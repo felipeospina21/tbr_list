@@ -28,6 +28,12 @@ This is intended to be a mobile-first web app and PWA.
 - Prefer TypeScript for application code.
 - Keep shared logic out of UI components when practical.
 - Favor small, composable modules over large files.
+- Prefer feature-first folders under `features/` for feature-owned UI, state, and data.
+- Keep `app/` thin and route-focused; avoid putting feature logic there.
+- Use PascalCase for component names and component file names.
+- Keep shared UI primitives directly under `components/` using PascalCase file names.
+- Use camelCase for non-component files, folders, and functions.
+- Use snake_case only for constants, such as `DEFAULT_VALUES`.
 
 ## Commands
 
