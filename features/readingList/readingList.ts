@@ -2,7 +2,7 @@ export type Book = {
 	id: string;
 	title: string;
 	author: string;
-	pages: number;
+	pages: number | null;
 	description: string;
 	cover: string;
 	accent: string;
@@ -52,18 +52,21 @@ export const initialBooks: Book[] = [
 ];
 
 export function totalPages(books: readonly Book[]) {
-	return books.reduce((sum, book) => sum + book.pages, 0);
+	return books.reduce(
+		(sum, book) => sum + (typeof book.pages === "number" ? book.pages : 0),
+		0,
+	);
 }
 
 export function moveBookInList(
 	books: readonly Book[],
 	index: number,
 	direction: -1 | 1,
-) {
+): Book[] {
 	const nextIndex = index + direction;
 
 	if (nextIndex < 0 || nextIndex >= books.length) {
-		return books;
+		return [...books];
 	}
 
 	const next = [...books];

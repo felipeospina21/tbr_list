@@ -18,8 +18,19 @@ export function useReadingList() {
 		setBooks((current) => moveBookInList(current, index, direction));
 	}
 
+	function addBook(book: Book) {
+		setBooks((current) => {
+			if (current.some((existingBook) => existingBook.id === book.id)) {
+				return current;
+			}
+
+			return [...current, book];
+		});
+	}
+
 	return {
 		books,
+		addBook,
 		moveBook,
 		pages,
 	};

@@ -1,7 +1,10 @@
 "use client";
 
-import { BookOpenText, LibraryBig } from "lucide-react";
+import { ArrowDown, ArrowUp, BookOpenText, LibraryBig } from "lucide-react";
+import { useMemo } from "react";
 
+import { Badge } from "@/components/Badge";
+import { Button } from "@/components/Button";
 import {
 	Card,
 	CardContent,
@@ -10,11 +13,16 @@ import {
 	CardTitle,
 } from "@/components/Card";
 
-import { ReadingListCard } from "./ReadingListCard";
+import { BookCard } from "./BookCard/BookCard";
+import { SearchBooksPanel } from "./SearchBooksPanel";
 import { useReadingList } from "./useReadingList";
 
 export function ReadingList() {
-	const { books, moveBook, pages } = useReadingList();
+	const { books, addBook, moveBook, pages } = useReadingList();
+	const existingBookIds = useMemo(
+		() => new Set(books.map((book) => book.id)),
+		[books],
+	);
 
 	return (
 		<main className="min-h-screen bg-[radial-gradient(circle_at_top,_#fff9ef_0%,_#f3efe8_44%,_#ebe5dc_100%)] px-4 py-5 text-stone-950 sm:px-6 sm:py-8">
@@ -60,15 +68,49 @@ export function ReadingList() {
 					</CardHeader>
 				</Card>
 
+				<SearchBooksPanel
+					existingBookIds={existingBookIds}
+					onAddBook={addBook}
+				/>
+
 				<div className="flex flex-col gap-4">
 					{books.map((book, index) => (
-						<ReadingListCard
+						<BookCard
 							key={book.id}
 							book={book}
-							index={index}
-							isFirst={index === 0}
-							isLast={index === books.length - 1}
-							onMove={moveBook}
+							priority={index === 0}
+							topBadge={
+								<div className="flex flex-wrap items-center gap-2">
+									<Badge variant="secondary">#{index + 1}</Badge>
+									<span className="text-xs uppercase tracking-[0.22em] text-stone-400">
+										TBR
+									</span>
+								</div>
+							}
+							footer={
+								<>
+									<Button
+										type="button"
+										variant="default"
+										onClick={() => moveBook(index, -1)}
+										disabled={index === 0}
+										className="w-full sm:flex-1"
+									>
+										<ArrowUp className="size-4" />
+										Move up
+									</Button>
+									<Button
+										type="button"
+										variant="outline"
+										onClick={() => moveBook(index, 1)}
+										disabled={index === books.length - 1}
+										className="w-full sm:flex-1"
+									>
+										<ArrowDown className="size-4" />
+										Move down
+									</Button>
+								</>
+							}
 						/>
 					))}
 				</div>
