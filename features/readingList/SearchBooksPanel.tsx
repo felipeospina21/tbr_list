@@ -1,9 +1,7 @@
 "use client";
 
-import { BookPlus, LibraryBig, Search, Sparkles, X } from "lucide-react";
+import { Search } from "lucide-react";
 
-import { Badge } from "@/components/Badge";
-import { Button } from "@/components/Button";
 import {
 	Card,
 	CardContent,
@@ -11,133 +9,111 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/Card";
-import { Input } from "@/components/Input";
+import type { UseQueryResult } from "@tanstack/react-query";
 
-import { BookCard } from "./BookCard/BookCard";
+import type { SearchBook } from "./bookSearch";
+import { SearchBookResultCard } from "./SearchBookResultCard";
+import { SearchBooksStateMessage } from "./SearchBooksStateMessage";
+import { SearchBooksToolbar } from "./SearchBooksToolbar";
 import type { Book } from "./readingList";
-import { useBookSearch } from "./useBookSearch";
+import type { BookSearchQueryData } from "./useBookSearchData";
 
 type SearchBooksPanelProps = {
-	existingBookIds: ReadonlySet<string>;
+	query: string;
+	searchTerm: string;
+	searchQuery: UseQueryResult<BookSearchQueryData, Error>;
+	onQueryChange: (query: string) => void;
 	onAddBook: (book: Book) => void;
+	existingBookIds: ReadonlySet<string>;
 };
 
 export function SearchBooksPanel({
-	existingBookIds,
+	query,
+	searchTerm,
+	searchQuery,
+	onQueryChange,
 	onAddBook,
+	existingBookIds,
 }: SearchBooksPanelProps) {
-	const { query, setQuery, results, status, error } = useBookSearch();
-
+	const results = searchQuery.data?.results ?? [];
+	const isIdle = searchTerm.length === 0;
+	const isLoading =
+		!isIdle && (searchQuery.isPending || searchQuery.isFetching);
 	const hasResults = results.length > 0;
-	const canClear = query.trim().length > 0;
-	const subtitle =
-		status === "loading"
-			? "Searching Google Books first, then Open Library if needed."
-			: status === "error"
-				? "The search request failed. Try again in a moment."
-				: status === "empty"
-					? "No books matched that search."
-					: "Search Google Books first. Open Library fills in when Google has no matches.";
+	const error =
+		searchQuery.isError && searchQuery.error instanceof Error
+			? searchQuery.error.message
+			: searchQuery.isError
+				? "Unable to search books."
+				: null;
+
+	const subtitle = isLoading
+		? "Searching Google Books first, then Open Library if needed."
+		: error
+			? "The search request failed. Try again in a moment."
+			: !isIdle && !hasResults
+				? "No books matched that search."
+				: "Search Google Books first. Open Library fills in when Google has no matches.";
 
 	return (
-		<Card className="overflow-hidden bg-white/85 backdrop-blur">
-			<CardHeader className="gap-4 p-5 sm:p-6">
-				<div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-stone-500">
-					<Sparkles className="size-4" />
+		<Card className="border-white/10 bg-white/[0.04] text-white shadow-[0_18px_50px_rgba(0,0,0,0.2)]">
+			<CardHeader className="gap-4 p-5">
+				<div className="flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/6">
+					<Search className="size-4" />
+				</div>
+				<CardTitle className="text-lg font-semibold tracking-[-0.02em]">
 					Search books
-				</div>
-
-				<div className="space-y-2">
-					<CardTitle className="text-2xl sm:text-3xl">
-						Add something new
-					</CardTitle>
-					<CardDescription className="max-w-2xl text-sm sm:text-base">
-						{subtitle}
-					</CardDescription>
-				</div>
-
-				<div className="flex flex-col gap-3 sm:flex-row">
-					<div className="relative flex-1">
-						<Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-stone-400" />
-						<Input
-							value={query}
-							onChange={(event) => setQuery(event.target.value)}
-							placeholder="Search by title or author"
-							className="pl-11"
-						/>
-					</div>
-					<Button
-						type="button"
-						variant="outline"
-						onClick={() => setQuery("")}
-						disabled={!canClear}
-						className="sm:w-auto"
-					>
-						<X className="size-4" />
-						Clear
-					</Button>
-				</div>
+				</CardTitle>
+				<CardDescription className="text-sm leading-6 text-white/66">
+					{subtitle}
+				</CardDescription>
 			</CardHeader>
 
-			<CardContent className="space-y-4">
+			<CardContent className="space-y-4 px-5 pb-5">
+				<SearchBooksToolbar query={query} onQueryChange={onQueryChange} />
+
+				{isIdle ? (
+					<SearchBooksStateMessage
+						variant="idle"
+						message="Type at least two characters to search the catalog."
+					/>
+				) : null}
+
+				{isLoading ? (
+					<SearchBooksStateMessage
+						variant="loading"
+						message="Searching books..."
+					/>
+				) : null}
+
 				{error ? (
-					<div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
-						{error}
-					</div>
+					<SearchBooksStateMessage
+						variant="error"
+						message={error}
+					/>
 				) : null}
 
-				{status === "idle" ? (
-					<div className="rounded-2xl border border-dashed border-stone-200 bg-white px-4 py-6 text-sm text-stone-500">
-						Type at least two characters to search the catalog.
-					</div>
-				) : null}
-
-				{status === "loading" ? (
-					<div className="rounded-2xl border border-stone-200 bg-white px-4 py-6 text-sm text-stone-500">
-						Searching books...
-					</div>
-				) : null}
-
-				{status === "empty" ? (
-					<div className="rounded-2xl border border-dashed border-stone-200 bg-white px-4 py-6 text-sm text-stone-500">
-						No results found.
-					</div>
+				{!isIdle && !isLoading && !error && !hasResults ? (
+					<SearchBooksStateMessage
+						variant="empty"
+						message="No results found."
+					/>
 				) : null}
 
 				{hasResults ? (
 					<div className="flex flex-col gap-4">
-						{results.map((book) => (
-							<BookCard
-								key={book.id}
-								book={book}
-								topBadge={
-									<Badge variant="secondary">
-										<LibraryBig className="mr-1.5 size-3" />
-										{book.provider}
-									</Badge>
-								}
-								footer={
-									<Button
-										type="button"
-										variant={
-											existingBookIds.has(book.id) ? "secondary" : "default"
-										}
-										onClick={() => onAddBook(book)}
-										disabled={existingBookIds.has(book.id)}
-										className="w-full"
-									>
-										<BookPlus className="size-4" />
-										{existingBookIds.has(book.id)
-											? "Added to list"
-											: "Add to list"}
-									</Button>
-								}
-								titleClassName="text-xl"
-								descriptionClassName="text-sm leading-6 text-stone-700 sm:text-[15px]"
-								imageSizes="(max-width: 768px) 100vw, 150px"
-								imageAltSuffix="front cover"
-							/>
-						))}
+						{results.map((book: SearchBook) => {
+							const isAdded = existingBookIds.has(book.id);
+
+							return (
+								<SearchBookResultCard
+									key={book.id}
+									book={book}
+									isAdded={isAdded}
+									onAddBook={onAddBook}
+								/>
+							);
+						})}
 					</div>
 				) : null}
 			</CardContent>
