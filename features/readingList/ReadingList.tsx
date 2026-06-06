@@ -1,13 +1,12 @@
 "use client";
 
 import { useMemo } from "react";
-
-import { SearchBooksPanel } from "./SearchBooksPanel";
-import { ReadingListHero } from "./ReadingListHero";
-import { ReadingQueuePanel } from "./ReadingQueuePanel";
-import { useBookSearch } from "./useBookSearch";
-import { useReadingList } from "./useReadingList";
 import { SectionBackdrop } from "@/components/SectionBackdrop";
+import { ReadingListHero } from "./components/ReadingListHero";
+import { ReadingQueuePanel } from "./components/ReadingQueuePanel";
+import { SearchBooksPanel } from "./components/SearchBooksPanel";
+import { useBookSearch } from "./hooks/useBookSearch";
+import { useReadingList } from "./hooks/useReadingList";
 
 export function ReadingList() {
 	const { books, addBook, moveBook, pages } = useReadingList();

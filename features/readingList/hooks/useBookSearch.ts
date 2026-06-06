@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 
+import { useDebouncedValue } from "../../../hooks/useDebouncedValue";
 import { useBookSearchData } from "./useBookSearchData";
-import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 
 const MIN_QUERY_LENGTH = 2;
 const SEARCH_DEBOUNCE_MS = 300;

@@ -1,16 +1,16 @@
 ---
 id: mem_d6d52aa7
 created: "2026-06-05T23:48:43.570Z"
-last_retrieved: "2026-06-05T23:48:43.570Z"
-retrieval_count: 0
+last_retrieved: "2026-06-06T01:48:56.837Z"
+retrieval_count: 6
 strength: 1
-half_life_days: 7
+half_life_days: 29
 layer: episodic
 tags: [conventions]
 emotional_valence: neutral
 schema_fit: 0.5
 source: cli
-outcome_score: null
+outcome_score: 1
 conflicts_with: []
 pinned: false
 confidence: verified

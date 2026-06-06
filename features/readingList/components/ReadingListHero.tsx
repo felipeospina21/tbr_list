@@ -23,16 +23,6 @@ export function ReadingListHero({ booksCount, pages }: ReadingListHeroProps) {
 				</Badge>
 			</div>
 
-			<h1 className="mt-6 max-w-[11ch] text-5xl leading-[0.9] tracking-[-0.04em] text-balance sm:text-6xl lg:text-[5.25rem]">
-				Your reading queue, staged for action.
-			</h1>
-
-			<p className="mt-5 max-w-xl text-base leading-8 text-white/72 sm:text-lg">
-				Search, add, and reorder your books in a focused workspace. The reading
-				list stays real and interactive, but the surface feels quiet and
-				intentional.
-			</p>
-
 			<div className="mt-8 grid gap-3 sm:grid-cols-3">
 				{[
 					{ label: "Books", value: booksCount.toString() },

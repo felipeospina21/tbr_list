@@ -7,13 +7,13 @@ import { Badge } from "@/components/Badge";
 import { Button } from "@/components/Button";
 import { cn } from "@/lib/utils";
 
-import type { Book } from "./readingList";
+import type { Book } from "../types/readingList";
 
 type ReadingQueueItemProps = {
 	book: Book;
 	index: number;
 	total: number;
-	onMove: (index: number, direction: -1 | 1) => void;
+	onMove: (bookId: string, direction: -1 | 1) => void;
 };
 
 export function ReadingQueueItem({
@@ -56,7 +56,9 @@ export function ReadingQueueItem({
 						</div>
 						<Badge className="border-white/10 bg-white/6 text-white/78">
 							<BookOpenText className="mr-1.5 size-3" />
-							{typeof book.pages === "number" ? `${book.pages} pages` : "Pages n/a"}
+							{typeof book.pages === "number"
+								? `${book.pages} pages`
+								: "Pages n/a"}
 						</Badge>
 					</div>
 
@@ -68,7 +70,7 @@ export function ReadingQueueItem({
 						<Button
 							type="button"
 							variant="outline"
-							onClick={() => onMove(index, -1)}
+							onClick={() => onMove(book.id, -1)}
 							disabled={index === 0}
 							className="border-white/10 bg-white/6 text-white hover:bg-white/10"
 						>
@@ -78,7 +80,7 @@ export function ReadingQueueItem({
 						<Button
 							type="button"
 							variant="outline"
-							onClick={() => onMove(index, 1)}
+							onClick={() => onMove(book.id, 1)}
 							disabled={index === total - 1}
 							className="border-white/10 bg-white/6 text-white hover:bg-white/10"
 						>

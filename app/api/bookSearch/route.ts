@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { searchBooksWithDebug } from "@/features/readingList/bookSearch";
+import { searchBooksWithDebug } from "@/features/readingList/server/bookSearch";
 
 export async function GET(request: Request) {
 	const url = new URL(request.url);

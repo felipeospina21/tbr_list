@@ -7,7 +7,6 @@ import {
 	Sparkles,
 } from "lucide-react";
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Manrope } from "next/font/google";
 import Link from "next/link";
 
 import { Badge } from "@/components/Badge";
@@ -20,16 +19,6 @@ import {
 } from "@/components/Card";
 import { SectionBackdrop } from "@/components/SectionBackdrop";
 import { cn } from "@/lib/utils";
-
-const display = Cormorant_Garamond({
-	subsets: ["latin"],
-	weight: ["400", "500", "600", "700"],
-});
-
-const body = Manrope({
-	subsets: ["latin"],
-	weight: ["400", "500", "600", "700"],
-});
 
 export const metadata: Metadata = {
 	title: "TBR List Landing",
@@ -56,9 +45,7 @@ const features = [
 
 export default function LandingPage() {
 	return (
-		<main
-			className={cn(body.className, "min-h-screen bg-[#0d1110] text-stone-50")}
-		>
+		<main className="min-h-screen bg-[#0d1110] text-stone-50">
 			<section className="relative isolate overflow-hidden">
 				<SectionBackdrop />
 				<div className="absolute left-1/2 top-12 h-64 w-64 -translate-x-1/2 rounded-full bg-amber-200/10 blur-3xl" />
@@ -75,12 +62,7 @@ export default function LandingPage() {
 							</Badge>
 						</div>
 
-						<h1
-							className={cn(
-								display.className,
-								"mt-6 max-w-[11ch] text-6xl leading-[0.88] tracking-[-0.04em] text-balance sm:text-7xl lg:text-[5.5rem]",
-							)}
-						>
+						<h1 className="mt-6 max-w-[11ch] font-serif text-6xl leading-[0.88] tracking-[-0.04em] text-balance sm:text-7xl lg:text-[5.5rem]">
 							Keep the next book within reach.
 						</h1>
 
@@ -133,8 +115,7 @@ export default function LandingPage() {
 										</p>
 										<CardTitle
 											className={cn(
-												display.className,
-												"mt-2 text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl",
+												"mt-2 font-serif text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl",
 											)}
 										>
 											Books to read next
@@ -219,8 +200,7 @@ export default function LandingPage() {
 						</p>
 						<h2
 							className={cn(
-								display.className,
-								"mt-4 text-4xl leading-[0.96] tracking-[-0.03em] text-balance sm:text-5xl",
+								"mt-4 font-serif text-4xl leading-[0.96] tracking-[-0.03em] text-balance sm:text-5xl",
 							)}
 						>
 							A reading queue with just enough ceremony.
@@ -283,8 +263,7 @@ export default function LandingPage() {
 							</p>
 							<h2
 								className={cn(
-									display.className,
-									"mt-4 text-4xl leading-[0.95] tracking-[-0.03em] text-balance sm:text-5xl",
+									"mt-4 font-serif text-4xl leading-[0.95] tracking-[-0.03em] text-balance sm:text-5xl",
 								)}
 							>
 								Open the app and put your queue back in order.

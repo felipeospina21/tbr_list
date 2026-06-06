@@ -2,7 +2,7 @@
 
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
-import type { SearchBook, SearchDebugInfo } from "./bookSearch";
+import type { SearchBook, SearchDebugInfo } from "../types/search";
 
 const MIN_QUERY_LENGTH = 2;
 const SEARCH_QUERY_KEY = "book-search";

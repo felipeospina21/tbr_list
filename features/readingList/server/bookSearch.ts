@@ -1,28 +1,13 @@
-import { buildBookArt } from "./bookArt";
-import type { Book } from "./readingList";
+import "server-only";
 
-export type SearchBook = Book & {
-	provider: "Google Books" | "Open Library";
-};
-
-export type SearchProvider = "google-books" | "open-library" | "none";
-
-export type SearchDebugInfo = {
-	googleApiKeyConfigured: boolean;
-	googleStatus: number | null;
-	googleError: string | null;
-	googleTotalItems: number | null;
-	googleResultCount: number;
-	openLibraryStatus: number | null;
-	openLibraryResultCount: number;
-	fallbackUsed: boolean;
-	provider: SearchProvider;
-};
-
-export type SearchOutcome = {
-	results: SearchBook[];
-	debug: SearchDebugInfo;
-};
+import type { Book } from "../types/readingList";
+import type {
+	SearchBook,
+	SearchDebugInfo,
+	SearchOutcome,
+	SearchProvider,
+} from "../types/search";
+import { buildBookArt } from "../utils/bookArt";
 
 type GoogleBooksResponse = {
 	items?: Array<{
@@ -33,7 +18,6 @@ type GoogleBooksResponse = {
 			description?: string;
 			pageCount?: number;
 			imageLinks?: {
-				smallThumbnail?: string;
 				thumbnail?: string;
 			};
 		};
@@ -41,12 +25,13 @@ type GoogleBooksResponse = {
 };
 
 type OpenLibraryResponse = {
+	numFound?: number;
 	docs?: Array<{
 		key?: string;
 		title?: string;
 		author_name?: string[];
 		description?: string | { value?: string };
-		first_sentence?: string | string[];
+		first_sentence?: string[] | string;
 		first_publish_year?: number;
 		number_of_pages_median?: number;
 		cover_i?: number;

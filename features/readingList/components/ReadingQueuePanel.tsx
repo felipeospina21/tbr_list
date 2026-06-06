@@ -1,16 +1,25 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/Card";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/Card";
 
-import type { Book } from "./readingList";
+import type { Book } from "../types/readingList";
 import { ReadingQueueItem } from "./ReadingQueueItem";
 
 type ReadingQueuePanelProps = {
 	books: Book[];
-	onMoveBook: (index: number, direction: -1 | 1) => void;
+	onMoveBook: (bookId: string, direction: -1 | 1) => void;
 };
 
-export function ReadingQueuePanel({ books, onMoveBook }: ReadingQueuePanelProps) {
+export function ReadingQueuePanel({
+	books,
+	onMoveBook,
+}: ReadingQueuePanelProps) {
 	return (
 		<Card className="border-white/10 bg-[#121817]/90 text-white shadow-[0_36px_100px_rgba(0,0,0,0.4)] backdrop-blur-md">
 			<CardHeader className="gap-4 border-b border-white/10 px-5 py-5 sm:px-6">

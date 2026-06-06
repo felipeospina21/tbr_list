@@ -7,8 +7,8 @@ import { Badge } from "@/components/Badge";
 import { Button } from "@/components/Button";
 import { cn } from "@/lib/utils";
 
-import type { SearchBook } from "./bookSearch";
-import type { Book } from "./readingList";
+import type { Book } from "../types/readingList";
+import type { SearchBook } from "../types/search";
 
 type SearchBookResultCardProps = {
 	book: SearchBook;
@@ -47,7 +47,9 @@ export function SearchBookResultCard({
 							<p className="mt-1 text-sm text-white/60">{book.author}</p>
 						</div>
 						<Badge className="border-white/10 bg-white/6 text-white/78">
-							{typeof book.pages === "number" ? `${book.pages} pages` : "Pages n/a"}
+							{typeof book.pages === "number"
+								? `${book.pages} pages`
+								: "Pages n/a"}
 						</Badge>
 					</div>
 

@@ -4,6 +4,7 @@
 	--background: #f3efe8;
 	--foreground: #171412;
 	--app-font-sans: Arial, Helvetica, sans-serif;
+	--app-font-serif: Georgia, "Times New Roman", serif;
 	--app-font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
@@ -11,6 +12,7 @@
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
 	--font-sans: var(--app-font-sans);
+	--font-serif: var(--app-font-serif);
 	--font-mono: var(--app-font-mono);
 }
 

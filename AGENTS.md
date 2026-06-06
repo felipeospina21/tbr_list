@@ -13,6 +13,8 @@ This is intended to be a mobile-first web app and PWA.
 - Tailwind CSS
 - Next.js
 - TanStack Query
+- Zod for runtime validation at API boundaries
+- SQLite via a replaceable storage abstraction
 - pnpm
 
 ## Style Direction
@@ -57,7 +59,15 @@ Avoid these patterns:
 - Favor small, composable modules over large files.
 - Prefer composition and atomic components over massive UI components.
 - Split complex screens into focused pieces when the JSX or logic starts to grow.
+- Keep persistence behind a storage/repository abstraction so SQLite can be swapped for Postgres without changing UI code.
 - Prefer feature-first folders under `features/` for feature-owned UI, state, and data.
+- Organize each feature into subfolders by concern when it grows:
+  - `components/` for presentational UI
+  - `hooks/` for client state and query logic
+  - `server/` for server-only data access and route helpers
+  - `schemas/` for runtime validation
+  - `types/` for shared feature domain types
+  - `utils/` for pure helpers
 - Keep `app/` thin and route-focused; avoid putting feature logic there.
 - Use PascalCase for component names and component file names.
 - Keep shared UI primitives directly under `components/` using PascalCase file names.

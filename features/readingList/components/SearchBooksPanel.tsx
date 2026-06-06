@@ -1,5 +1,6 @@
 "use client";
 
+import type { UseQueryResult } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 
 import {
@@ -9,14 +10,12 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/Card";
-import type { UseQueryResult } from "@tanstack/react-query";
-
-import type { SearchBook } from "./bookSearch";
+import type { BookSearchQueryData } from "../hooks/useBookSearchData";
+import type { Book } from "../types/readingList";
+import type { SearchBook } from "../types/search";
 import { SearchBookResultCard } from "./SearchBookResultCard";
 import { SearchBooksStateMessage } from "./SearchBooksStateMessage";
 import { SearchBooksToolbar } from "./SearchBooksToolbar";
-import type { Book } from "./readingList";
-import type { BookSearchQueryData } from "./useBookSearchData";
 
 type SearchBooksPanelProps = {
 	query: string;
@@ -87,10 +86,7 @@ export function SearchBooksPanel({
 				) : null}
 
 				{error ? (
-					<SearchBooksStateMessage
-						variant="error"
-						message={error}
-					/>
+					<SearchBooksStateMessage variant="error" message={error} />
 				) : null}
 
 				{!isIdle && !isLoading && !error && !hasResults ? (
