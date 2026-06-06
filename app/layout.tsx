@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { debugRootClassName } from "@/lib/debug";
+import styles from "./layout.module.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
@@ -16,8 +18,8 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en" className="h-full antialiased">
-			<body className="min-h-full flex flex-col">
+		<html lang="en" className={styles.html}>
+			<body className={`${styles.body} ${debugRootClassName()}`}>
 				<Providers>{children}</Providers>
 			</body>
 		</html>

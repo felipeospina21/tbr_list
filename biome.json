@@ -14,11 +14,7 @@
 			"!next-env.d.ts"
 		]
 	},
-	"css": {
-		"parser": {
-			"tailwindDirectives": true
-		}
-	},
+	"css": {},
 	"formatter": { "enabled": true, "indentStyle": "tab" },
 	"linter": {
 		"enabled": true,

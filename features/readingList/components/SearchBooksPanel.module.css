@@ -1,0 +1,44 @@
+.panel {
+	border-color: rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.04);
+	color: #fff;
+	box-shadow: 0 18px 50px rgba(0, 0, 0, 0.2);
+}
+
+.header {
+	gap: 1rem;
+	padding: 1.25rem;
+}
+
+.headerIcon {
+	display: flex;
+	width: 2.5rem;
+	height: 2.5rem;
+	align-items: center;
+	justify-content: center;
+	border-radius: 9999px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.06);
+}
+
+.headerTitle {
+	font-size: 1.125rem;
+	font-weight: 600;
+	letter-spacing: -0.02em;
+}
+
+.headerDescription {
+	font-size: 0.875rem;
+	line-height: 1.5rem;
+	color: rgba(255, 255, 255, 0.66);
+}
+
+.results {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.content {
+	padding: 1rem 1.25rem 1.25rem;
+}

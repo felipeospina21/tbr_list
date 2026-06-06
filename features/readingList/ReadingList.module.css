@@ -1,0 +1,42 @@
+.main {
+	min-height: 100vh;
+	background: #0d1110;
+	color: #fafaf9;
+}
+
+.surface {
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.shell {
+	margin-left: auto;
+	margin-right: auto;
+	display: grid;
+	width: 100%;
+	max-width: 80rem;
+	gap: 2rem;
+	padding: 1.5rem 0.5rem 2.5rem;
+}
+
+@media (min-width: 640px) {
+	.shell {
+		padding: 2rem 1.5rem 3.5rem;
+	}
+}
+
+@media (min-width: 1024px) {
+	.shell {
+		grid-template-columns: 1.05fr 0.95fr;
+		align-items: start;
+		gap: 3rem;
+		padding: 2.5rem 2rem 4rem;
+	}
+}
+
+.stack {
+	display: grid;
+	gap: 1rem;
+}

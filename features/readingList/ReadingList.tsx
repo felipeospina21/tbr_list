@@ -2,11 +2,13 @@
 
 import { useMemo } from "react";
 import { SectionBackdrop } from "@/components/SectionBackdrop";
+import { debugComponentAttrs } from "@/lib/debug";
 import { ReadingListHero } from "./components/ReadingListHero";
 import { ReadingQueuePanel } from "./components/ReadingQueuePanel";
 import { SearchBooksPanel } from "./components/SearchBooksPanel";
 import { useBookSearch } from "./hooks/useBookSearch";
 import { useReadingList } from "./hooks/useReadingList";
+import styles from "./ReadingList.module.css";
 
 export function ReadingList() {
 	const { books, addBook, moveBook, pages } = useReadingList();
@@ -17,14 +19,17 @@ export function ReadingList() {
 	);
 
 	return (
-		<main className="min-h-screen bg-[#0d1110] text-stone-50">
-			<section className="relative isolate overflow-hidden border-b border-white/8">
+		<main className={styles.main} {...debugComponentAttrs("ReadingListPage")}>
+			<section
+				className={styles.surface}
+				{...debugComponentAttrs("ReadingListSurface")}
+			>
 				<SectionBackdrop />
 
-				<div className="mx-auto grid w-full max-w-7xl gap-8 px-4 pb-10 pt-6 sm:px-6 sm:pb-14 sm:pt-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-12 lg:px-8 lg:pb-16 lg:pt-10">
+				<div className={styles.shell}>
 					<ReadingListHero booksCount={books.length} pages={pages} />
 
-					<div className="grid gap-4">
+					<div className={styles.stack}>
 						<SearchBooksPanel
 							query={query}
 							searchTerm={searchTerm}

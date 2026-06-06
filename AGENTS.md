@@ -19,16 +19,16 @@ This is intended to be a mobile-first web app and PWA.
 
 ## Style Direction
 
-The current visual direction is a two-part system:
+The current visual direction is a midnight-library system with two treatments:
 
-- Landing pages should feel like an editorial magazine spread.
-- App surfaces should feel like a quiet library desk or reading room.
+- Landing pages should feel like an editorial magazine spread with a strong first impression.
+- App surfaces should feel like a quiet, focused reading room built around the queue and search flow.
 
 Core style rules:
 
-- Use a dark, nocturne palette for branded landing pages: charcoal, warm stone, amber, and soft paper highlights.
-- Use a lighter paper-and-ink palette for workspace surfaces: stone, parchment, muted brown, and restrained black text.
-- Prefer serif display type for headlines and a clean sans-serif for supporting copy.
+- Use a dark, nocturne palette across the product: charcoal, deep green-black, warm stone, amber, and soft paper highlights.
+- Keep workspace surfaces slightly quieter than landing pages, but do not switch to a light paper-and-ink theme.
+- Prefer serif display type for landing-page headlines and key feature moments, with a clean sans-serif for supporting copy and controls.
 - Keep layouts mobile-first, but let desktop breathe with asymmetry and wider rhythm.
 - Favor full-bleed hero sections and strong focal compositions over generic center-column hero cards.
 - Keep card usage intentional. Use cards only when they clarify a surface or hold real content; avoid card mosaics and dashboard grids.
@@ -61,10 +61,13 @@ Avoid these patterns:
 - Split complex screens into focused pieces when the JSX or logic starts to grow.
 - Keep persistence behind a storage/repository abstraction so SQLite can be swapped for Postgres without changing UI code.
 - Prefer feature-first folders under `features/` for feature-owned UI, state, and data.
-- Keep each hook in its own file. Query and mutation hooks should be named after the operation they perform, such as `useFetchReadingList` or `useChangeBookPosition`.
+- Keep each hook in its own file. Query hooks belong in `queries/`, mutation hooks belong in `mutations/`, and shared client-state hooks belong in `hooks/`.
+- Name query and mutation hooks after the operation they perform, such as `useFetchReadingList` or `useChangeBookPosition`.
 - Organize each feature into subfolders by concern when it grows:
   - `components/` for presentational UI
   - `hooks/` for client state and query logic
+  - `queries/` for fetch hooks and query keys
+  - `mutations/` for write hooks and mutation helpers
   - `server/` for server-only data access and route helpers
   - `schemas/` for runtime validation
   - `types/` for shared feature domain types
@@ -77,14 +80,14 @@ Avoid these patterns:
 
 ## Commands
 
-Add the exact project commands here once the app is scaffolded.
-
-- install:
-- dev:
-- test:
-- lint:
-- build:
-- typecheck:
+- install: `pnpm install`
+- dev: `pnpm dev`
+- test: not defined yet
+- lint: `pnpm lint`
+- build: `pnpm build`
+- typecheck: not defined yet
+- format: `pnpm format`
+- check: `pnpm check`
 
 ## Decision Rules
 
@@ -96,7 +99,7 @@ When there are multiple valid options:
 
 ## Notes
 
-This file is intentionally lightweight for a greenfield project. Expand it as the app gains real structure, commands, and constraints.
+This file is intentionally lightweight, but it should stay aligned with the actual repo structure, commands, and design system as they evolve.
 
 <!-- hippo:start -->
 ## Project Memory (Hippo)

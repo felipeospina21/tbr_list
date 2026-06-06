@@ -10,10 +10,13 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/Card";
+import iconStyles from "@/components/Icon.module.css";
+import { debugComponentAttrs } from "@/lib/debug";
 import type { BookSearchQueryData } from "../queries/useBookSearchData";
 import type { Book } from "../types/readingList";
 import type { SearchBook } from "../types/search";
 import { SearchBookResultCard } from "./SearchBookResultCard";
+import styles from "./SearchBooksPanel.module.css";
 import { SearchBooksStateMessage } from "./SearchBooksStateMessage";
 import { SearchBooksToolbar } from "./SearchBooksToolbar";
 
@@ -55,63 +58,63 @@ export function SearchBooksPanel({
 				: "Search Google Books first. Open Library fills in when Google has no matches.";
 
 	return (
-		<Card className="border-white/10 bg-white/[0.04] text-white shadow-[0_18px_50px_rgba(0,0,0,0.2)]">
-			<CardHeader className="gap-4 p-5">
-				<div className="flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/6">
-					<Search className="size-4" />
+		<Card className={styles.panel} {...debugComponentAttrs("SearchBooksPanel")}>
+			<CardHeader className={styles.header}>
+				<div className={styles.headerIcon}>
+					<Search className={iconStyles.size4} />
 				</div>
-				<CardTitle className="text-lg font-semibold tracking-[-0.02em]">
-					Search books
-				</CardTitle>
-				<CardDescription className="text-sm leading-6 text-white/66">
+				<CardTitle className={styles.headerTitle}>Search books</CardTitle>
+				<CardDescription className={styles.headerDescription}>
 					{subtitle}
 				</CardDescription>
 			</CardHeader>
 
-			<CardContent className="space-y-4 px-5 pb-5">
-				<SearchBooksToolbar query={query} onQueryChange={onQueryChange} />
+			<CardContent className={styles.content}>
+				<div className={styles.results}>
+					<SearchBooksToolbar query={query} onQueryChange={onQueryChange} />
 
-				{isIdle ? (
-					<SearchBooksStateMessage
-						variant="idle"
-						message="Type at least two characters to search the catalog."
-					/>
-				) : null}
+					{isIdle ? (
+						<SearchBooksStateMessage
+							variant="idle"
+							message="Type at least two characters to search the catalog."
+						/>
+					) : null}
 
-				{isLoading ? (
-					<SearchBooksStateMessage
-						variant="loading"
-						message="Searching books..."
-					/>
-				) : null}
+					{isLoading ? (
+						<SearchBooksStateMessage
+							variant="loading"
+							message="Searching books..."
+						/>
+					) : null}
 
-				{error ? (
-					<SearchBooksStateMessage variant="error" message={error} />
-				) : null}
+					{error ? (
+						<SearchBooksStateMessage variant="error" message={error} />
+					) : null}
 
-				{!isIdle && !isLoading && !error && !hasResults ? (
-					<SearchBooksStateMessage
-						variant="empty"
-						message="No results found."
-					/>
-				) : null}
+					{!isIdle && !isLoading && !error && !hasResults ? (
+						<SearchBooksStateMessage
+							variant="empty"
+							message="No results found."
+						/>
+					) : null}
 
-				{hasResults ? (
-					<div className="flex flex-col gap-4">
-						{results.map((book: SearchBook) => {
-							const isAdded = existingBookIds.has(book.id);
+					{hasResults ? (
+						<div className={styles.results}>
+							{results.map((book: SearchBook) => {
+								const isAdded = existingBookIds.has(book.id);
 
-							return (
-								<SearchBookResultCard
-									key={book.id}
-									book={book}
-									isAdded={isAdded}
-									onAddBook={onAddBook}
-								/>
-							);
-						})}
-					</div>
-				) : null}
+								return (
+									<SearchBookResultCard
+										key={book.id}
+										book={book}
+										isAdded={isAdded}
+										onAddBook={onAddBook}
+									/>
+								);
+							})}
+						</div>
+					) : null}
+				</div>
 			</CardContent>
 		</Card>
 	);

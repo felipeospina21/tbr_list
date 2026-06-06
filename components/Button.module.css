@@ -1,0 +1,97 @@
+.button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	border: 0;
+	border-radius: 9999px;
+	font-size: 0.875rem;
+	font-weight: 500;
+	line-height: 1;
+	transition:
+		color 150ms ease,
+		background-color 150ms ease,
+		box-shadow 150ms ease,
+		transform 150ms ease,
+		opacity 150ms ease;
+	outline: none;
+}
+
+.button:focus-visible {
+	box-shadow:
+		0 0 0 2px var(--button-ring-color),
+		0 0 0 4px var(--button-ring-offset, #fff);
+}
+
+.button:disabled {
+	pointer-events: none;
+	opacity: 0.5;
+}
+
+.default {
+	background: #171412;
+	color: #fff;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+	--button-ring-color: rgba(23, 20, 18, 0.55);
+	--button-ring-offset: #fff;
+}
+
+.default:hover {
+	background: #2d2925;
+}
+
+.secondary {
+	background: #f5f5f4;
+	color: #171412;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+	--button-ring-color: rgba(168, 162, 158, 0.7);
+	--button-ring-offset: #fff;
+}
+
+.secondary:hover {
+	background: #e7e5e4;
+}
+
+.outline {
+	border: 1px solid #e7e5e4;
+	background: #fff;
+	color: #171412;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+	--button-ring-color: rgba(168, 162, 158, 0.7);
+	--button-ring-offset: #fff;
+}
+
+.outline:hover {
+	background: #fafaf9;
+}
+
+.ghost {
+	color: #44403c;
+	--button-ring-color: rgba(168, 162, 158, 0.7);
+	--button-ring-offset: #fff;
+}
+
+.ghost:hover {
+	background: #f5f5f4;
+	color: #171412;
+}
+
+.sizeDefault {
+	height: 2.75rem;
+	padding: 0.5rem 1rem;
+}
+
+.sizeSm {
+	height: 2.25rem;
+	padding: 0 0.75rem;
+}
+
+.sizeLg {
+	height: 3rem;
+	padding: 0 1.5rem;
+}
+
+.sizeIcon {
+	width: 2.75rem;
+	height: 2.75rem;
+}

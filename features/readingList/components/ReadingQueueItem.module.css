@@ -1,0 +1,125 @@
+.item {
+	overflow: hidden;
+	border: 1px solid;
+}
+
+.top {
+	border-color: rgba(255, 255, 255, 0.14);
+	background: rgba(255, 255, 255, 0.08);
+}
+
+.regular {
+	border-color: rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.04);
+}
+
+.grid {
+	display: grid;
+	gap: 0;
+	grid-template-columns: 1fr 1fr;
+}
+
+@media (min-width: 768px) {
+	.grid {
+		grid-template-columns: 168px minmax(0, 1fr);
+	}
+}
+
+.coverWrap {
+	position: relative;
+	min-height: 14rem;
+	background: rgba(0, 0, 0, 0.2);
+}
+
+.coverImage {
+	object-fit: cover;
+}
+
+@media (min-width: 768px) {
+	.coverWrap {
+		min-height: 100%;
+	}
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	padding: 0.5rem;
+	padding-right: 0.4rem;
+}
+
+.header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: start;
+	justify-content: space-between;
+	gap: 0.75rem;
+}
+
+.metaGroup {
+	min-width: 0;
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.indexBadge {
+	background: rgba(255, 255, 255, 0.06);
+	color: rgba(255, 255, 255, 0.78);
+}
+
+.title {
+	margin-top: 0.5rem;
+	margin-bottom: 0;
+	font-size: 1.25rem;
+	font-weight: 600;
+	letter-spacing: -0.03em;
+	color: #fff;
+}
+
+.author {
+	margin: 0;
+	font-size: 0.875rem;
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.pagesBadge {
+	flex-shrink: 0;
+	background: rgba(255, 255, 255, 0.06);
+	color: rgba(255, 255, 255, 0.78);
+
+	.badgeContent {
+		margin-left: 0.5rem;
+	}
+}
+
+.description {
+	margin-top: 0.5rem;
+	margin-bottom: 0;
+	font-size: 0.875rem;
+	line-height: 1.5rem;
+	color: rgba(255, 255, 255, 0.72);
+}
+
+.actions {
+	margin-top: 1.25rem;
+	display: flex;
+	gap: 0.75rem;
+}
+
+.actionButton {
+	flex: 1 1 0%;
+	border-color: rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.06);
+	color: #fff;
+}
+
+.actionButton:hover {
+	background: rgba(255, 255, 255, 0.1);
+}
+
+@media (min-width: 640px) {
+	.content {
+		padding: 1.25rem;
+	}
+}

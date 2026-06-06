@@ -5,9 +5,12 @@ import Image from "next/image";
 
 import { Badge } from "@/components/Badge";
 import { Button } from "@/components/Button";
+import iconStyles from "@/components/Icon.module.css";
+import { debugComponentAttrs } from "@/lib/debug";
 import { cn } from "@/lib/utils";
 
 import type { Book } from "../types/readingList";
+import styles from "./ReadingQueueItem.module.css";
 
 type ReadingQueueItemProps = {
 	book: Book;
@@ -24,68 +27,59 @@ export function ReadingQueueItem({
 }: ReadingQueueItemProps) {
 	return (
 		<div
-			className={cn(
-				"overflow-hidden rounded-[1.35rem] border",
-				index === 0
-					? "border-white/14 bg-white/8"
-					: "border-white/8 bg-white/[0.04]",
-			)}
+			className={cn(styles.item, index === 0 ? styles.top : styles.regular)}
+			{...debugComponentAttrs("ReadingQueueItem")}
 		>
-			<div className="grid gap-0 md:grid-cols-[168px_minmax(0,1fr)]">
-				<div className="relative min-h-56 bg-black/20 md:min-h-full">
+			<div className={styles.grid}>
+				<div className={styles.coverWrap}>
 					<Image
 						src={book.cover}
 						alt={`${book.title} cover`}
 						fill
-						className="object-cover"
+						className={styles.coverImage}
 						sizes="(max-width: 768px) 100vw, 168px"
 						unoptimized
 						priority={index === 0}
 					/>
 				</div>
-				<div className="flex flex-col p-4 sm:p-5">
-					<div className="flex flex-wrap items-start justify-between gap-3">
-						<div>
-							<Badge className="border-white/10 bg-white/6 text-white/78">
-								#{index + 1}
+
+				<div className={styles.content}>
+					<div className={styles.header}>
+						<div className={styles.metaGroup}>
+							<Badge className={styles.indexBadge}>#{index + 1}</Badge>
+							<Badge className={styles.pagesBadge}>
+								<BookOpenText className={iconStyles.size3} />
+								<p className={styles.badgeContent}>
+									{typeof book.pages === "number" ? `${book.pages}` : "n/a"}
+								</p>
 							</Badge>
-							<h3 className="mt-3 text-xl font-semibold tracking-[-0.03em] text-white">
-								{book.title}
-							</h3>
-							<p className="mt-1 text-sm text-white/60">{book.author}</p>
 						</div>
-						<Badge className="border-white/10 bg-white/6 text-white/78">
-							<BookOpenText className="mr-1.5 size-3" />
-							{typeof book.pages === "number"
-								? `${book.pages} pages`
-								: "Pages n/a"}
-						</Badge>
+						<h3 className={styles.title}>{book.title}</h3>
+						<p className={styles.author}>{book.author}</p>
 					</div>
 
-					<p className="mt-4 line-clamp-4 text-sm leading-6 text-white/72">
-						{book.description}
-					</p>
+					<p className={styles.description}>{book.description}</p>
 
-					<div className="mt-5 flex gap-3">
+					<div className={styles.actions}>
 						<Button
 							type="button"
 							variant="outline"
+							size="sm"
 							onClick={() => onMove(book.id, -1)}
 							disabled={index === 0}
-							className="flex-1 border-white/10 bg-white/6 text-white hover:bg-white/10"
+							className={styles.actionButton}
 						>
-							<ArrowUp className="size-4" />
-							Move up
+							<ArrowUp className={iconStyles.size4} />
 						</Button>
 						<Button
 							type="button"
 							variant="outline"
+							size="sm"
 							onClick={() => onMove(book.id, 1)}
 							disabled={index === total - 1}
-							className="flex-1 border-white/10 bg-white/6 text-white hover:bg-white/10"
+							className={styles.actionButton}
 						>
-							<ArrowDown className="size-4" />
-							Move down
+							<ArrowDown className={iconStyles.size4} />
 						</Button>
 					</div>
 				</div>

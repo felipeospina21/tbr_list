@@ -5,10 +5,13 @@ import Image from "next/image";
 
 import { Badge } from "@/components/Badge";
 import { Button } from "@/components/Button";
+import iconStyles from "@/components/Icon.module.css";
+import { debugComponentAttrs } from "@/lib/debug";
 import { cn } from "@/lib/utils";
 
 import type { Book } from "../types/readingList";
 import type { SearchBook } from "../types/search";
+import styles from "./SearchBookResultCard.module.css";
 
 type SearchBookResultCardProps = {
 	book: SearchBook;
@@ -22,25 +25,28 @@ export function SearchBookResultCard({
 	onAddBook,
 }: SearchBookResultCardProps) {
 	return (
-		<div className="overflow-hidden rounded-[1.35rem] border border-white/10 bg-[#111715]/90">
-			<div className="grid gap-0 md:grid-cols-[120px_minmax(0,1fr)]">
-				<div className="relative min-h-44 bg-black/20">
+		<div
+			className={styles.card}
+			{...debugComponentAttrs("SearchBookResultCard")}
+		>
+			<div className={styles.grid}>
+				<div className={styles.coverWrap}>
 					<Image
 						src={book.cover}
 						alt={`${book.title} front cover`}
 						fill
-						className="object-cover"
+						className={styles.coverImage}
 						sizes="(max-width: 768px) 100vw, 120px"
 						unoptimized
 					/>
 				</div>
-				<div className="flex flex-col p-4 sm:p-5">
-					<div className="flex flex-wrap items-start justify-between gap-3">
-						<Badge className="border-white/10 bg-white/6 text-white/78">
-							<LibraryBig className="mr-1.5 size-3" />
+				<div className={styles.content}>
+					<div className={styles.header}>
+						<Badge className={styles.providerBadge}>
+							<LibraryBig className={iconStyles.size3} />
 							{book.provider}
 						</Badge>
-						<Badge className="border-white/10 bg-white/6 text-white/78">
+						<Badge className={styles.pagesBadge}>
 							{typeof book.pages === "number"
 								? `${book.pages} pages`
 								: "Pages n/a"}
@@ -48,30 +54,24 @@ export function SearchBookResultCard({
 					</div>
 
 					<div>
-						<h3 className="mt-3 text-lg font-semibold tracking-[-0.03em] text-white">
-							{book.title}
-						</h3>
-						<p className="mt-1 text-sm text-white/60">{book.author}</p>
+						<h3 className={styles.title}>{book.title}</h3>
+						<p className={styles.author}>{book.author}</p>
 					</div>
 
-					<p className="mt-4 line-clamp-4 text-sm leading-6 text-white/72">
-						{book.description}
-					</p>
+					<p className={styles.description}>{book.description}</p>
 
-					<div className="mt-5">
+					<div className={styles.actionWrap}>
 						<Button
 							type="button"
 							variant={isAdded ? "secondary" : "default"}
 							onClick={() => onAddBook(book)}
 							disabled={isAdded}
 							className={cn(
-								"w-full",
-								isAdded
-									? "border-white/10 bg-white/10 text-white hover:bg-white/10"
-									: "bg-amber-200 text-stone-950 hover:bg-amber-100",
+								styles.actionButton,
+								isAdded ? styles.added : styles.notAdded,
 							)}
 						>
-							<BookPlus className="size-4" />
+							<BookPlus className={iconStyles.size4} />
 							{isAdded ? "Added to list" : "Add to list"}
 						</Button>
 					</div>

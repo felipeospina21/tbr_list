@@ -1,0 +1,111 @@
+.card {
+	overflow: hidden;
+	border-radius: 1.35rem;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(17, 23, 21, 0.9);
+}
+
+.grid {
+	display: grid;
+	gap: 0;
+}
+
+@media (min-width: 768px) {
+	.grid {
+		grid-template-columns: 120px minmax(0, 1fr);
+	}
+}
+
+.coverWrap {
+	position: relative;
+	min-height: 11rem;
+	background: rgba(0, 0, 0, 0.2);
+}
+
+.coverImage {
+	object-fit: cover;
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	padding: 1rem;
+}
+
+.header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: start;
+	justify-content: space-between;
+	gap: 0.75rem;
+}
+
+.providerBadge,
+.pagesBadge {
+	background: rgba(255, 255, 255, 0.06);
+	color: rgba(255, 255, 255, 0.78);
+}
+
+.title {
+	margin-top: 0.75rem;
+	font-size: 1.125rem;
+	font-weight: 600;
+	letter-spacing: -0.03em;
+	color: #fff;
+}
+
+.author {
+	margin-top: 0.25rem;
+	font-size: 0.875rem;
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.title {
+	margin-top: 0.75rem;
+	font-size: 1.125rem;
+	font-weight: 600;
+	letter-spacing: -0.03em;
+	color: #fff;
+}
+
+.author {
+	margin-top: 0.25rem;
+	font-size: 0.875rem;
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.description {
+	margin-top: 1rem;
+	font-size: 0.875rem;
+	line-height: 1.5rem;
+	color: rgba(255, 255, 255, 0.72);
+}
+
+.actionWrap {
+	margin-top: 1.25rem;
+}
+
+.actionButton {
+	width: 100%;
+}
+
+.added {
+	border-color: rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.1);
+	color: #fff;
+}
+
+.notAdded {
+	background: #f5d596;
+	color: #171412;
+}
+
+.notAdded:hover {
+	background: #f8e0ab;
+}
+
+@media (min-width: 640px) {
+	.content {
+		padding: 1.25rem;
+	}
+}
