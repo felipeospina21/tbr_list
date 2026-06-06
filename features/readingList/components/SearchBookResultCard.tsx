@@ -36,21 +36,22 @@ export function SearchBookResultCard({
 				</div>
 				<div className="flex flex-col p-4 sm:p-5">
 					<div className="flex flex-wrap items-start justify-between gap-3">
-						<div>
-							<Badge className="border-white/10 bg-white/6 text-white/78">
-								<LibraryBig className="mr-1.5 size-3" />
-								{book.provider}
-							</Badge>
-							<h3 className="mt-3 text-lg font-semibold tracking-[-0.03em] text-white">
-								{book.title}
-							</h3>
-							<p className="mt-1 text-sm text-white/60">{book.author}</p>
-						</div>
+						<Badge className="border-white/10 bg-white/6 text-white/78">
+							<LibraryBig className="mr-1.5 size-3" />
+							{book.provider}
+						</Badge>
 						<Badge className="border-white/10 bg-white/6 text-white/78">
 							{typeof book.pages === "number"
 								? `${book.pages} pages`
 								: "Pages n/a"}
 						</Badge>
+					</div>
+
+					<div>
+						<h3 className="mt-3 text-lg font-semibold tracking-[-0.03em] text-white">
+							{book.title}
+						</h3>
+						<p className="mt-1 text-sm text-white/60">{book.author}</p>
 					</div>
 
 					<p className="mt-4 line-clamp-4 text-sm leading-6 text-white/72">

@@ -1,16 +1,16 @@
 ---
 id: mem_30bff92d
 created: "2026-06-06T02:08:39.493Z"
-last_retrieved: "2026-06-06T02:14:41.472Z"
-retrieval_count: 2
+last_retrieved: "2026-06-06T02:28:08.069Z"
+retrieval_count: 7
 strength: 1
-half_life_days: 11
+half_life_days: 36
 layer: episodic
 tags: []
 emotional_valence: neutral
 schema_fit: 0.5
 source: cli
-outcome_score: null
+outcome_score: 1
 conflicts_with: []
 pinned: false
 confidence: verified

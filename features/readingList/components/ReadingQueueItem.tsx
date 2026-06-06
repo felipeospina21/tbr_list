@@ -31,14 +31,14 @@ export function ReadingQueueItem({
 					: "border-white/8 bg-white/[0.04]",
 			)}
 		>
-			<div className="grid gap-0 md:grid-cols-[120px_minmax(0,1fr)]">
-				<div className="relative min-h-40 bg-black/20">
+			<div className="grid gap-0 md:grid-cols-[168px_minmax(0,1fr)]">
+				<div className="relative min-h-56 bg-black/20 md:min-h-full">
 					<Image
 						src={book.cover}
 						alt={`${book.title} cover`}
 						fill
 						className="object-cover"
-						sizes="(max-width: 768px) 100vw, 120px"
+						sizes="(max-width: 768px) 100vw, 168px"
 						unoptimized
 						priority={index === 0}
 					/>
@@ -66,13 +66,13 @@ export function ReadingQueueItem({
 						{book.description}
 					</p>
 
-					<div className="mt-5 flex flex-col gap-3 sm:flex-row">
+					<div className="mt-5 flex gap-3">
 						<Button
 							type="button"
 							variant="outline"
 							onClick={() => onMove(book.id, -1)}
 							disabled={index === 0}
-							className="border-white/10 bg-white/6 text-white hover:bg-white/10"
+							className="flex-1 border-white/10 bg-white/6 text-white hover:bg-white/10"
 						>
 							<ArrowUp className="size-4" />
 							Move up
@@ -82,7 +82,7 @@ export function ReadingQueueItem({
 							variant="outline"
 							onClick={() => onMove(book.id, 1)}
 							disabled={index === total - 1}
-							className="border-white/10 bg-white/6 text-white hover:bg-white/10"
+							className="flex-1 border-white/10 bg-white/6 text-white hover:bg-white/10"
 						>
 							<ArrowDown className="size-4" />
 							Move down
