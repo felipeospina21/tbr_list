@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import {
 	bookSchema,
 	moveBookSchema,
-} from "@/features/readingList/schemas/readingList";
+} from "@/features/readingList/schemas/readingList.schema";
 import { getReadingListStore } from "@/features/readingList/server/storage";
 
 export async function GET() {

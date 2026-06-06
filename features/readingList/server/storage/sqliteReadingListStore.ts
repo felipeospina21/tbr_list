@@ -84,7 +84,6 @@ class SqliteReadingListStore implements ReadingListStore {
 			CREATE INDEX IF NOT EXISTS idx_reading_list_books_position
 			ON reading_list_books(position);
 		`);
-
 	}
 
 	async getBooks(): Promise<ReadingListSnapshot> {

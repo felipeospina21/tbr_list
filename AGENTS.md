@@ -61,6 +61,7 @@ Avoid these patterns:
 - Split complex screens into focused pieces when the JSX or logic starts to grow.
 - Keep persistence behind a storage/repository abstraction so SQLite can be swapped for Postgres without changing UI code.
 - Prefer feature-first folders under `features/` for feature-owned UI, state, and data.
+- Keep each hook in its own file. Query and mutation hooks should be named after the operation they perform, such as `useFetchReadingList` or `useChangeBookPosition`.
 - Organize each feature into subfolders by concern when it grows:
   - `components/` for presentational UI
   - `hooks/` for client state and query logic

@@ -10,7 +10,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/Card";
-import type { BookSearchQueryData } from "../hooks/useBookSearchData";
+import type { BookSearchQueryData } from "../queries/useBookSearchData";
 import type { Book } from "../types/readingList";
 import type { SearchBook } from "../types/search";
 import { SearchBookResultCard } from "./SearchBookResultCard";

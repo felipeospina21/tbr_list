@@ -1,10 +1,10 @@
 ---
 id: mem_d6d52aa7
 created: "2026-06-05T23:48:43.570Z"
-last_retrieved: "2026-06-06T01:48:56.837Z"
-retrieval_count: 6
+last_retrieved: "2026-06-06T02:09:38.793Z"
+retrieval_count: 9
 strength: 1
-half_life_days: 29
+half_life_days: 45
 layer: episodic
 tags: [conventions]
 emotional_valence: neutral

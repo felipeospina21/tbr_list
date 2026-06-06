@@ -1,10 +1,10 @@
 ---
 id: mem_b5cada48
 created: "2026-06-05T23:44:37.532Z"
-last_retrieved: "2026-06-06T01:48:56.837Z"
-retrieval_count: 6
+last_retrieved: "2026-06-06T02:09:38.793Z"
+retrieval_count: 9
 strength: 1
-half_life_days: 29
+half_life_days: 45
 layer: episodic
 tags: []
 emotional_valence: neutral

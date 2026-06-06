@@ -1,10 +1,10 @@
 ---
-id: mem_b5e06c93
-created: "2026-06-05T23:44:12.332Z"
+id: mem_aacc0349
+created: "2026-06-06T01:55:26.449Z"
 last_retrieved: "2026-06-06T02:09:38.793Z"
-retrieval_count: 9
+retrieval_count: 2
 strength: 1
-half_life_days: 45
+half_life_days: 16
 layer: episodic
 tags: []
 emotional_valence: neutral
@@ -16,4 +16,4 @@ pinned: false
 confidence: verified
 ---
 
-prefer component composition as a main architectural pattern
+hooks should have its own file. Spically queries and mutations

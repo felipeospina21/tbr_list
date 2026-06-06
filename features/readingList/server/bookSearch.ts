@@ -7,7 +7,7 @@ import type {
 	SearchOutcome,
 	SearchProvider,
 } from "../types/search";
-import { buildBookArt } from "../utils/bookArt";
+import { buildBookArt } from "./bookArt";
 
 type GoogleBooksResponse = {
 	items?: Array<{
@@ -274,4 +274,12 @@ function resolveOpenLibraryDescription(doc: OpenLibraryDoc) {
 	}
 
 	return "Open Library result.";
+}
+
+export async function readJson<T>(response: Response): Promise<T> {
+	if (!response.ok) {
+		throw new Error("Reading list request failed");
+	}
+
+	return (await response.json()) as T;
 }
