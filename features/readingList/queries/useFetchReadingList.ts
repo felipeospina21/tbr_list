@@ -1,7 +1,6 @@
 "use client";
 
-import { QueryKey, useQuery } from "@tanstack/react-query";
-import { readJson } from "../server/bookSearch";
+import { type QueryKey, useQuery } from "@tanstack/react-query";
 import type { Book, ReadingListSnapshot } from "../types/readingList";
 
 export const READING_LIST_QUERY_KEY: QueryKey = ["reading-list"];
@@ -16,7 +15,12 @@ export const EMPTY_READING_LIST = {
 
 export async function fetchReadingList(): Promise<ReadingListSnapshot> {
 	const response = await fetch("/api/reading-list");
-	return readJson<ReadingListSnapshot>(response);
+
+	if (!response.ok) {
+		throw new Error("Reading list request failed");
+	}
+
+	return (await response.json()) as ReadingListSnapshot;
 }
 
 export function useFetchReadingList() {

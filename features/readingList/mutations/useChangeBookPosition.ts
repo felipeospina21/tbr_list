@@ -3,8 +3,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { READING_LIST_QUERY_KEY } from "../queries/useFetchReadingList";
-import { readJson } from "../server/bookSearch";
-import { ReadingListSnapshot } from "../types/readingList";
+import type { ReadingListSnapshot } from "../types/readingList";
 
 type ChangeBookPositionInput = {
 	bookId: string;
@@ -23,7 +22,11 @@ export async function moveReadingListBook(
 		body: JSON.stringify({ bookId, direction }),
 	});
 
-	return readJson<ReadingListSnapshot>(response);
+	if (!response.ok) {
+		throw new Error("Reading list request failed");
+	}
+
+	return (await response.json()) as ReadingListSnapshot;
 }
 
 export function useChangeBookPosition() {
