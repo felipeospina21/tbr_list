@@ -15,35 +15,36 @@
 
 .grid {
 	display: grid;
-	gap: 0;
-	grid-template-columns: 1fr 1fr;
+	align-items: start;
+	gap: 0.5rem;
+	grid-template-columns: 40% minmax(0, 1fr);
 }
 
 @media (min-width: 768px) {
 	.grid {
 		grid-template-columns: 168px minmax(0, 1fr);
+		gap: 0;
 	}
 }
 
 .coverWrap {
 	position: relative;
-	min-height: 14rem;
+	overflow: hidden;
+	aspect-ratio: 2 / 3;
+	width: 100%;
 	background: rgba(0, 0, 0, 0.2);
+	margin: 0.5rem 0 0.5rem 0.2rem;
+	border-radius: 5px;
 }
 
 .coverImage {
 	object-fit: cover;
 }
 
-@media (min-width: 768px) {
-	.coverWrap {
-		min-height: 100%;
-	}
-}
-
 .content {
 	display: flex;
 	flex-direction: column;
+	min-width: 0;
 	padding: 0.5rem;
 	padding-right: 0.4rem;
 }
@@ -96,9 +97,14 @@
 .description {
 	margin-top: 0.5rem;
 	margin-bottom: 0;
+	display: -webkit-box;
+	overflow: hidden;
 	font-size: 0.875rem;
 	line-height: 1.5rem;
 	color: rgba(255, 255, 255, 0.72);
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 5;
+	line-clamp: 5;
 }
 
 .actions {

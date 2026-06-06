@@ -27,14 +27,6 @@ button {
 	touch-action: manipulation;
 }
 
-.book-description-clamp {
-	display: -webkit-box;
-	overflow: hidden;
-	line-clamp: 5;
-	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 5;
-}
-
 body.debug-component-labels [data-component] {
 	position: relative;
 }

@@ -37,7 +37,7 @@ export function ReadingQueueItem({
 						alt={`${book.title} cover`}
 						fill
 						className={styles.coverImage}
-						sizes="(max-width: 768px) 100vw, 168px"
+						sizes="(max-width: 768px) 40vw, 168px"
 						unoptimized
 						priority={index === 0}
 					/>
