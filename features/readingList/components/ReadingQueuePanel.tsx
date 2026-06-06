@@ -1,16 +1,10 @@
 "use client";
 
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/Card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/Card";
 import { debugComponentAttrs } from "@/lib/debug";
 
 import type { Book } from "../types/readingList";
-import { ReadingQueueItem } from "./ReadingQueueItem";
+import { BookCard } from "./BookCard";
 import styles from "./ReadingQueuePanel.module.css";
 
 type ReadingQueuePanelProps = {
@@ -28,18 +22,10 @@ export function ReadingQueuePanel({
 			{...debugComponentAttrs("ReadingQueuePanel")}
 		>
 			<CardHeader className={styles.header}>
-				<div className={styles.headerRow}>
-					<div>
-						<p className={styles.eyebrow}>Current session</p>
-						<CardTitle className={styles.title}>Ready to read next</CardTitle>
-					</div>
-					<div className={styles.status}>Now</div>
+				<div>
+					<p className={styles.eyebrow}>Current session</p>
+					<CardTitle className={styles.title}>Ready to read next</CardTitle>
 				</div>
-				<CardDescription className={styles.description}>
-					{books.length > 0
-						? "The top of the list is the next decision. Move anything up or down without losing the rest."
-						: "Start by searching for a book. This workspace stays empty until you add something to the queue."}
-				</CardDescription>
 			</CardHeader>
 
 			<CardContent className={styles.content}>
@@ -49,7 +35,7 @@ export function ReadingQueuePanel({
 					</div>
 				) : (
 					books.map((book, index) => (
-						<ReadingQueueItem
+						<BookCard
 							key={book.id}
 							book={book}
 							index={index}

@@ -12,7 +12,7 @@ import styles from "./ReadingList.module.css";
 
 export function ReadingList() {
 	const { books, addBook, moveBook, pages } = useReadingList();
-	const { query, setQuery, searchTerm, searchQuery } = useBookSearch();
+	const { query, setQuery, searchQuery } = useBookSearch();
 	const existingBookIds = useMemo(
 		() => new Set(books.map((book) => book.id)),
 		[books],
@@ -32,7 +32,6 @@ export function ReadingList() {
 					<div className={styles.stack}>
 						<SearchBooksPanel
 							query={query}
-							searchTerm={searchTerm}
 							searchQuery={searchQuery}
 							onQueryChange={setQuery}
 							onAddBook={addBook}
