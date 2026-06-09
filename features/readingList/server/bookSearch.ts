@@ -1,12 +1,12 @@
 import "server-only";
 
-import type { Book } from "../types/readingList";
 import type {
 	SearchBook,
 	SearchDebugInfo,
 	SearchOutcome,
 	SearchProvider,
 } from "../types/search";
+import { buildBookIdentityKey } from "../utils/bookIdentity";
 import { buildBookArt } from "./bookArt";
 
 type GoogleBooksResponse = {
@@ -14,12 +14,23 @@ type GoogleBooksResponse = {
 		id: string;
 		volumeInfo?: {
 			title?: string;
+			subtitle?: string;
 			authors?: string[];
 			description?: string;
 			pageCount?: number;
+			language?: string;
+			publishedDate?: string;
+			publisher?: string;
+			averageRating?: number;
+			ratingsCount?: number;
 			imageLinks?: {
 				thumbnail?: string;
 			};
+			industryIdentifiers?: Array<{
+				type?: string;
+				identifier?: string;
+			}>;
+			categories?: string[];
 		};
 	}>;
 };
@@ -29,12 +40,17 @@ type OpenLibraryResponse = {
 	docs?: Array<{
 		key?: string;
 		title?: string;
+		subtitle?: string;
 		author_name?: string[];
 		description?: string | { value?: string };
 		first_sentence?: string[] | string;
 		first_publish_year?: number;
 		number_of_pages_median?: number;
 		cover_i?: number;
+		isbn?: string[];
+		language?: string[];
+		publisher?: string[];
+		subject?: string[];
 	}>;
 };
 
@@ -166,24 +182,72 @@ async function searchGoogleBooks(query: string): Promise<{
 	const results = (data.items ?? []).map((item) => {
 		const volumeInfo = item.volumeInfo ?? {};
 		const title = volumeInfo.title?.trim() || "Untitled";
+		const subtitle = volumeInfo.subtitle?.trim() ?? null;
 		const author = volumeInfo.authors?.[0] ?? "Unknown author";
 		const description =
 			volumeInfo.description?.trim() || "No description available.";
 		const pages =
 			typeof volumeInfo.pageCount === "number" ? volumeInfo.pageCount : null;
+		const language = volumeInfo.language?.trim() ?? null;
+		const publishedDate = volumeInfo.publishedDate?.trim() ?? null;
+		const publishedYear = extractPublishedYear(publishedDate);
+		const publisher = volumeInfo.publisher?.trim() ?? null;
+		const averageRating =
+			typeof volumeInfo.averageRating === "number"
+				? volumeInfo.averageRating
+				: null;
+		const ratingsCount =
+			typeof volumeInfo.ratingsCount === "number"
+				? volumeInfo.ratingsCount
+				: null;
 		const art = buildBookArt(title);
 		const cover =
 			volumeInfo.imageLinks?.thumbnail?.replace(/^http:\/\//, "https://") ??
 			art.cover;
+		const isbn13 =
+			volumeInfo.industryIdentifiers
+				?.find(
+					(identifier) =>
+						identifier.type === "ISBN_13" && identifier.identifier,
+				)
+				?.identifier?.trim() ?? null;
+		const isbn10 =
+			volumeInfo.industryIdentifiers
+				?.find(
+					(identifier) =>
+						identifier.type === "ISBN_10" && identifier.identifier,
+				)
+				?.identifier?.trim() ?? null;
+		const sourceBookId = item.id;
+		const subjects = normalizeSubjects(volumeInfo.categories);
 
 		return {
-			id: `google:${item.id}`,
+			id: buildBookIdentityKey({
+				source: "google-books",
+				sourceBookId,
+				isbn10,
+				isbn13,
+			}),
+			source: "google-books" as const,
+			sourceBookId,
+			isbn10,
+			isbn13,
 			title,
+			subtitle,
 			author,
 			pages,
+			language,
+			publishedYear,
+			publishedDate,
+			publisher,
+			averageRating,
+			ratingsCount,
 			description,
 			cover,
 			accent: art.accent,
+			seriesName: null,
+			seriesPosition: null,
+			subjects,
 			provider: "Google Books" as const,
 		};
 	});
@@ -201,7 +265,7 @@ async function searchOpenLibrary(query: string): Promise<{
 	status: number;
 }> {
 	const response = await fetch(
-		`https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=${SEARCH_LIMIT}&fields=key,title,author_name,description,first_sentence,first_publish_year,number_of_pages_median,cover_i`,
+		`https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=${SEARCH_LIMIT}&fields=key,title,subtitle,author_name,description,first_sentence,first_publish_year,number_of_pages_median,cover_i,isbn,language,publisher,subject`,
 		{
 			headers: {
 				Accept: "application/json",
@@ -217,26 +281,64 @@ async function searchOpenLibrary(query: string): Promise<{
 
 	const results = (data.docs ?? []).map((doc) => {
 		const title = doc.title?.trim() || "Untitled";
+		const subtitle = doc.subtitle?.trim() ?? null;
 		const author = doc.author_name?.[0] ?? "Unknown author";
 		const description = resolveOpenLibraryDescription(doc);
 		const pages =
 			typeof doc.number_of_pages_median === "number"
 				? doc.number_of_pages_median
 				: null;
+		const language = doc.language?.[0]?.trim() ?? null;
+		const publisher = doc.publisher?.[0]?.trim() ?? null;
+		const publishedYear =
+			typeof doc.first_publish_year === "number"
+				? doc.first_publish_year
+				: null;
+		const publishedDate =
+			typeof doc.first_publish_year === "number"
+				? String(doc.first_publish_year)
+				: null;
+		const averageRating = null;
+		const ratingsCount = null;
 		const art = buildBookArt(title);
 		const cover =
 			typeof doc.cover_i === "number"
 				? `https://covers.openlibrary.org/b/id/${doc.cover_i}-M.jpg`
 				: art.cover;
+		const sourceBookId = doc.key ?? title;
+		const isbn13 =
+			doc.isbn?.find((identifier) => identifier.length === 13) ?? null;
+		const isbn10 =
+			doc.isbn?.find((identifier) => identifier.length === 10) ?? null;
+		const subjects = normalizeSubjects(doc.subject);
 
 		return {
-			id: `openLibrary:${doc.key ?? title}`,
+			id: buildBookIdentityKey({
+				source: "open-library",
+				sourceBookId,
+				isbn10,
+				isbn13,
+			}),
+			source: "open-library" as const,
+			sourceBookId,
+			isbn10,
+			isbn13,
 			title,
+			subtitle,
 			author,
 			pages,
+			language,
+			publishedYear,
+			publishedDate,
+			publisher,
+			averageRating,
+			ratingsCount,
 			description,
 			cover,
 			accent: art.accent,
+			seriesName: null,
+			seriesPosition: null,
+			subjects,
 			provider: "Open Library" as const,
 		};
 	});
@@ -274,6 +376,28 @@ function resolveOpenLibraryDescription(doc: OpenLibraryDoc) {
 	}
 
 	return "Open Library result.";
+}
+
+function normalizeSubjects(subjects: readonly string[] | undefined) {
+	return [
+		...new Set(
+			(subjects ?? []).map((subject) => subject.trim()).filter(Boolean),
+		),
+	];
+}
+
+function extractPublishedYear(publishedDate: string | null) {
+	if (!publishedDate) {
+		return null;
+	}
+
+	const yearMatch = publishedDate.match(/^(\d{4})/);
+
+	if (!yearMatch) {
+		return null;
+	}
+
+	return Number(yearMatch[1]);
 }
 
 export async function readJson<T>(response: Response): Promise<T> {
