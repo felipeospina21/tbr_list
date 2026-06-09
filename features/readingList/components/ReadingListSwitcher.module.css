@@ -1,0 +1,57 @@
+.root {
+	margin-top: 1rem;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 0.5rem;
+}
+
+.button {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.35rem;
+	padding: 0.8rem 0.85rem;
+	border-radius: 1rem;
+	border: 1px solid rgba(255, 255, 255, 0.09);
+	background: rgba(255, 255, 255, 0.04);
+	color: rgba(255, 255, 255, 0.68);
+	text-align: left;
+	transition:
+		border-color 160ms ease,
+		background-color 160ms ease,
+		transform 160ms ease,
+		color 160ms ease;
+}
+
+.button:hover {
+	transform: translateY(-1px);
+	border-color: rgba(245, 158, 11, 0.35);
+	background: rgba(245, 158, 11, 0.08);
+	color: rgba(255, 255, 255, 0.94);
+}
+
+.buttonActive {
+	border-color: rgba(245, 158, 11, 0.55);
+	background: rgba(245, 158, 11, 0.12);
+	color: rgba(255, 255, 255, 0.98);
+}
+
+.label {
+	font-size: 0.78rem;
+	font-weight: 650;
+	letter-spacing: 0.06em;
+}
+
+.count {
+	font-size: 0.72rem;
+	font-weight: 600;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.52);
+}
+
+@media (max-width: 639px) {
+	.root {
+		grid-template-columns: 1fr;
+	}
+}

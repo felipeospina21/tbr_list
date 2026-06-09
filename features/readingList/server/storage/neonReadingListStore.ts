@@ -4,13 +4,21 @@ import { randomUUID } from "node:crypto";
 
 import { neon } from "@neondatabase/serverless";
 
-import { type Book, totalPages } from "../../types/readingList";
+import {
+	type Book,
+	DEFAULT_READING_LIST_SLUG,
+	READING_LIST_DEFINITIONS,
+	type ReadingListSlug,
+	type ReadingListSnapshot,
+	type ReadingListSummary,
+	totalPages,
+} from "../../types/readingList";
 import {
 	buildBookIdentityKey,
 	getBookIdentifierKeys,
 } from "../../utils/bookIdentity";
 import { buildBookArt } from "../bookArt";
-import type { ReadingListSnapshot, ReadingListStore } from "./readingListStore";
+import type { ReadingListStore } from "./readingListStore";
 
 const DATABASE_URL =
 	process.env.DATABASE_URL ??
@@ -38,6 +46,13 @@ type AuthAccountRow = {
 
 type ReadingListRow = {
 	id: string;
+	slug: string;
+	name: string;
+	isDefault: number;
+};
+
+type ReadingListCatalogRow = ReadingListRow & {
+	booksCount: number;
 };
 
 type StoredBookRow = {
@@ -161,6 +176,36 @@ function toBookFromRow(
 		seriesPosition: row.seriesPosition,
 		subjects,
 	};
+}
+
+function toReadingListSummary(row: ReadingListCatalogRow): ReadingListSummary {
+	const slug = normalizeReadingListSlug(row.slug);
+
+	return {
+		slug,
+		name: row.name,
+		isDefault: row.isDefault === 1,
+		booksCount: row.booksCount,
+	};
+}
+
+function normalizeReadingListSlug(slug: string): ReadingListSlug {
+	if (slug === "default") {
+		return DEFAULT_READING_LIST_SLUG;
+	}
+
+	const matchingDefinition = READING_LIST_DEFINITIONS.find(
+		(definition) => definition.slug === slug,
+	);
+
+	return matchingDefinition?.slug ?? DEFAULT_READING_LIST_SLUG;
+}
+
+function getReadingListDefinition(slug: ReadingListSlug) {
+	return (
+		READING_LIST_DEFINITIONS.find((definition) => definition.slug === slug) ??
+		READING_LIST_DEFINITIONS[0]
+	);
 }
 
 class NeonReadingListStore implements ReadingListStore {
@@ -330,18 +375,29 @@ class NeonReadingListStore implements ReadingListStore {
 		`;
 	}
 
-	async getBooks(authSubject: string): Promise<ReadingListSnapshot> {
-		const { listId } = await this.resolveDefaultList(authSubject);
+	async getBooks(
+		authSubject: string,
+		listSlug?: ReadingListSlug,
+	): Promise<ReadingListSnapshot> {
+		const { listId, activeListSlug, lists } =
+			await this.resolveReadingListContext(authSubject, listSlug);
 		const books = await this.selectBooks(listId);
 
 		return {
+			lists,
+			activeListSlug,
 			books,
 			pages: totalPages(books),
 		};
 	}
 
-	async addBook(authSubject: string, book: Book): Promise<ReadingListSnapshot> {
-		const { listId } = await this.resolveDefaultList(authSubject);
+	async addBook(
+		authSubject: string,
+		book: Book,
+		listSlug?: ReadingListSlug,
+	): Promise<ReadingListSnapshot> {
+		const { listId, activeListSlug, lists } =
+			await this.resolveReadingListContext(authSubject, listSlug);
 		const storedBook = await this.resolveBook(book);
 		const nextPosition = await this.getNextPosition(listId);
 
@@ -358,15 +414,24 @@ class NeonReadingListStore implements ReadingListStore {
 			ON CONFLICT (list_id, book_id) DO NOTHING
 		`;
 
-		return this.getBooks(authSubject);
+		const books = await this.selectBooks(listId);
+
+		return {
+			lists,
+			activeListSlug,
+			books,
+			pages: totalPages(books),
+		};
 	}
 
 	async moveBook(
 		authSubject: string,
 		bookId: string,
 		direction: -1 | 1,
+		listSlug?: ReadingListSlug,
 	): Promise<ReadingListSnapshot> {
-		const { listId } = await this.resolveDefaultList(authSubject);
+		const { listId, activeListSlug, lists } =
+			await this.resolveReadingListContext(authSubject, listSlug);
 		const books = await this.selectBooksWithInternalIds(listId);
 		const currentIndex = books.findIndex(
 			(book) => book.canonicalKey === bookId,
@@ -374,7 +439,7 @@ class NeonReadingListStore implements ReadingListStore {
 		const nextIndex = currentIndex + direction;
 
 		if (currentIndex < 0 || nextIndex < 0 || nextIndex >= books.length) {
-			return this.getBooks(authSubject);
+			return this.getBooks(authSubject, listSlug);
 		}
 
 		const reorderedBooks = [...books];
@@ -398,22 +463,62 @@ class NeonReadingListStore implements ReadingListStore {
 			FROM reordered
 			WHERE items.list_id = $1
 				AND items.book_id = reordered.book_id
-		`,
+			`,
 			updateParams,
 		);
 
-		return this.getBooks(authSubject);
+		const updatedBooks = await this.selectBooks(listId);
+
+		return {
+			lists,
+			activeListSlug,
+			books: updatedBooks,
+			pages: totalPages(updatedBooks),
+		};
 	}
 
-	private async resolveDefaultList(authSubject: string) {
+	private async resolveReadingListContext(
+		authSubject: string,
+		listSlug?: ReadingListSlug,
+	) {
 		const { provider, providerAccountId } = parseAuthSubject(authSubject);
 		const userId = await this.resolveUserId(provider, providerAccountId);
-		const listId = await this.resolveOrCreateDefaultList(userId);
+		const lists = await this.ensureReadingLists(userId);
+		const activeListSlug = this.resolveSelectedListSlug(
+			lists,
+			listSlug ?? DEFAULT_READING_LIST_SLUG,
+		);
+		const listId = lists.find((list) => list.slug === activeListSlug)?.id;
+
+		if (!listId) {
+			throw new Error("Failed to resolve reading list.");
+		}
 
 		return {
 			userId,
 			listId,
+			activeListSlug,
+			lists: lists.map(toReadingListSummary),
 		};
+	}
+
+	private resolveSelectedListSlug(
+		lists: ReadingListCatalogRow[],
+		listSlug: ReadingListSlug,
+	) {
+		const matchingList = lists.find((list) => list.slug === listSlug);
+
+		if (matchingList) {
+			return matchingList.slug as ReadingListSlug;
+		}
+
+		const defaultList = lists.find((list) => list.isDefault === 1);
+
+		if (defaultList) {
+			return normalizeReadingListSlug(defaultList.slug);
+		}
+
+		return DEFAULT_READING_LIST_SLUG;
 	}
 
 	private async resolveUserId(provider: string, providerAccountId: string) {
@@ -475,44 +580,111 @@ class NeonReadingListStore implements ReadingListStore {
 		return userId;
 	}
 
-	private async resolveOrCreateDefaultList(userId: string) {
-		const existingList = (await this.sql`
-				SELECT id
+	private async ensureReadingLists(userId: string) {
+		const existingLists = (await this.sql`
+				SELECT id, slug, name, is_default AS "isDefault"
 				FROM ${this.sql.unsafe(TABLES.readingLists)}
 				WHERE user_id = ${userId}
-					AND is_default = 1
-				LIMIT 1
 			`) as ReadingListRow[];
 
-		if (existingList.length > 0) {
-			return existingList[0].id;
+		const hasCanonicalDefault = existingLists.some(
+			(list) => list.slug === DEFAULT_READING_LIST_SLUG,
+		);
+		const legacyDefault = existingLists.find((list) => list.slug === "default");
+
+		if (legacyDefault && !hasCanonicalDefault) {
+			await this.sql`
+				UPDATE ${this.sql.unsafe(TABLES.readingLists)}
+				SET
+					name = ${getReadingListDefinition(DEFAULT_READING_LIST_SLUG).name},
+					slug = ${DEFAULT_READING_LIST_SLUG},
+					is_default = 1,
+					updated_at = CURRENT_TIMESTAMP
+				WHERE id = ${legacyDefault.id}
+			`;
 		}
 
-		const listId = randomUUID();
-
-		await this.sql`
-			INSERT INTO ${this.sql.unsafe(TABLES.readingLists)} (
-				id, user_id, name, slug, is_default
-			)
-			VALUES (
-				${listId},
-				${userId},
-				${"Reading List"},
-				${"default"},
-				${1}
-			)
-			ON CONFLICT (user_id, slug) DO NOTHING
-		`;
-
-		const resolvedList = (await this.sql`
-				SELECT id
+		const normalizedExistingLists = (await this.sql`
+				SELECT id, slug, name, is_default AS "isDefault"
 				FROM ${this.sql.unsafe(TABLES.readingLists)}
 				WHERE user_id = ${userId}
-					AND is_default = 1
-				LIMIT 1
 			`) as ReadingListRow[];
 
-		return resolvedList[0]?.id ?? listId;
+		for (const definition of READING_LIST_DEFINITIONS) {
+			const existingList =
+				normalizedExistingLists.find((list) => list.slug === definition.slug) ??
+				(definition.slug === DEFAULT_READING_LIST_SLUG
+					? normalizedExistingLists.find((list) => list.slug === "default")
+					: undefined);
+
+			if (existingList) {
+				await this.sql`
+					UPDATE ${this.sql.unsafe(TABLES.readingLists)}
+					SET
+						name = ${definition.name},
+						slug = ${definition.slug},
+						is_default = ${definition.isDefault ? 1 : 0},
+						updated_at = CURRENT_TIMESTAMP
+					WHERE id = ${existingList.id}
+				`;
+				continue;
+			}
+
+			await this.sql`
+				INSERT INTO ${this.sql.unsafe(TABLES.readingLists)} (
+					id, user_id, name, slug, is_default
+				)
+				VALUES (
+					${randomUUID()},
+					${userId},
+					${definition.name},
+					${definition.slug},
+					${definition.isDefault ? 1 : 0}
+				)
+				ON CONFLICT (user_id, slug) DO NOTHING
+			`;
+		}
+
+		await this.sql`
+			UPDATE ${this.sql.unsafe(TABLES.readingLists)}
+			SET
+				name = CASE
+					WHEN slug = ${DEFAULT_READING_LIST_SLUG} THEN ${getReadingListDefinition(DEFAULT_READING_LIST_SLUG).name}
+					WHEN slug = ${"finished"} THEN ${getReadingListDefinition("finished").name}
+					WHEN slug = ${"did_not_finish"} THEN ${getReadingListDefinition("did_not_finish").name}
+					ELSE name
+				END,
+				is_default = CASE
+					WHEN slug = ${DEFAULT_READING_LIST_SLUG} THEN 1
+					ELSE 0
+				END,
+				updated_at = CURRENT_TIMESTAMP
+			WHERE user_id = ${userId}
+		`;
+
+		const lists = (await this.sql`
+				SELECT
+					id,
+					slug,
+					name,
+					is_default AS "isDefault",
+					(
+						SELECT COUNT(*)
+						FROM ${this.sql.unsafe(TABLES.listItems)} AS items
+						WHERE items.list_id = reading_lists.id
+					) AS "booksCount"
+				FROM ${this.sql.unsafe(TABLES.readingLists)}
+				WHERE user_id = ${userId}
+				ORDER BY is_default DESC, created_at ASC
+			`) as ReadingListCatalogRow[];
+
+		return lists.map((list) => ({
+			id: list.id,
+			slug: normalizeReadingListSlug(list.slug),
+			name: list.name,
+			isDefault: list.isDefault,
+			booksCount: Number(list.booksCount),
+		})) as ReadingListCatalogRow[];
 	}
 
 	private async resolveBook(book: Book) {

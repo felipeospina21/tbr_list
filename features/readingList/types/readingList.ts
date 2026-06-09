@@ -1,5 +1,34 @@
 export type BookSource = "google-books" | "open-library";
 
+export const READING_LIST_DEFINITIONS = [
+	{
+		slug: "to_be_read",
+		name: "To Be Read",
+		isDefault: true,
+	},
+	{
+		slug: "finished",
+		name: "Finished",
+		isDefault: false,
+	},
+	{
+		slug: "did_not_finish",
+		name: "Did Not Finish",
+		isDefault: false,
+	},
+] as const;
+
+export type ReadingListSlug = (typeof READING_LIST_DEFINITIONS)[number]["slug"];
+
+export const DEFAULT_READING_LIST_SLUG: ReadingListSlug = "to_be_read";
+
+export type ReadingListSummary = {
+	slug: ReadingListSlug;
+	name: string;
+	isDefault: boolean;
+	booksCount: number;
+};
+
 export type Book = {
 	id: string;
 	source: BookSource;
@@ -25,6 +54,8 @@ export type Book = {
 };
 
 export type ReadingListSnapshot = {
+	lists: ReadingListSummary[];
+	activeListSlug: ReadingListSlug;
 	books: Book[];
 	pages: number;
 };

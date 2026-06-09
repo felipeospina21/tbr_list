@@ -5,15 +5,28 @@ import { getAuthOptions } from "@/auth";
 import {
 	bookSchema,
 	moveBookSchema,
+	readingListSlugSchema,
 } from "@/features/readingList/schemas/readingList.schema";
 import { getReadingListStore } from "@/features/readingList/server/storage";
+import type { ReadingListSlug } from "@/features/readingList/types/readingList";
 
 async function getCurrentUserId() {
 	const session = await getServerSession(getAuthOptions());
 	return session?.user?.id ?? null;
 }
 
-export async function GET() {
+function getRequestedListSlug(request: Request): ReadingListSlug | undefined {
+	const requestUrl = new URL(request.url);
+	const parsedListSlug = readingListSlugSchema.safeParse(
+		requestUrl.searchParams.get("listSlug"),
+	);
+
+	return parsedListSlug.success
+		? (parsedListSlug.data as ReadingListSlug)
+		: undefined;
+}
+
+export async function GET(request: Request) {
 	try {
 		const userId = await getCurrentUserId();
 
@@ -25,7 +38,10 @@ export async function GET() {
 		}
 
 		const store = await getReadingListStore();
-		const snapshot = await store.getBooks(userId);
+		const snapshot = await store.getBooks(
+			userId,
+			getRequestedListSlug(request),
+		);
 		return NextResponse.json(snapshot);
 	} catch {
 		return NextResponse.json(
@@ -58,7 +74,11 @@ export async function POST(request: Request) {
 		}
 
 		const store = await getReadingListStore();
-		const snapshot = await store.addBook(userId, parsedBook.data);
+		const snapshot = await store.addBook(
+			userId,
+			parsedBook.data,
+			getRequestedListSlug(request),
+		);
 
 		return NextResponse.json(snapshot);
 	} catch {
@@ -99,6 +119,7 @@ export async function PATCH(request: Request) {
 			userId,
 			parsedMove.data.bookId,
 			parsedMove.data.direction,
+			getRequestedListSlug(request),
 		);
 
 		return NextResponse.json(snapshot);

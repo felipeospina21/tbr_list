@@ -1,10 +1,10 @@
 ---
 id: mem_35b5def3
 created: "2026-06-05T23:48:32.697Z"
-last_retrieved: "2026-06-06T17:48:53.372Z"
-retrieval_count: 18
+last_retrieved: "2026-06-09T21:54:18.705Z"
+retrieval_count: 22
 strength: 1
-half_life_days: 98
+half_life_days: 131
 layer: episodic
 tags: [ux]
 emotional_valence: neutral
