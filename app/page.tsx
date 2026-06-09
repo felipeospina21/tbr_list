@@ -72,7 +72,7 @@ export default function LandingPage() {
 
 						<div className={styles.actions}>
 							<Link
-								href="/workspace"
+								href="/login?callbackUrl=/reading-list"
 								className={cn(styles.buttonBase, styles.primaryButton)}
 							>
 								Open the app
@@ -259,7 +259,7 @@ export default function LandingPage() {
 
 						<div className={styles.ctaActions}>
 							<Link
-								href="/workspace"
+								href="/login?callbackUrl=/reading-list"
 								className={cn(styles.buttonBase, styles.ctaPrimary)}
 							>
 								Start using TBR List

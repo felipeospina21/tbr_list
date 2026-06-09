@@ -1,9 +1,9 @@
 import { BookOpenText } from "lucide-react";
-import styles from "./BookCardHeader.module.css";
-import iconStyles from "@/components/Icon.module.css";
 import { FC } from "react";
-import { Book } from "../types/readingList";
 import { Badge } from "@/components/Badge";
+import iconStyles from "@/components/Icon.module.css";
+import { Book } from "../types/readingList";
+import styles from "./BookCardHeader.module.css";
 
 interface BookCardHeaderProps {
 	index: number;

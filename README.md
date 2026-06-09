@@ -10,6 +10,12 @@ cp .env.example .env.local
 
 Set `GOOGLE_BOOKS_API_KEY` in `.env.local` to make Google Books requests more reliable. The app will still fall back to Open Library automatically if Google fails or returns no results.
 
+Set `DATABASE_URL` to a Neon connection string for the reading list database. If you deploy on Vercel with a Neon or Postgres integration, the app also accepts `POSTGRES_URL_NON_POOLING`, `POSTGRES_URL`, or `NEON_DATABASE_URL`.
+
+The normalized database layout and table relationships are documented in [`docs/database-schema.md`](/home/felipe/projects/tbr_list/docs/database-schema.md).
+
+The app now uses Google sign-in through NextAuth/Auth.js. Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `NEXTAUTH_SECRET`, and `NEXTAUTH_URL` in `.env.local`, and register `http://localhost:3000/api/auth/callback/google` as the local OAuth callback URL in Google Cloud Console.
+
 Then run the development server:
 
 ```bash

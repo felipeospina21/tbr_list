@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 
 import type { Book } from "../types/readingList";
 import styles from "./BookCard.module.css";
-import { BookCardHeader } from "./BookCardHeader";
 import { BookCardActions } from "./BookCardActions";
+import { BookCardHeader } from "./BookCardHeader";
 import { BookCardImage } from "./BookCardImage";
 
 type BookCardProps = {

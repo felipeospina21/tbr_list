@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { Book } from "../types/readingList";
 import { FC } from "react";
+import { Book } from "../types/readingList";
 import styles from "./BookCardImage.module.css";
 
 interface BookCardImageProps {

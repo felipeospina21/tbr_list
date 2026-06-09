@@ -1,14 +1,31 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+
+import { getAuthOptions } from "@/auth";
 import {
 	bookSchema,
 	moveBookSchema,
 } from "@/features/readingList/schemas/readingList.schema";
 import { getReadingListStore } from "@/features/readingList/server/storage";
 
+async function getCurrentUserId() {
+	const session = await getServerSession(getAuthOptions());
+	return session?.user?.id ?? null;
+}
+
 export async function GET() {
 	try {
+		const userId = await getCurrentUserId();
+
+		if (!userId) {
+			return NextResponse.json(
+				{ error: "Authentication required." },
+				{ status: 401 },
+			);
+		}
+
 		const store = await getReadingListStore();
-		const snapshot = await store.getBooks();
+		const snapshot = await store.getBooks(userId);
 		return NextResponse.json(snapshot);
 	} catch {
 		return NextResponse.json(
@@ -20,6 +37,15 @@ export async function GET() {
 
 export async function POST(request: Request) {
 	try {
+		const userId = await getCurrentUserId();
+
+		if (!userId) {
+			return NextResponse.json(
+				{ error: "Authentication required." },
+				{ status: 401 },
+			);
+		}
+
 		const body = (await request.json()) as { book?: unknown };
 
 		const parsedBook = bookSchema.safeParse(body.book);
@@ -32,7 +58,7 @@ export async function POST(request: Request) {
 		}
 
 		const store = await getReadingListStore();
-		const snapshot = await store.addBook(parsedBook.data);
+		const snapshot = await store.addBook(userId, parsedBook.data);
 
 		return NextResponse.json(snapshot);
 	} catch {
@@ -45,6 +71,15 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
 	try {
+		const userId = await getCurrentUserId();
+
+		if (!userId) {
+			return NextResponse.json(
+				{ error: "Authentication required." },
+				{ status: 401 },
+			);
+		}
+
 		const body = (await request.json()) as {
 			bookId?: unknown;
 			direction?: unknown;
@@ -61,6 +96,7 @@ export async function PATCH(request: Request) {
 
 		const store = await getReadingListStore();
 		const snapshot = await store.moveBook(
+			userId,
 			parsedMove.data.bookId,
 			parsedMove.data.direction,
 		);

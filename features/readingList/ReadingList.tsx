@@ -1,5 +1,6 @@
 "use client";
 
+import { signOut } from "next-auth/react";
 import { useMemo } from "react";
 import { SectionBackdrop } from "@/components/SectionBackdrop";
 import { debugComponentAttrs } from "@/lib/debug";
@@ -10,7 +11,11 @@ import { useBookSearch } from "./hooks/useBookSearch";
 import { useReadingList } from "./hooks/useReadingList";
 import styles from "./ReadingList.module.css";
 
-export function ReadingList() {
+type ReadingListProps = {
+	accountLabel: string;
+};
+
+export function ReadingList({ accountLabel }: ReadingListProps) {
 	const { books, addBook, moveBook, pages } = useReadingList();
 	const { query, setQuery, searchQuery } = useBookSearch();
 	const existingBookIds = useMemo(
@@ -27,7 +32,14 @@ export function ReadingList() {
 				<SectionBackdrop />
 
 				<div className={styles.shell}>
-					<ReadingListHero booksCount={books.length} pages={pages} />
+					<ReadingListHero
+						booksCount={books.length}
+						pages={pages}
+						accountLabel={accountLabel}
+						onSignOut={() => {
+							void signOut({ callbackUrl: "/login" });
+						}}
+					/>
 
 					<div className={styles.stack}>
 						<SearchBooksPanel

@@ -1,0 +1,24 @@
+.main {
+	position: relative;
+	min-height: 100svh;
+	padding: 2rem 1rem 3rem;
+	display: grid;
+	place-items: center;
+	overflow: hidden;
+	background:
+		radial-gradient(circle at top, rgba(214, 159, 66, 0.12), transparent 34%),
+		linear-gradient(180deg, #12100d 0%, #0d0b09 100%);
+}
+
+.shell {
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	max-width: 38rem;
+}
+
+@media (min-width: 640px) {
+	.main {
+		padding-inline: 1.5rem;
+	}
+}
