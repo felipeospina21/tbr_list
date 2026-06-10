@@ -7,7 +7,6 @@ import {
 	type ReadingListSummary,
 } from "../types/readingList";
 import styles from "./ReadingListSwitcher.module.css";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 type ReadingListSwitcherProps = {
 	activeListSlug: ReadingListSlug;
@@ -18,8 +17,14 @@ export function ReadingListSwitcher({
 	activeListSlug,
 	onSelectList,
 }: ReadingListSwitcherProps) {
-	// TODO: fetch reading lists
-	const lists = READING_LIST_DEFINITIONS;
+	const lists: ReadingListSummary[] = READING_LIST_DEFINITIONS.map(
+		(definition) => ({
+			slug: definition.slug,
+			name: definition.name,
+			isDefault: definition.isDefault,
+			booksCount: 0,
+		}),
+	);
 
 	return (
 		<nav

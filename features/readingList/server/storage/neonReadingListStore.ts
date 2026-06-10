@@ -446,35 +446,34 @@ class NeonReadingListStore implements ReadingListStore {
 			return this.getBooks(authSubject, listSlug);
 		}
 
-		const reorderedBooks = [...books];
-		const [book] = reorderedBooks.splice(currentIndex, 1);
-		reorderedBooks.splice(nextIndex, 0, book);
-
-		const positionOffset = reorderedBooks.length + 1;
-		const bookIds = reorderedBooks.map((row) => row.bookId);
-		const finalPositionCases = reorderedBooks
-			.map(
-				(row, position) => `WHEN book_id = $${position + 2} THEN ${position}`,
-			)
-			.join(" ");
-		const finalReorderQuery = `
-			UPDATE ${TABLES.listItems}
-			SET position = CASE ${finalPositionCases} END,
-				updated_at = CURRENT_TIMESTAMP
-			WHERE list_id = $1
-				AND book_id = ANY($${bookIds.length + 2}::text[])
-		`;
-		const finalReorderParams = [listId, ...bookIds, bookIds];
+		const currentBook = books[currentIndex];
+		const targetBook = books[nextIndex];
+		const tempPosition =
+			Math.min(...books.map((bookRow) => bookRow.position)) - 1;
 
 		try {
 			await this.sql.transaction((txn) => [
 				txn`
 					UPDATE ${txn.unsafe(TABLES.listItems)}
-					SET position = position + ${positionOffset},
+					SET position = ${tempPosition},
 						updated_at = CURRENT_TIMESTAMP
 					WHERE list_id = ${listId}
+						AND book_id = ${currentBook.bookId}
 				`,
-				txn.query(finalReorderQuery, finalReorderParams),
+				txn`
+					UPDATE ${txn.unsafe(TABLES.listItems)}
+					SET position = ${currentBook.position},
+						updated_at = CURRENT_TIMESTAMP
+					WHERE list_id = ${listId}
+						AND book_id = ${targetBook.bookId}
+				`,
+				txn`
+					UPDATE ${txn.unsafe(TABLES.listItems)}
+					SET position = ${targetBook.position},
+						updated_at = CURRENT_TIMESTAMP
+					WHERE list_id = ${listId}
+						AND book_id = ${currentBook.bookId}
+				`,
 			]);
 		} catch (error) {
 			console.error("Reading list reorder failed", {
@@ -484,11 +483,9 @@ class NeonReadingListStore implements ReadingListStore {
 				direction,
 				currentIndex,
 				nextIndex,
-				positionOffset,
-				bookIds,
-				finalPositionCases,
-				finalReorderQuery,
-				finalReorderParams,
+				tempPosition,
+				currentBook,
+				targetBook,
 				error,
 			});
 
