@@ -10,6 +10,18 @@ import {
 import { getReadingListStore } from "@/features/readingList/server/storage";
 import type { ReadingListSlug } from "@/features/readingList/types/readingList";
 
+function isDevelopment() {
+	return process.env.NODE_ENV !== "production";
+}
+
+function toErrorMessage(error: unknown, fallback: string) {
+	if (error instanceof Error && error.message) {
+		return error.message;
+	}
+
+	return fallback;
+}
+
 async function getCurrentUserId() {
 	const session = await getServerSession(getAuthOptions());
 	return session?.user?.id ?? null;
@@ -43,9 +55,16 @@ export async function GET(request: Request) {
 			getRequestedListSlug(request),
 		);
 		return NextResponse.json(snapshot);
-	} catch {
+	} catch (error) {
+		console.error("GET /api/reading-list failed", error);
 		return NextResponse.json(
-			{ books: [], pages: 0, error: "Unable to load reading list." },
+			{
+				books: [],
+				pages: 0,
+				error: isDevelopment()
+					? toErrorMessage(error, "Unable to load reading list.")
+					: "Unable to load reading list.",
+			},
 			{ status: 500 },
 		);
 	}
@@ -81,9 +100,14 @@ export async function POST(request: Request) {
 		);
 
 		return NextResponse.json(snapshot);
-	} catch {
+	} catch (error) {
+		console.error("POST /api/reading-list failed", error);
 		return NextResponse.json(
-			{ error: "Unable to save the book." },
+			{
+				error: isDevelopment()
+					? toErrorMessage(error, "Unable to save the book.")
+					: "Unable to save the book.",
+			},
 			{ status: 500 },
 		);
 	}
@@ -123,9 +147,14 @@ export async function PATCH(request: Request) {
 		);
 
 		return NextResponse.json(snapshot);
-	} catch {
+	} catch (error) {
+		console.error("PATCH /api/reading-list failed", error);
 		return NextResponse.json(
-			{ error: "Unable to move the book." },
+			{
+				error: isDevelopment()
+					? toErrorMessage(error, "Unable to move the book.")
+					: "Unable to move the book.",
+			},
 			{ status: 500 },
 		);
 	}

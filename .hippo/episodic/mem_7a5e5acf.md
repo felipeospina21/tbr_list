@@ -1,10 +1,10 @@
 ---
 id: mem_7a5e5acf
 created: "2026-06-05T23:43:51.612Z"
-last_retrieved: "2026-06-09T22:20:36.649Z"
-retrieval_count: 23
+last_retrieved: "2026-06-10T00:06:50.517Z"
+retrieval_count: 24
 strength: 1
-half_life_days: 143
+half_life_days: 145
 layer: episodic
 tags: []
 emotional_valence: neutral

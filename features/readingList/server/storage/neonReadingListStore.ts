@@ -450,26 +450,50 @@ class NeonReadingListStore implements ReadingListStore {
 		const [book] = reorderedBooks.splice(currentIndex, 1);
 		reorderedBooks.splice(nextIndex, 0, book);
 
-		const valuePlaceholders = reorderedBooks
-			.map((_, index) => `($${index * 2 + 2}, $${index * 2 + 3})`)
-			.join(", ");
-		const updateParams = [
-			listId,
-			...reorderedBooks.flatMap((row, position) => [row.bookId, position]),
-		];
-
-		await this.sql.query(
-			`
-			WITH reordered(book_id, position) AS (VALUES ${valuePlaceholders})
-			UPDATE ${TABLES.listItems} AS items
-			SET position = reordered.position,
+		const positionOffset = reorderedBooks.length + 1;
+		const bookIds = reorderedBooks.map((row) => row.bookId);
+		const finalPositionCases = reorderedBooks
+			.map(
+				(row, position) => `WHEN book_id = $${position + 2} THEN ${position}`,
+			)
+			.join(" ");
+		const finalReorderQuery = `
+			UPDATE ${TABLES.listItems}
+			SET position = CASE ${finalPositionCases} END,
 				updated_at = CURRENT_TIMESTAMP
-			FROM reordered
-			WHERE items.list_id = $1
-				AND items.book_id = reordered.book_id
-			`,
-			updateParams,
-		);
+			WHERE list_id = $1
+				AND book_id = ANY($${bookIds.length + 2}::text[])
+		`;
+		const finalReorderParams = [listId, ...bookIds, bookIds];
+
+		try {
+			await this.sql.transaction((txn) => [
+				txn`
+					UPDATE ${txn.unsafe(TABLES.listItems)}
+					SET position = position + ${positionOffset},
+						updated_at = CURRENT_TIMESTAMP
+					WHERE list_id = ${listId}
+				`,
+				txn.query(finalReorderQuery, finalReorderParams),
+			]);
+		} catch (error) {
+			console.error("Reading list reorder failed", {
+				listId,
+				activeListSlug,
+				bookId,
+				direction,
+				currentIndex,
+				nextIndex,
+				positionOffset,
+				bookIds,
+				finalPositionCases,
+				finalReorderQuery,
+				finalReorderParams,
+				error,
+			});
+
+			throw error;
+		}
 
 		const updatedBooks = await this.selectBooks(listId);
 

@@ -2,11 +2,10 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/Card";
 import { debugComponentAttrs } from "@/lib/debug";
-
+import { useChangeBookPosition } from "../mutations/useChangeBookPosition";
 import type { Book } from "../types/readingList";
 import { BookCard } from "./BookCard";
 import styles from "./ReadingQueuePanel.module.css";
-import { useChangeBookPosition } from "../mutations/useChangeBookPosition";
 
 type ReadingQueuePanelProps = {
 	books: Book[] | undefined;
