@@ -21,13 +21,22 @@ export type SearchBook = {
 	accent: string;
 	seriesName: string | null;
 	seriesPosition: string | null;
+	moods: string[];
 	subjects: string[];
-	provider: "Google Books" | "Open Library";
+	provider: "Google Books" | "Hardcover" | "Open Library";
 };
 
-export type SearchProvider = "google-books" | "open-library" | "none";
+export type SearchProvider =
+	| "google-books"
+	| "hardcover"
+	| "open-library"
+	| "none";
 
 export type SearchDebugInfo = {
+	hardcoverApiKeyConfigured: boolean;
+	hardcoverStatus: number | null;
+	hardcoverError: string | null;
+	hardcoverResultCount: number;
 	googleApiKeyConfigured: boolean;
 	googleStatus: number | null;
 	googleError: string | null;

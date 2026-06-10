@@ -8,7 +8,7 @@ First, copy the example env file if you want Google Books to use an API key:
 cp .env.example .env.local
 ```
 
-Set `GOOGLE_BOOKS_API_KEY` in `.env.local` to make Google Books requests more reliable. The app will still fall back to Open Library automatically if Google fails or returns no results.
+Set `HARDCOVER_API_KEY` in `.env.local` to use Hardcover as the primary book search provider. Set `GOOGLE_BOOKS_API_KEY` to make the final Google Books fallback more reliable. The app searches Hardcover first when configured, then Open Library, then Google Books.
 
 Set `DATABASE_URL` to a Neon connection string for the reading list database. If you deploy on Vercel with a Neon or Postgres integration, the app also accepts `POSTGRES_URL_NON_POOLING`, `POSTGRES_URL`, or `NEON_DATABASE_URL`.
 

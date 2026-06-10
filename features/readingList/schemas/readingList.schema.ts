@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { READING_LIST_DEFINITIONS } from "../types/readingList";
 
-const bookSourceSchema = z.enum(["google-books", "open-library"]);
+const bookSourceSchema = z.enum(["google-books", "hardcover", "open-library"]);
 const readingListSlugSchema = z.enum(
 	READING_LIST_DEFINITIONS.map((definition) => definition.slug) as [
 		string,

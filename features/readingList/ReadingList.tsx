@@ -3,8 +3,6 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useMemo } from "react";
-import { SectionBackdrop } from "@/components/SectionBackdrop";
-import { debugComponentAttrs } from "@/lib/debug";
 import { ReadingListHero } from "./components/ReadingListHero";
 import { ReadingQueuePanel } from "./components/ReadingQueuePanel";
 import { SearchBooksPanel } from "./components/SearchBooksPanel";
@@ -56,48 +54,35 @@ export function ReadingList({ accountLabel }: ReadingListProps) {
 		router.replace(nextUrl, { scroll: false });
 	}
 
-	if (readingListQuery.isFetching) {
-		return <div>loading</div>;
-	}
-
 	if (readingListQuery.isError) {
 		return <div>error</div>;
 	}
 
 	return (
-		<main className={styles.main} {...debugComponentAttrs("ReadingListPage")}>
-			<section
-				className={styles.surface}
-				{...debugComponentAttrs("ReadingListSurface")}
-			>
-				<SectionBackdrop />
+		<>
+			<ReadingListHero
+				activeListSlug={activeListSlug}
+				booksCount={books?.length}
+				pages={pages}
+				accountLabel={accountLabel}
+				onSelectList={handleSelectList}
+				onSignOut={() => {
+					void signOut({ callbackUrl: "/login" });
+				}}
+			/>
 
-				<div className={styles.shell}>
-					<ReadingListHero
-						activeListSlug={activeListSlug}
-						booksCount={books?.length}
-						pages={pages}
-						accountLabel={accountLabel}
-						onSelectList={handleSelectList}
-						onSignOut={() => {
-							void signOut({ callbackUrl: "/login" });
-						}}
-					/>
+			<div className={styles.stack}>
+				<SearchBooksPanel
+					activeListSlug={activeListSlug}
+					query={query}
+					searchQuery={searchQuery}
+					onQueryChange={setQuery}
+					existingBookIds={existingBookIds}
+				/>
 
-					<div className={styles.stack}>
-						<SearchBooksPanel
-							activeListSlug={activeListSlug}
-							query={query}
-							searchQuery={searchQuery}
-							onQueryChange={setQuery}
-							existingBookIds={existingBookIds}
-						/>
-
-						<ReadingQueuePanel activeListSlug={activeListSlug} books={books} />
-					</div>
-				</div>
-			</section>
-		</main>
+				<ReadingQueuePanel activeListSlug={activeListSlug} books={books} />
+			</div>
+		</>
 	);
 }
 

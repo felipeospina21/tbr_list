@@ -1,4 +1,4 @@
-export type BookSource = "google-books" | "open-library";
+export type BookSource = "google-books" | "hardcover" | "open-library";
 
 export const READING_LIST_DEFINITIONS = [
 	{

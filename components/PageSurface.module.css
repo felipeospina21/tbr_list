@@ -1,0 +1,19 @@
+.main {
+	min-height: 100vh;
+	background: #0d1110;
+	color: #fafaf9;
+}
+
+.surface {
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+}
+
+.shell {
+	margin-left: auto;
+	margin-right: auto;
+	display: grid;
+	width: 100%;
+	max-width: 80rem;
+}
