@@ -29,11 +29,36 @@ export async function addReadingListBook(
 
 export function useAddBookToReadingList(listSlug: ReadingListSlug) {
 	const queryClient = useQueryClient();
+	const queryKey = getReadingListQueryKey(listSlug);
 
 	return useMutation({
 		mutationFn: (book: Book) => addReadingListBook(listSlug, book),
+		onMutate: async (input) => {
+			await queryClient.cancelQueries({ queryKey });
+
+			const previousSnapshot =
+				queryClient.getQueryData<ReadingListSnapshot>(queryKey);
+
+			queryClient.setQueryData<ReadingListSnapshot | undefined>(
+				queryKey,
+				(snapshot) => {
+					if (!snapshot) {
+						return undefined;
+					}
+
+					return { ...snapshot, books: [...snapshot.books, input] };
+				},
+			);
+
+			return { previousSnapshot };
+		},
+		onError: (_error, _input, context) => {
+			if (context?.previousSnapshot) {
+				queryClient.setQueryData(queryKey, context.previousSnapshot);
+			}
+		},
 		onSuccess: (snapshot) => {
-			queryClient.setQueryData(getReadingListQueryKey(listSlug), snapshot);
+			queryClient.setQueryData(queryKey, snapshot);
 		},
 	});
 }
