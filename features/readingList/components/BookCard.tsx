@@ -28,7 +28,7 @@ export function BookCard({ book, index, provider, action }: BookCardProps) {
 					<BookCardHeader index={index} book={book} provider={provider} />
 					<p className={styles.description}>{book.description}</p>
 
-					{action}
+					<div className={styles.action}>{action}</div>
 				</div>
 			</div>
 		</div>

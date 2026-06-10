@@ -19,7 +19,7 @@ export const BookCardHeader: FC<BookCardHeaderProps> = ({
 	const indexBadgeContent = provider ? provider : `#${index + 1}`;
 
 	return (
-		<div className={styles.header}>
+		<>
 			<div className={styles.metaGroup}>
 				<Badge className={styles.indexBadge}>{indexBadgeContent}</Badge>
 				<Badge className={styles.pagesBadge}>
@@ -31,6 +31,6 @@ export const BookCardHeader: FC<BookCardHeaderProps> = ({
 			</div>
 			<h3 className={styles.title}>{book.title}</h3>
 			<p className={styles.author}>{book.author}</p>
-		</div>
+		</>
 	);
 };

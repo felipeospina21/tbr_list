@@ -15,7 +15,7 @@
 
 .grid {
 	display: grid;
-	align-items: start;
+	align-items: stretch;
 	gap: 0.5rem;
 	grid-template-columns: 40% minmax(0, 1fr);
 }
@@ -31,13 +31,13 @@
 	display: flex;
 	flex-direction: column;
 	min-width: 0;
+	height: 100%;
 	padding: 0.5rem;
 	padding-right: 0.4rem;
 }
 
 .description {
-	margin-top: 0.5rem;
-	margin-bottom: 0;
+	margin: 0;
 	display: -webkit-box;
 	overflow: hidden;
 	font-size: 0.875rem;
@@ -46,6 +46,11 @@
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 5;
 	line-clamp: 5;
+}
+
+.action {
+	margin-top: auto;
+	padding-top: 0.75rem;
 }
 
 @media (min-width: 640px) {
