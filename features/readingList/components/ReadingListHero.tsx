@@ -7,31 +7,30 @@ import { Button } from "@/components/Button";
 import { Card, CardContent } from "@/components/Card";
 import iconStyles from "@/components/Icon.module.css";
 import { debugComponentAttrs } from "@/lib/debug";
-import type { ReadingListSlug, ReadingListSummary } from "../types/readingList";
+import { READING_LIST_DEFINITIONS } from "../types/readingList";
 import styles from "./ReadingListHero.module.css";
 import { ReadingListSwitcher } from "./ReadingListSwitcher";
 
 type ReadingListHeroProps = {
-	booksCount: number;
-	pages: number;
+	booksCount: number | undefined;
+	pages: number | undefined;
 	accountLabel: string;
-	lists: ReadingListSummary[];
-	activeListSlug: ReadingListSlug;
-	onSelectList: (slug: ReadingListSlug) => void;
+	activeListSlug: "to_be_read" | "finished" | "did_not_finish";
 	onSignOut: () => void;
+	onSelectList: (slug: "to_be_read" | "finished" | "did_not_finish") => void;
 };
 
 export function ReadingListHero({
 	booksCount,
 	pages,
 	accountLabel,
-	lists,
 	activeListSlug,
-	onSelectList,
 	onSignOut,
+	onSelectList,
 }: ReadingListHeroProps) {
-	const activeList =
-		lists.find((list) => list.slug === activeListSlug) ?? lists[0];
+	const activeList = READING_LIST_DEFINITIONS.find(
+		(list) => list.slug === activeListSlug,
+	);
 
 	return (
 		<div className={styles.root} {...debugComponentAttrs("ReadingListHero")}>
@@ -54,15 +53,15 @@ export function ReadingListHero({
 			</div>
 
 			<ReadingListSwitcher
-				lists={lists}
 				activeListSlug={activeListSlug}
 				onSelectList={onSelectList}
 			/>
 
+			{/* TODO: extract this block */}
 			<div className={styles.statGrid}>
 				{[
-					{ label: "Books", value: booksCount.toString() },
-					{ label: "Pages", value: pages.toString() },
+					{ label: "Books", value: booksCount ?? 0 },
+					{ label: "Pages", value: pages ?? 0 },
 				].map((stat) => (
 					<Card
 						key={stat.label}

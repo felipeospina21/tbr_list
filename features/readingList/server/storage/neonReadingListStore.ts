@@ -379,12 +379,13 @@ class NeonReadingListStore implements ReadingListStore {
 		authSubject: string,
 		listSlug?: ReadingListSlug,
 	): Promise<ReadingListSnapshot> {
-		const { listId, activeListSlug, lists } =
-			await this.resolveReadingListContext(authSubject, listSlug);
+		const { listId, activeListSlug } = await this.resolveReadingListContext(
+			authSubject,
+			listSlug,
+		);
 		const books = await this.selectBooks(listId);
 
 		return {
-			lists,
 			activeListSlug,
 			books,
 			pages: totalPages(books),
@@ -396,8 +397,10 @@ class NeonReadingListStore implements ReadingListStore {
 		book: Book,
 		listSlug?: ReadingListSlug,
 	): Promise<ReadingListSnapshot> {
-		const { listId, activeListSlug, lists } =
-			await this.resolveReadingListContext(authSubject, listSlug);
+		const { listId, activeListSlug } = await this.resolveReadingListContext(
+			authSubject,
+			listSlug,
+		);
 		const storedBook = await this.resolveBook(book);
 		const nextPosition = await this.getNextPosition(listId);
 
@@ -417,7 +420,6 @@ class NeonReadingListStore implements ReadingListStore {
 		const books = await this.selectBooks(listId);
 
 		return {
-			lists,
 			activeListSlug,
 			books,
 			pages: totalPages(books),
@@ -430,8 +432,10 @@ class NeonReadingListStore implements ReadingListStore {
 		direction: -1 | 1,
 		listSlug?: ReadingListSlug,
 	): Promise<ReadingListSnapshot> {
-		const { listId, activeListSlug, lists } =
-			await this.resolveReadingListContext(authSubject, listSlug);
+		const { listId, activeListSlug } = await this.resolveReadingListContext(
+			authSubject,
+			listSlug,
+		);
 		const books = await this.selectBooksWithInternalIds(listId);
 		const currentIndex = books.findIndex(
 			(book) => book.canonicalKey === bookId,
@@ -470,7 +474,6 @@ class NeonReadingListStore implements ReadingListStore {
 		const updatedBooks = await this.selectBooks(listId);
 
 		return {
-			lists,
 			activeListSlug,
 			books: updatedBooks,
 			pages: totalPages(updatedBooks),

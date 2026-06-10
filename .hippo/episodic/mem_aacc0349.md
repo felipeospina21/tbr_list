@@ -1,10 +1,10 @@
 ---
 id: mem_aacc0349
 created: "2026-06-06T01:55:26.449Z"
-last_retrieved: "2026-06-09T21:54:18.705Z"
-retrieval_count: 15
+last_retrieved: "2026-06-09T22:20:36.649Z"
+retrieval_count: 16
 strength: 1
-half_life_days: 102
+half_life_days: 114
 layer: episodic
 tags: []
 emotional_valence: neutral

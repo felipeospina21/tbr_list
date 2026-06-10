@@ -39,6 +39,7 @@ export function useChangeBookPosition(listSlug: ReadingListSlug) {
 	return useMutation({
 		mutationFn: ({ bookId, direction }: ChangeBookPositionInput) =>
 			moveReadingListBook(listSlug, bookId, direction),
+
 		onSuccess: (snapshot) => {
 			queryClient.setQueryData(getReadingListQueryKey(listSlug), snapshot);
 		},

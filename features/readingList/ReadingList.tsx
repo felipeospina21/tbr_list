@@ -26,24 +26,18 @@ export function ReadingList({ accountLabel }: ReadingListProps) {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const initialListSlug = getSelectedListSlug(searchParams.get("listSlug"));
-	const {
-		activeListSlug,
-		books,
-		addBook,
-		lists,
-		moveBook,
-		pages,
-		setSelectedListSlug,
-	} = useReadingList(initialListSlug);
+
+	const { activeListSlug, setSelectedListSlug, readingListQuery } =
+		useReadingList(initialListSlug);
+
+	const books = readingListQuery.data?.books;
+	const pages = readingListQuery.data?.pages;
+
 	const { query, setQuery, searchQuery } = useBookSearch();
 	const existingBookIds = useMemo(
-		() => new Set(books.map((book) => book.id)),
+		() => new Set(books?.map((book) => book.id)),
 		[books],
 	);
-
-	useEffect(() => {
-		setSelectedListSlug(getSelectedListSlug(searchParams.get("listSlug")));
-	}, [searchParams, setSelectedListSlug]);
 
 	function handleSelectList(slug: ReadingListSlug) {
 		setSelectedListSlug(slug);
@@ -62,6 +56,14 @@ export function ReadingList({ accountLabel }: ReadingListProps) {
 		router.replace(nextUrl, { scroll: false });
 	}
 
+	if (readingListQuery.isFetching) {
+		return <div>loading</div>;
+	}
+
+	if (readingListQuery.isError) {
+		return <div>error</div>;
+	}
+
 	return (
 		<main className={styles.main} {...debugComponentAttrs("ReadingListPage")}>
 			<section
@@ -72,11 +74,10 @@ export function ReadingList({ accountLabel }: ReadingListProps) {
 
 				<div className={styles.shell}>
 					<ReadingListHero
-						booksCount={books.length}
 						activeListSlug={activeListSlug}
+						booksCount={books?.length}
 						pages={pages}
 						accountLabel={accountLabel}
-						lists={lists}
 						onSelectList={handleSelectList}
 						onSignOut={() => {
 							void signOut({ callbackUrl: "/login" });
@@ -88,11 +89,11 @@ export function ReadingList({ accountLabel }: ReadingListProps) {
 							query={query}
 							searchQuery={searchQuery}
 							onQueryChange={setQuery}
-							onAddBook={addBook}
+							onAddBook={() => {}}
 							existingBookIds={existingBookIds}
 						/>
 
-						<ReadingQueuePanel books={books} onMoveBook={moveBook} />
+						<ReadingQueuePanel activeListSlug={activeListSlug} books={books} />
 					</div>
 				</div>
 			</section>

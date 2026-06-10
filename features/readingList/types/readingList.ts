@@ -54,7 +54,6 @@ export type Book = {
 };
 
 export type ReadingListSnapshot = {
-	lists: ReadingListSummary[];
 	activeListSlug: ReadingListSlug;
 	books: Book[];
 	pages: number;

@@ -9,7 +9,7 @@ import { debugComponentAttrs } from "@/lib/debug";
 import type { BookSearchQueryData } from "../queries/useBookSearchData";
 import type { Book } from "../types/readingList";
 import type { SearchBook } from "../types/search";
-import { SearchBookResultCard } from "./SearchBookResultCard";
+import { SearchBookCard } from "./BookCard";
 import styles from "./SearchBooksPanel.module.css";
 import { SearchBooksToolbar } from "./SearchBooksToolbar";
 
@@ -50,7 +50,7 @@ export function SearchBooksPanel({
 								const isAdded = existingBookIds.has(book.id);
 
 								return (
-									<SearchBookResultCard
+									<SearchBookCard
 										key={book.id}
 										book={book}
 										isAdded={isAdded}

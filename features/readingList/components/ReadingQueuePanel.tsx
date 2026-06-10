@@ -6,16 +6,24 @@ import { debugComponentAttrs } from "@/lib/debug";
 import type { Book } from "../types/readingList";
 import { BookCard } from "./BookCard";
 import styles from "./ReadingQueuePanel.module.css";
+import { useChangeBookPosition } from "../mutations/useChangeBookPosition";
 
 type ReadingQueuePanelProps = {
-	books: Book[];
-	onMoveBook: (bookId: string, direction: -1 | 1) => void;
+	books: Book[] | undefined;
+	activeListSlug: "to_be_read" | "finished" | "did_not_finish";
 };
 
 export function ReadingQueuePanel({
+	activeListSlug,
 	books,
-	onMoveBook,
 }: ReadingQueuePanelProps) {
+	const moveBookMutation = useChangeBookPosition(activeListSlug);
+
+	function changeBookCardPosition(bookId: string, direction: 1 | -1) {
+		moveBookMutation.mutate({ bookId, direction });
+	}
+
+	const noBooks = !books || !books.length;
 	return (
 		<Card
 			className={styles.panel}
@@ -29,18 +37,18 @@ export function ReadingQueuePanel({
 			</CardHeader>
 
 			<CardContent className={styles.content}>
-				{books.length === 0 ? (
+				{noBooks ? (
 					<div className={styles.emptyState}>
 						No books yet. Use the search panel below to add your first title.
 					</div>
 				) : (
-					books.map((book, index) => (
+					books?.map((book, index) => (
 						<BookCard
 							key={book.id}
 							book={book}
 							index={index}
 							total={books.length}
-							onMove={onMoveBook}
+							action={changeBookCardPosition}
 						/>
 					))
 				)}
