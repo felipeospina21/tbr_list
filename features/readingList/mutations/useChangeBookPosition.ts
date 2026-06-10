@@ -74,6 +74,7 @@ export function useChangeBookPosition(listSlug: ReadingListSlug) {
 	>({
 		mutationFn: ({ bookId, direction }: ChangeBookPositionInput) =>
 			moveReadingListBook(listSlug, bookId, direction),
+
 		onMutate: async (input) => {
 			await queryClient.cancelQueries({ queryKey });
 

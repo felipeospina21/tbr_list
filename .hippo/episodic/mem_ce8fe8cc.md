@@ -1,6 +1,6 @@
 ---
-id: mem_ce123465
-created: "2026-06-10T00:48:55.801Z"
+id: mem_ce8fe8cc
+created: "2026-06-10T01:13:40.501Z"
 last_retrieved: "2026-06-10T01:15:52.291Z"
 retrieval_count: 2
 strength: 1
@@ -16,4 +16,4 @@ pinned: false
 confidence: verified
 ---
 
-avoid the 'any' type
+use interfaces for component props definitions unless a type alias is required
