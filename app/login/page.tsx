@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
 import { getAuthOptions } from "@/auth";
-import { SectionBackdrop } from "@/components/SectionBackdrop";
+import { SectionBackdrop } from "@/components/layout/SectionBackdrop";
 import { LoginPanel } from "@/features/auth/components/LoginPanel";
 import styles from "./page.module.css";
 

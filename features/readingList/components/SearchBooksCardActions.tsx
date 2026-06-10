@@ -1,7 +1,7 @@
 import { BookPlus } from "lucide-react";
 import { FC } from "react";
-import { Button } from "@/components/Button";
 import iconStyles from "@/components/Icon.module.css";
+import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { useAddBookToReadingList } from "../mutations/useAddBookToReadingList";
 import { Book } from "../types/readingList";

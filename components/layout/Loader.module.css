@@ -1,0 +1,10 @@
+.loader {
+	display: flex;
+	min-height: 10rem;
+	align-items: center;
+	justify-content: center;
+}
+
+.spinner {
+	color: rgba(245, 213, 150, 0.92);
+}

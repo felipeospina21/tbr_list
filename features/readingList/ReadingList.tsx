@@ -3,6 +3,8 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useMemo } from "react";
+
+import { Loader } from "@/components/layout/Loader";
 import { ReadingListHero } from "./components/ReadingListHero";
 import { ReadingQueuePanel } from "./components/ReadingQueuePanel";
 import { SearchBooksPanel } from "./components/SearchBooksPanel";
@@ -54,8 +56,8 @@ export function ReadingList({ accountLabel }: ReadingListProps) {
 		router.replace(nextUrl, { scroll: false });
 	}
 
-	if (readingListQuery.isError) {
-		return <div>error</div>;
+	if (readingListQuery.isPending) {
+		return <Loader />;
 	}
 
 	return (

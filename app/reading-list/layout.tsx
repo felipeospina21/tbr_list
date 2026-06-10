@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from "react";
 
-import { PageSurface } from "@/components/PageSurface";
+import { PageSurface } from "@/components/layout/PageSurface";
 import styles from "./layout.module.css";
 
 interface ReadingListLayoutProps {

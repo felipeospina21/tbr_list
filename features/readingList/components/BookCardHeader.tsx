@@ -1,7 +1,7 @@
 import { BookOpenText } from "lucide-react";
 import { FC } from "react";
-import { Badge } from "@/components/Badge";
 import iconStyles from "@/components/Icon.module.css";
+import { Badge } from "@/components/ui/Badge";
 import { Book } from "../types/readingList";
 import styles from "./BookCardHeader.module.css";
 

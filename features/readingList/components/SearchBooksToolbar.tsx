@@ -1,10 +1,9 @@
 "use client";
 
 import { Search, X } from "lucide-react";
-
-import { Button } from "@/components/Button";
 import iconStyles from "@/components/Icon.module.css";
-import { Input } from "@/components/Input";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import styles from "./SearchBooksToolbar.module.css";
 
 type SearchBooksToolbarProps = {

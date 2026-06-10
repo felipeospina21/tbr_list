@@ -1,10 +1,10 @@
 ---
 id: mem_30bff92d
 created: "2026-06-06T02:08:39.493Z"
-last_retrieved: "2026-06-10T01:15:11.850Z"
-retrieval_count: 20
+last_retrieved: "2026-06-10T23:24:33.758Z"
+retrieval_count: 39
 strength: 1
-half_life_days: 132
+half_life_days: 220
 layer: episodic
 tags: []
 emotional_valence: neutral

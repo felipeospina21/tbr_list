@@ -38,5 +38,6 @@ export function useFetchReadingList(listSlug: ReadingListSlug) {
 		queryKey: getReadingListQueryKey(listSlug),
 		queryFn: () => fetchReadingList(listSlug),
 		refetchOnWindowFocus: false,
+		throwOnError: true,
 	});
 }

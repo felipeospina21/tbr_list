@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/Card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { debugComponentAttrs } from "@/lib/debug";
 import { useChangeBookPosition } from "../mutations/useChangeBookPosition";
 import type { Book } from "../types/readingList";

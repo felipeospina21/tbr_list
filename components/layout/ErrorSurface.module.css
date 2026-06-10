@@ -1,0 +1,66 @@
+.surface {
+	display: flex;
+	min-height: 16rem;
+	align-items: center;
+	justify-content: center;
+	padding: 1.5rem 0;
+}
+
+.content {
+	width: min(100%, 32rem);
+	border: 1px solid rgba(245, 213, 150, 0.16);
+	border-radius: 1.5rem;
+	background: rgba(18, 24, 23, 0.76);
+	padding: 1.25rem;
+	color: #fafaf9;
+	backdrop-filter: blur(12px);
+}
+
+.eyebrow {
+	margin: 0;
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.22em;
+	color: rgba(245, 213, 150, 0.86);
+}
+
+.title {
+	margin: 0.75rem 0 0;
+	font-family: var(--app-font-serif);
+	font-size: 2rem;
+	font-weight: 600;
+	line-height: 1.05;
+	color: #fff;
+	text-wrap: balance;
+}
+
+.message {
+	margin: 0.75rem 0 0;
+	max-width: 28rem;
+	font-size: 0.95rem;
+	line-height: 1.7;
+	color: rgba(255, 255, 255, 0.68);
+}
+
+.action {
+	margin-top: 1.25rem;
+	background: #f5d596;
+	color: #171412;
+	--button-ring-color: rgba(245, 213, 150, 0.85);
+	--button-ring-offset: #0d1110;
+}
+
+.action:hover {
+	background: #f8e0ab;
+}
+
+@media (min-width: 640px) {
+	.content {
+		padding: 1.5rem;
+	}
+
+	.title {
+		font-size: 2.5rem;
+	}
+}

@@ -3,11 +3,10 @@
 import { ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-
-import { Badge } from "@/components/Badge";
-import { Button } from "@/components/Button";
-import { Card, CardContent } from "@/components/Card";
 import iconStyles from "@/components/Icon.module.css";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { Card, CardContent } from "@/components/ui/Card";
 import { debugComponentAttrs } from "@/lib/debug";
 import styles from "./LoginPanel.module.css";
 

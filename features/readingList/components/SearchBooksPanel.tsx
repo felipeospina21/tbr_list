@@ -2,8 +2,8 @@
 
 import type { UseQueryResult } from "@tanstack/react-query";
 import { Search } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/Card";
 import iconStyles from "@/components/Icon.module.css";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { debugComponentAttrs } from "@/lib/debug";
 import type { BookSearchQueryData } from "../queries/useBookSearchData";
 import type { SearchBook } from "../types/search";

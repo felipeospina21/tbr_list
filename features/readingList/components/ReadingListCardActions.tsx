@@ -1,7 +1,7 @@
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { FC } from "react";
-import { Button } from "@/components/Button";
 import iconStyles from "@/components/Icon.module.css";
+import { Button } from "@/components/ui/Button";
 import { Book } from "../types/readingList";
 import styles from "./ReadingListCardActions.module.css";
 

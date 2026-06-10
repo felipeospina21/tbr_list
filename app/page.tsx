@@ -9,17 +9,16 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { FC } from "react";
-
-import { Badge } from "@/components/Badge";
+import iconStyles from "@/components/Icon.module.css";
+import { PageSurface } from "@/components/layout/PageSurface";
+import { Badge } from "@/components/ui/Badge";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/Card";
-import iconStyles from "@/components/Icon.module.css";
-import { PageSurface } from "@/components/PageSurface";
+} from "@/components/ui/Card";
 import { debugComponentAttrs } from "@/lib/debug";
 import { cn } from "@/lib/utils";
 import styles from "./page.module.css";
