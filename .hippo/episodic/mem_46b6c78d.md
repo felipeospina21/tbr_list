@@ -1,10 +1,10 @@
 ---
 id: mem_46b6c78d
 created: "2026-06-05T23:48:21.504Z"
-last_retrieved: "2026-06-10T00:18:17.877Z"
-retrieval_count: 26
+last_retrieved: "2026-06-10T00:48:41.531Z"
+retrieval_count: 27
 strength: 1
-half_life_days: 159
+half_life_days: 166
 layer: episodic
 tags: [architecture]
 emotional_valence: neutral

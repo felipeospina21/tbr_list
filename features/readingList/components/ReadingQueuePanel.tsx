@@ -5,6 +5,7 @@ import { debugComponentAttrs } from "@/lib/debug";
 import { useChangeBookPosition } from "../mutations/useChangeBookPosition";
 import type { Book } from "../types/readingList";
 import { BookCard } from "./BookCard";
+import { ReadingListCardActions } from "./ReadingListCardActions";
 import styles from "./ReadingQueuePanel.module.css";
 
 type ReadingQueuePanelProps = {
@@ -46,8 +47,14 @@ export function ReadingQueuePanel({
 							key={book.id}
 							book={book}
 							index={index}
-							total={books.length}
-							action={changeBookCardPosition}
+							action={
+								<ReadingListCardActions
+									index={index}
+									total={books.length}
+									book={book}
+									onMove={changeBookCardPosition}
+								/>
+							}
 						/>
 					))
 				)}

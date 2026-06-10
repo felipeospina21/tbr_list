@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { SectionBackdrop } from "@/components/SectionBackdrop";
 import { debugComponentAttrs } from "@/lib/debug";
 import { ReadingListHero } from "./components/ReadingListHero";
@@ -86,10 +86,10 @@ export function ReadingList({ accountLabel }: ReadingListProps) {
 
 					<div className={styles.stack}>
 						<SearchBooksPanel
+							activeListSlug={activeListSlug}
 							query={query}
 							searchQuery={searchQuery}
 							onQueryChange={setQuery}
-							onAddBook={() => {}}
 							existingBookIds={existingBookIds}
 						/>
 

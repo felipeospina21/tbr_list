@@ -2,30 +2,29 @@
 
 import type { UseQueryResult } from "@tanstack/react-query";
 import { Search } from "lucide-react";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/Card";
 import iconStyles from "@/components/Icon.module.css";
 import { debugComponentAttrs } from "@/lib/debug";
 import type { BookSearchQueryData } from "../queries/useBookSearchData";
-import type { Book } from "../types/readingList";
 import type { SearchBook } from "../types/search";
-import { SearchBookCard } from "./BookCard";
+import { BookCard } from "./BookCard";
+import { SearchBooksCardActions } from "./SearchBooksCardActions";
 import styles from "./SearchBooksPanel.module.css";
 import { SearchBooksToolbar } from "./SearchBooksToolbar";
 
 type SearchBooksPanelProps = {
+	activeListSlug: "to_be_read" | "finished" | "did_not_finish";
 	query: string;
 	searchQuery: UseQueryResult<BookSearchQueryData, Error>;
 	onQueryChange: (query: string) => void;
-	onAddBook: (book: Book) => void;
 	existingBookIds: ReadonlySet<string>;
 };
 
 export function SearchBooksPanel({
+	activeListSlug,
 	query,
 	searchQuery,
 	onQueryChange,
-	onAddBook,
 	existingBookIds,
 }: SearchBooksPanelProps) {
 	const results = searchQuery.data?.results ?? [];
@@ -46,15 +45,22 @@ export function SearchBooksPanel({
 
 					{hasResults ? (
 						<div className={styles.results}>
-							{results.map((book: SearchBook) => {
+							{results.map((book: SearchBook, index) => {
 								const isAdded = existingBookIds.has(book.id);
 
 								return (
-									<SearchBookCard
+									<BookCard
 										key={book.id}
 										book={book}
-										isAdded={isAdded}
-										onAddBook={onAddBook}
+										index={index}
+										provider={book.provider}
+										action={
+											<SearchBooksCardActions
+												isAdded={isAdded}
+												book={book}
+												activeListSlug={activeListSlug}
+											/>
+										}
 									/>
 								);
 							})}

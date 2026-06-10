@@ -3,16 +3,16 @@ import { FC } from "react";
 import { Button } from "@/components/Button";
 import iconStyles from "@/components/Icon.module.css";
 import { Book } from "../types/readingList";
-import styles from "./BookCardActions.module.css";
+import styles from "./ReadingListCardActions.module.css";
 
-interface BookCardActionsProps {
+interface ReadingListCardActionsProps {
 	index: number;
 	book: Book;
 	total: number;
 	onMove: (bookId: string, direction: -1 | 1) => void;
 }
 
-export const BookCardActions: FC<BookCardActionsProps> = ({
+export const ReadingListCardActions: FC<ReadingListCardActionsProps> = ({
 	index,
 	onMove,
 	book,

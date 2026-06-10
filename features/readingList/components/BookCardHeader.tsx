@@ -7,14 +7,21 @@ import styles from "./BookCardHeader.module.css";
 
 interface BookCardHeaderProps {
 	index: number;
+	provider?: string;
 	book: Book;
 }
 
-export const BookCardHeader: FC<BookCardHeaderProps> = ({ index, book }) => {
+export const BookCardHeader: FC<BookCardHeaderProps> = ({
+	index,
+	book,
+	provider,
+}) => {
+	const indexBadgeContent = provider ? provider : `#${index + 1}`;
+
 	return (
 		<div className={styles.header}>
 			<div className={styles.metaGroup}>
-				<Badge className={styles.indexBadge}>#{index + 1}</Badge>
+				<Badge className={styles.indexBadge}>{indexBadgeContent}</Badge>
 				<Badge className={styles.pagesBadge}>
 					<BookOpenText className={iconStyles.size3} />
 					<p className={styles.badgeContent}>
