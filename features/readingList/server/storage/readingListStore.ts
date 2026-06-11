@@ -21,7 +21,18 @@ export interface ReadingListStore {
 	moveBook(
 		userId: string,
 		bookId: string,
-		direction: -1 | 1,
+		targetIndex: number,
 		listSlug?: ReadingListSlug,
+	): Promise<ReadingListSnapshot>;
+	removeBook(
+		userId: string,
+		bookId: string,
+		listSlug?: ReadingListSlug,
+	): Promise<ReadingListSnapshot>;
+	transferBook(
+		userId: string,
+		bookId: string,
+		sourceListSlug: ReadingListSlug,
+		targetListSlug: ReadingListSlug,
 	): Promise<ReadingListSnapshot>;
 }

@@ -1,16 +1,83 @@
-.actions {
-	margin-top: 1.25rem;
-	display: flex;
-	gap: 0.75rem;
+.root {
+	display: grid;
+	gap: 0.55rem;
 }
 
-.actionButton {
-	flex: 1 1 0%;
-	border-color: rgba(255, 255, 255, 0.1);
-	background: rgba(255, 255, 255, 0.06);
+.secondaryRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.55rem;
+}
+
+.moveButton,
+.removeButton,
+.confirmButton,
+.cancelButton,
+.destinationButton {
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.035);
+	color: rgba(255, 255, 255, 0.78);
+}
+
+.moveButton {
+	flex: 1 1 auto;
+	justify-content: flex-start;
+	color: rgba(244, 214, 169, 0.9);
+}
+
+.moveButton:hover,
+.destinationButton:hover {
+	background: rgba(194, 139, 74, 0.12);
+	color: #f8deb6;
+}
+
+.removeButton {
+	flex: 0 0 auto;
+	width: 2.25rem;
+	padding: 0;
+	color: rgba(255, 255, 255, 0.58);
+}
+
+.removeButton:hover {
+	background: rgba(164, 58, 47, 0.14);
+	color: #f1b0a8;
+}
+
+.confirmGroup {
+	display: flex;
+	gap: 0.35rem;
+}
+
+.confirmButton,
+.cancelButton {
+	width: 2.25rem;
+	padding: 0;
+}
+
+.confirmButton {
+	color: #f1b0a8;
+}
+
+.confirmButton:hover {
+	background: rgba(164, 58, 47, 0.18);
+	color: #ffd1cc;
+}
+
+.cancelButton:hover {
+	background: rgba(255, 255, 255, 0.08);
 	color: #fff;
 }
 
-.actionButton:hover {
-	background: rgba(255, 255, 255, 0.1);
+.destinationRow {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.45rem;
+}
+
+.destinationButton {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }

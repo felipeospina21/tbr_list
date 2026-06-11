@@ -6,6 +6,8 @@ import {
 	bookSchema,
 	moveBookSchema,
 	readingListSlugSchema,
+	removeBookSchema,
+	transferBookSchema,
 } from "@/features/readingList/schemas/readingList.schema";
 import { getReadingListStore } from "@/features/readingList/server/storage";
 import type { ReadingListSlug } from "@/features/readingList/types/readingList";
@@ -126,8 +128,24 @@ export async function PATCH(request: Request) {
 
 		const body = (await request.json()) as {
 			bookId?: unknown;
-			direction?: unknown;
+			targetIndex?: unknown;
+			sourceListSlug?: unknown;
+			targetListSlug?: unknown;
 		};
+
+		const parsedTransfer = transferBookSchema.safeParse(body);
+
+		if (parsedTransfer.success) {
+			const store = await getReadingListStore();
+			const snapshot = await store.transferBook(
+				userId,
+				parsedTransfer.data.bookId,
+				parsedTransfer.data.sourceListSlug as ReadingListSlug,
+				parsedTransfer.data.targetListSlug as ReadingListSlug,
+			);
+
+			return NextResponse.json(snapshot);
+		}
 
 		const parsedMove = moveBookSchema.safeParse(body);
 
@@ -142,7 +160,7 @@ export async function PATCH(request: Request) {
 		const snapshot = await store.moveBook(
 			userId,
 			parsedMove.data.bookId,
-			parsedMove.data.direction,
+			parsedMove.data.targetIndex,
 			getRequestedListSlug(request),
 		);
 
@@ -154,6 +172,48 @@ export async function PATCH(request: Request) {
 				error: isDevelopment()
 					? toErrorMessage(error, "Unable to move the book.")
 					: "Unable to move the book.",
+			},
+			{ status: 500 },
+		);
+	}
+}
+
+export async function DELETE(request: Request) {
+	try {
+		const userId = await getCurrentUserId();
+
+		if (!userId) {
+			return NextResponse.json(
+				{ error: "Authentication required." },
+				{ status: 401 },
+			);
+		}
+
+		const body = (await request.json()) as { bookId?: unknown };
+		const parsedRemove = removeBookSchema.safeParse(body);
+
+		if (!parsedRemove.success) {
+			return NextResponse.json(
+				{ error: "Invalid remove payload." },
+				{ status: 400 },
+			);
+		}
+
+		const store = await getReadingListStore();
+		const snapshot = await store.removeBook(
+			userId,
+			parsedRemove.data.bookId,
+			getRequestedListSlug(request),
+		);
+
+		return NextResponse.json(snapshot);
+	} catch (error) {
+		console.error("DELETE /api/reading-list failed", error);
+		return NextResponse.json(
+			{
+				error: isDevelopment()
+					? toErrorMessage(error, "Unable to remove the book.")
+					: "Unable to remove the book.",
 			},
 			{ status: 500 },
 		);

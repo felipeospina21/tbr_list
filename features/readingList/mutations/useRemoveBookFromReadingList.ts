@@ -7,55 +7,43 @@ import type {
 	ReadingListSlug,
 	ReadingListSnapshot,
 } from "../types/readingList";
+import { totalPages } from "../types/readingList";
 
-type ChangeBookPositionInput = {
+interface RemoveBookInput {
 	bookId: string;
-	targetIndex: number;
-};
+}
 
-type ChangeBookPositionContext = {
+interface RemoveBookContext {
 	previousSnapshot?: ReadingListSnapshot;
-};
+}
 
-function reorderSnapshot(
+function removeBookFromSnapshot(
 	snapshot: ReadingListSnapshot | undefined,
-	{ bookId, targetIndex }: ChangeBookPositionInput,
+	bookId: string,
 ) {
 	if (!snapshot) {
 		return snapshot;
 	}
 
-	const currentIndex = snapshot.books.findIndex((book) => book.id === bookId);
-
-	if (
-		currentIndex < 0 ||
-		targetIndex < 0 ||
-		targetIndex >= snapshot.books.length
-	) {
-		return snapshot;
-	}
-
-	const books = [...snapshot.books];
-	const [book] = books.splice(currentIndex, 1);
-	books.splice(targetIndex, 0, book);
+	const books = snapshot.books.filter((book) => book.id !== bookId);
 
 	return {
 		...snapshot,
 		books,
+		pages: totalPages(books),
 	};
 }
 
-export async function moveReadingListBook(
+export async function removeReadingListBook(
 	listSlug: ReadingListSlug,
 	bookId: string,
-	targetIndex: number,
 ): Promise<ReadingListSnapshot> {
 	const response = await fetch(`/api/reading-list?listSlug=${listSlug}`, {
-		method: "PATCH",
+		method: "DELETE",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify({ bookId, targetIndex }),
+		body: JSON.stringify({ bookId }),
 	});
 
 	if (!response.ok) {
@@ -65,20 +53,18 @@ export async function moveReadingListBook(
 	return (await response.json()) as ReadingListSnapshot;
 }
 
-export function useChangeBookPosition(listSlug: ReadingListSlug) {
+export function useRemoveBookFromReadingList(listSlug: ReadingListSlug) {
 	const queryClient = useQueryClient();
 	const queryKey = getReadingListQueryKey(listSlug);
 
 	return useMutation<
 		ReadingListSnapshot,
 		Error,
-		ChangeBookPositionInput,
-		ChangeBookPositionContext
+		RemoveBookInput,
+		RemoveBookContext
 	>({
-		mutationFn: ({ bookId, targetIndex }: ChangeBookPositionInput) =>
-			moveReadingListBook(listSlug, bookId, targetIndex),
-
-		onMutate: async (input) => {
+		mutationFn: ({ bookId }) => removeReadingListBook(listSlug, bookId),
+		onMutate: async ({ bookId }) => {
 			await queryClient.cancelQueries({ queryKey });
 
 			const previousSnapshot =
@@ -86,7 +72,7 @@ export function useChangeBookPosition(listSlug: ReadingListSlug) {
 
 			queryClient.setQueryData<ReadingListSnapshot | undefined>(
 				queryKey,
-				(snapshot) => reorderSnapshot(snapshot, input),
+				(snapshot) => removeBookFromSnapshot(snapshot, bookId),
 			);
 
 			return { previousSnapshot };

@@ -3,6 +3,7 @@ import { FC } from "react";
 import iconStyles from "@/components/Icon.module.css";
 import { Badge } from "@/components/ui/Badge";
 import { Book } from "../types/readingList";
+import { formatSeriesMetadata } from "../utils/formatSeriesMetadata";
 import styles from "./BookCardHeader.module.css";
 
 interface BookCardHeaderProps {
@@ -17,17 +18,23 @@ export const BookCardHeader: FC<BookCardHeaderProps> = ({
 	provider,
 }) => {
 	const indexBadgeContent = provider ? provider : `#${index + 1}`;
+	const seriesMetadata = formatSeriesMetadata(book);
 
 	return (
 		<>
 			<div className={styles.metaGroup}>
 				<Badge className={styles.indexBadge}>{indexBadgeContent}</Badge>
-				<Badge className={styles.pagesBadge}>
-					<BookOpenText className={iconStyles.size3} />
-					<p className={styles.badgeContent}>
-						{typeof book.pages === "number" ? `${book.pages}` : "n/a"}
-					</p>
-				</Badge>
+				<div className={styles.badgeGroup}>
+					{seriesMetadata ? (
+						<Badge className={styles.seriesBadge}>{seriesMetadata}</Badge>
+					) : null}
+					<Badge className={styles.pagesBadge}>
+						<BookOpenText className={iconStyles.size3} />
+						<p className={styles.badgeContent}>
+							{typeof book.pages === "number" ? `${book.pages}` : "n/a"}
+						</p>
+					</Badge>
+				</div>
 			</div>
 			<h3 className={styles.title}>{book.title}</h3>
 			<p className={styles.author}>{book.author}</p>

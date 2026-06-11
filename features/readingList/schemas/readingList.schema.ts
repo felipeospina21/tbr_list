@@ -41,7 +41,17 @@ export const userBookRowSchema = bookSchema.extend({
 
 export const moveBookSchema = z.object({
 	bookId: z.string(),
-	direction: z.union([z.literal(-1), z.literal(1)]),
+	targetIndex: z.number().int().nonnegative(),
+});
+
+export const removeBookSchema = z.object({
+	bookId: z.string(),
+});
+
+export const transferBookSchema = z.object({
+	bookId: z.string(),
+	sourceListSlug: readingListSlugSchema,
+	targetListSlug: readingListSlugSchema,
 });
 
 export { readingListSlugSchema };

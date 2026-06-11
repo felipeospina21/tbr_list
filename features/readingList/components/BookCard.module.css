@@ -1,11 +1,14 @@
 .item {
 	overflow: hidden;
 	border: 1px solid;
+	border-radius: 0.45rem;
 }
 
 .top {
 	border-color: rgba(255, 255, 255, 0.14);
-	background: rgba(255, 255, 255, 0.08);
+	background:
+		linear-gradient(135deg, rgba(194, 139, 74, 0.11), transparent 42%),
+		rgba(255, 255, 255, 0.075);
 }
 
 .regular {
@@ -16,8 +19,8 @@
 .grid {
 	display: grid;
 	align-items: stretch;
-	gap: 0.5rem;
-	grid-template-columns: 40% minmax(0, 1fr);
+	gap: 0.65rem;
+	grid-template-columns: minmax(7.25rem, 38%) minmax(0, 1fr);
 }
 
 @media (min-width: 768px) {
@@ -32,8 +35,7 @@
 	flex-direction: column;
 	min-width: 0;
 	height: 100%;
-	padding: 0.5rem;
-	padding-right: 0.4rem;
+	padding: 0.65rem;
 }
 
 .description {
@@ -41,11 +43,11 @@
 	display: -webkit-box;
 	overflow: hidden;
 	font-size: 0.875rem;
-	line-height: 1.5rem;
+	line-height: 1.45rem;
 	color: rgba(255, 255, 255, 0.72);
 	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 5;
-	line-clamp: 5;
+	-webkit-line-clamp: 4;
+	line-clamp: 4;
 }
 
 .action {
@@ -56,5 +58,10 @@
 @media (min-width: 640px) {
 	.content {
 		padding: 1.25rem;
+	}
+
+	.description {
+		-webkit-line-clamp: 5;
+		line-clamp: 5;
 	}
 }

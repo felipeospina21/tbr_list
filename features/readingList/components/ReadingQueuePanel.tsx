@@ -1,12 +1,28 @@
 "use client";
 
+import {
+	closestCenter,
+	DndContext,
+	type DragEndEvent,
+	KeyboardSensor,
+	PointerSensor,
+	useSensor,
+	useSensors,
+} from "@dnd-kit/core";
+import {
+	SortableContext,
+	sortableKeyboardCoordinates,
+	verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { useMemo } from "react";
 import { Loader } from "@/components/layout/Loader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { useChangeBookPosition } from "../mutations/useChangeBookPosition";
+import { useRemoveBookFromReadingList } from "../mutations/useRemoveBookFromReadingList";
+import { useTransferBookBetweenReadingLists } from "../mutations/useTransferBookBetweenReadingLists";
 import { type Book, READING_LIST_DEFINITIONS } from "../types/readingList";
-import { BookCard } from "./BookCard";
-import { ReadingListCardActions } from "./ReadingListCardActions";
 import styles from "./ReadingQueuePanel.module.css";
+import { SortableBookCard } from "./SortableBookCard";
 
 type ReadingQueuePanelProps = {
 	books: Book[] | undefined;
@@ -20,9 +36,52 @@ export function ReadingQueuePanel({
 	isLoading = false,
 }: ReadingQueuePanelProps) {
 	const moveBookMutation = useChangeBookPosition(activeListSlug);
+	const removeBookMutation = useRemoveBookFromReadingList(activeListSlug);
+	const transferBookMutation =
+		useTransferBookBetweenReadingLists(activeListSlug);
+	const sortableBookIds = useMemo(
+		() => books?.map((book) => book.id) ?? [],
+		[books],
+	);
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 6,
+			},
+		}),
+		useSensor(KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		}),
+	);
 
-	function changeBookCardPosition(bookId: string, direction: 1 | -1) {
-		moveBookMutation.mutate({ bookId, direction });
+	function removeBook(bookId: string) {
+		removeBookMutation.mutate({ bookId });
+	}
+
+	function transferBook(
+		book: Book,
+		targetListSlug: "to_be_read" | "finished" | "did_not_finish",
+	) {
+		transferBookMutation.mutate({ book, targetListSlug });
+	}
+
+	function reorderBook(event: DragEndEvent) {
+		const { active, over } = event;
+
+		if (!over || active.id === over.id) {
+			return;
+		}
+
+		const bookId = String(active.id);
+		const targetIndex = sortableBookIds.findIndex(
+			(id) => id === String(over.id),
+		);
+
+		if (targetIndex < 0) {
+			return;
+		}
+
+		moveBookMutation.mutate({ bookId, targetIndex });
 	}
 
 	const noBooks = !books || !books.length;
@@ -46,23 +105,31 @@ export function ReadingQueuePanel({
 					<div className={styles.emptyState}>
 						No books yet. Use the search panel below to add your first title.
 					</div>
-				) : (
-					books?.map((book, index) => (
-						<BookCard
-							key={book.id}
-							book={book}
-							index={index}
-							action={
-								<ReadingListCardActions
-									index={index}
-									total={books.length}
-									book={book}
-									onMove={changeBookCardPosition}
-								/>
-							}
-						/>
-					))
-				)}
+				) : books ? (
+					<DndContext
+						sensors={sensors}
+						collisionDetection={closestCenter}
+						onDragEnd={reorderBook}
+					>
+						<SortableContext
+							items={sortableBookIds}
+							strategy={verticalListSortingStrategy}
+						>
+							<div className={styles.list}>
+								{books.map((book, index) => (
+									<SortableBookCard
+										key={book.id}
+										activeListSlug={activeListSlug}
+										book={book}
+										index={index}
+										onRemove={removeBook}
+										onTransfer={transferBook}
+									/>
+								))}
+							</div>
+						</SortableContext>
+					</DndContext>
+				) : null}
 			</CardContent>
 		</Card>
 	);

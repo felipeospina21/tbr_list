@@ -429,7 +429,7 @@ class NeonReadingListStore implements ReadingListStore {
 	async moveBook(
 		authSubject: string,
 		bookId: string,
-		direction: -1 | 1,
+		targetIndex: number,
 		listSlug?: ReadingListSlug,
 	): Promise<ReadingListSnapshot> {
 		const { listId, activeListSlug } = await this.resolveReadingListContext(
@@ -440,52 +440,47 @@ class NeonReadingListStore implements ReadingListStore {
 		const currentIndex = books.findIndex(
 			(book) => book.canonicalKey === bookId,
 		);
-		const nextIndex = currentIndex + direction;
 
-		if (currentIndex < 0 || nextIndex < 0 || nextIndex >= books.length) {
+		if (currentIndex < 0 || targetIndex < 0 || targetIndex >= books.length) {
 			return this.getBooks(authSubject, listSlug);
 		}
 
-		const currentBook = books[currentIndex];
-		const targetBook = books[nextIndex];
-		const tempPosition =
-			Math.min(...books.map((bookRow) => bookRow.position)) - 1;
+		if (currentIndex === targetIndex) {
+			return this.getBooks(authSubject, listSlug);
+		}
+
+		const reorderedBooks = [...books];
+		const [movedBook] = reorderedBooks.splice(currentIndex, 1);
+		reorderedBooks.splice(targetIndex, 0, movedBook);
 
 		try {
 			await this.sql.transaction((txn) => [
-				txn`
+				...reorderedBooks.map(
+					(book, index) => txn`
 					UPDATE ${txn.unsafe(TABLES.listItems)}
-					SET position = ${tempPosition},
+					SET position = ${-index - 1},
 						updated_at = CURRENT_TIMESTAMP
 					WHERE list_id = ${listId}
-						AND book_id = ${currentBook.bookId}
+						AND book_id = ${book.bookId}
 				`,
-				txn`
+				),
+				...reorderedBooks.map(
+					(book, index) => txn`
 					UPDATE ${txn.unsafe(TABLES.listItems)}
-					SET position = ${currentBook.position},
+					SET position = ${index},
 						updated_at = CURRENT_TIMESTAMP
 					WHERE list_id = ${listId}
-						AND book_id = ${targetBook.bookId}
+						AND book_id = ${book.bookId}
 				`,
-				txn`
-					UPDATE ${txn.unsafe(TABLES.listItems)}
-					SET position = ${targetBook.position},
-						updated_at = CURRENT_TIMESTAMP
-					WHERE list_id = ${listId}
-						AND book_id = ${currentBook.bookId}
-				`,
+				),
 			]);
 		} catch (error) {
 			console.error("Reading list reorder failed", {
 				listId,
 				activeListSlug,
 				bookId,
-				direction,
 				currentIndex,
-				nextIndex,
-				tempPosition,
-				currentBook,
-				targetBook,
+				targetIndex,
 				error,
 			});
 
@@ -498,6 +493,91 @@ class NeonReadingListStore implements ReadingListStore {
 			activeListSlug,
 			books: updatedBooks,
 			pages: totalPages(updatedBooks),
+		};
+	}
+
+	async removeBook(
+		authSubject: string,
+		bookId: string,
+		listSlug?: ReadingListSlug,
+	): Promise<ReadingListSnapshot> {
+		const { listId, activeListSlug } = await this.resolveReadingListContext(
+			authSubject,
+			listSlug,
+		);
+
+		await this.sql`
+			DELETE FROM ${this.sql.unsafe(TABLES.listItems)} AS items
+			USING ${this.sql.unsafe(TABLES.books)} AS books
+			WHERE items.book_id = books.id
+				AND items.list_id = ${listId}
+				AND books.canonical_key = ${bookId}
+		`;
+
+		const books = await this.selectBooks(listId);
+
+		return {
+			activeListSlug,
+			books,
+			pages: totalPages(books),
+		};
+	}
+
+	async transferBook(
+		authSubject: string,
+		bookId: string,
+		sourceListSlug: ReadingListSlug,
+		targetListSlug: ReadingListSlug,
+	): Promise<ReadingListSnapshot> {
+		if (sourceListSlug === targetListSlug) {
+			return this.getBooks(authSubject, sourceListSlug);
+		}
+
+		const sourceContext = await this.resolveReadingListContext(
+			authSubject,
+			sourceListSlug,
+		);
+		const targetContext = await this.resolveReadingListContext(
+			authSubject,
+			targetListSlug,
+		);
+		const sourceBooks = await this.selectBooksWithInternalIds(
+			sourceContext.listId,
+		);
+		const sourceBook = sourceBooks.find((book) => book.canonicalKey === bookId);
+
+		if (!sourceBook) {
+			return this.getBooks(authSubject, sourceListSlug);
+		}
+
+		const nextTargetPosition = await this.getNextPosition(targetContext.listId);
+
+		await this.sql.transaction((txn) => [
+			txn`
+				INSERT INTO ${txn.unsafe(TABLES.listItems)} (
+					id, list_id, book_id, position
+				)
+				VALUES (
+					${randomUUID()},
+					${targetContext.listId},
+					${sourceBook.bookId},
+					${nextTargetPosition}
+				)
+				ON CONFLICT (list_id, book_id) DO NOTHING
+			`,
+			txn`
+				DELETE FROM ${txn.unsafe(TABLES.listItems)}
+				WHERE list_id = ${sourceContext.listId}
+					AND book_id = ${sourceBook.bookId}
+			`,
+		]);
+
+		const books = await this.selectBooks(sourceContext.listId);
+
+		return {
+			activeListSlug: sourceContext.activeListSlug,
+			books,
+			pages: totalPages(books),
 		};
 	}
 

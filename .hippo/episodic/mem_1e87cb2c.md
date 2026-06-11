@@ -1,10 +1,10 @@
 ---
 id: mem_1e87cb2c
 created: "2026-06-06T01:51:25.929Z"
-last_retrieved: "2026-06-11T16:54:05.568Z"
-retrieval_count: 63
+last_retrieved: "2026-06-11T17:46:14.564Z"
+retrieval_count: 66
 strength: 1
-half_life_days: 373
+half_life_days: 404
 layer: episodic
 tags: []
 emotional_valence: neutral

@@ -1,13 +1,31 @@
 .metaGroup {
 	min-width: 0;
 	display: flex;
+	gap: 0.5rem;
 	justify-content: space-between;
 	width: 100%;
 }
 
+.badgeGroup {
+	min-width: 0;
+	display: flex;
+	gap: 0.4rem;
+	justify-content: flex-end;
+}
+
 .indexBadge {
+	flex-shrink: 0;
 	background: rgba(255, 255, 255, 0.06);
 	color: rgba(255, 255, 255, 0.78);
+}
+
+.seriesBadge {
+	min-width: 0;
+	overflow: hidden;
+	background: rgba(194, 139, 74, 0.12);
+	color: rgba(244, 214, 169, 0.9);
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .pagesBadge {
@@ -25,7 +43,7 @@
 	margin-bottom: 0;
 	font-size: 1.25rem;
 	font-weight: 600;
-	letter-spacing: -0.03em;
+	line-height: 1.12;
 	color: #fff;
 }
 
