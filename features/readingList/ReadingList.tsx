@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { signOut } from "next-auth/react";
 import { useMemo } from "react";
 
 import { ReadingListHero } from "./components/ReadingListHero";
@@ -16,14 +15,10 @@ import {
 } from "./types/readingList";
 
 type ReadingListProps = {
-	accountLabel: string;
 	initialListSlug: ReadingListSlug;
 };
 
-export function ReadingList({
-	accountLabel,
-	initialListSlug,
-}: ReadingListProps) {
+export function ReadingList({ initialListSlug }: ReadingListProps) {
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
@@ -63,11 +58,7 @@ export function ReadingList({
 				activeListSlug={activeListSlug}
 				booksCount={books?.length}
 				pages={pages}
-				accountLabel={accountLabel}
 				onSelectList={handleSelectList}
-				onSignOut={() => {
-					void signOut({ callbackUrl: "/login" });
-				}}
 			/>
 
 			<div className={styles.stack}>

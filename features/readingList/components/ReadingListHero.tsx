@@ -3,7 +3,6 @@
 import { Sparkles } from "lucide-react";
 import iconStyles from "@/components/Icon.module.css";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { debugComponentAttrs } from "@/lib/debug";
 import { READING_LIST_DEFINITIONS } from "../types/readingList";
@@ -13,18 +12,14 @@ import { ReadingListSwitcher } from "./ReadingListSwitcher";
 type ReadingListHeroProps = {
 	booksCount: number | undefined;
 	pages: number | undefined;
-	accountLabel: string;
 	activeListSlug: "to_be_read" | "finished" | "did_not_finish";
-	onSignOut: () => void;
 	onSelectList: (slug: "to_be_read" | "finished" | "did_not_finish") => void;
 };
 
 export function ReadingListHero({
 	booksCount,
 	pages,
-	accountLabel,
 	activeListSlug,
-	onSignOut,
 	onSelectList,
 }: ReadingListHeroProps) {
 	const activeList = READING_LIST_DEFINITIONS.find(
@@ -38,17 +33,6 @@ export function ReadingListHero({
 				<Badge className={styles.badge} variant="secondary">
 					{activeList?.name ?? "To Be Read"}
 				</Badge>
-			</div>
-
-			<div className={styles.accountRow}>
-				<div>
-					<p className={styles.accountLabel}>Signed in as</p>
-					<p className={styles.accountValue}>{accountLabel}</p>
-				</div>
-
-				<Button variant="secondary" size="sm" onClick={onSignOut}>
-					Sign out
-				</Button>
 			</div>
 
 			<ReadingListSwitcher

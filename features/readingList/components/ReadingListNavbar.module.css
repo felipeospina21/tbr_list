@@ -1,0 +1,156 @@
+.navbar {
+	position: relative;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	min-height: 4rem;
+	width: 100%;
+	padding: 0.75rem 1rem;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-right: 0;
+	border-left: 0;
+	background: rgba(9, 14, 12, 0.72);
+	backdrop-filter: blur(16px);
+}
+
+.brand {
+	min-width: 0;
+}
+
+.brandEyebrow {
+	margin: 0;
+	font-size: 0.6875rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.24em;
+	color: rgba(218, 171, 92, 0.82);
+}
+
+.brandTitle {
+	margin: 0.25rem 0 0;
+	font-family: var(--app-font-serif);
+	font-size: 1.25rem;
+	line-height: 1;
+	color: rgba(255, 252, 242, 0.94);
+}
+
+.menuRoot {
+	position: relative;
+	flex: 0 0 auto;
+}
+
+.menuButton {
+	width: 2.75rem;
+	height: 2.75rem;
+	padding: 0;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.055);
+	color: rgba(255, 252, 242, 0.9);
+	--button-ring-color: rgba(218, 171, 92, 0.54);
+	--button-ring-offset: rgba(9, 14, 12, 0.96);
+}
+
+.menuButton:hover {
+	background: rgba(255, 255, 255, 0.09);
+	color: rgba(255, 252, 242, 0.98);
+}
+
+.menuIcon {
+	width: 1.2rem;
+	height: 1.2rem;
+}
+
+.menuPanel {
+	position: absolute;
+	top: calc(100% + 0.6rem);
+	right: 0;
+	z-index: 20;
+	width: min(18rem, calc(100vw - 2rem));
+	padding: 0.55rem;
+	border: 1px solid rgba(255, 255, 255, 0.11);
+	border-radius: 1rem;
+	background: #0e1210;
+	box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.34);
+}
+
+.accountSummary {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	gap: 0.75rem;
+	align-items: center;
+	padding: 0.65rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.accountIcon {
+	width: 2rem;
+	height: 2rem;
+	color: rgba(218, 171, 92, 0.9);
+}
+
+.accountLabel {
+	margin: 0;
+	font-size: 0.6875rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.28em;
+	color: rgba(255, 255, 255, 0.45);
+}
+
+.accountValue {
+	margin: 0.35rem 0 0;
+	font-size: 0.95rem;
+	font-weight: 500;
+	color: rgba(255, 255, 255, 0.9);
+	overflow-wrap: anywhere;
+}
+
+.menuItem {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	gap: 0.65rem;
+	margin-top: 0.5rem;
+	padding: 0.75rem 0.7rem;
+	border: 0;
+	border-radius: 0.75rem;
+	background: transparent;
+	color: rgba(255, 252, 242, 0.88);
+	font: inherit;
+	font-size: 0.9rem;
+	font-weight: 650;
+	text-align: left;
+	cursor: pointer;
+	transition:
+		background-color 150ms ease,
+		color 150ms ease;
+}
+
+.menuItem:hover,
+.menuItem:focus-visible {
+	background: rgba(218, 171, 92, 0.12);
+	color: rgba(255, 252, 242, 0.98);
+	outline: none;
+}
+
+.menuItemIcon {
+	width: 1rem;
+	height: 1rem;
+	color: rgba(218, 171, 92, 0.92);
+}
+
+@media (min-width: 640px) {
+	.navbar {
+		padding-right: 2rem;
+		padding-left: 2rem;
+	}
+}
+
+@media (min-width: 1024px) {
+	.navbar {
+		padding-right: 2.5rem;
+		padding-left: 2.5rem;
+	}
+}

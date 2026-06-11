@@ -23,20 +23,12 @@ export default async function ReadingListPage({
 	}
 
 	const initialListSlug = getInitialListSlug(await searchParams);
-	const accountLabel =
-		session.user.email ?? session.user.name ?? "Signed in reader";
 
 	return (
 		<Suspense
-			fallback={
-				<ReadingListPending
-					accountLabel={accountLabel}
-					initialListSlug={initialListSlug}
-				/>
-			}
+			fallback={<ReadingListPending initialListSlug={initialListSlug} />}
 		>
 			<ReadingListHydration
-				accountLabel={accountLabel}
 				initialListSlug={initialListSlug}
 				userId={session.user.id}
 			/>

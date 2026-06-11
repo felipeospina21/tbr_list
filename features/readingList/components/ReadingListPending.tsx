@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { signOut } from "next-auth/react";
 import { useMemo } from "react";
 
 import { useBookSearch } from "../hooks/useBookSearch";
@@ -15,12 +14,10 @@ import { ReadingQueuePanel } from "./ReadingQueuePanel";
 import { SearchBooksPanel } from "./SearchBooksPanel";
 
 interface ReadingListPendingProps {
-	accountLabel: string;
 	initialListSlug: ReadingListSlug;
 }
 
 export function ReadingListPending({
-	accountLabel,
 	initialListSlug,
 }: ReadingListPendingProps) {
 	const router = useRouter();
@@ -50,11 +47,7 @@ export function ReadingListPending({
 				activeListSlug={initialListSlug}
 				booksCount={undefined}
 				pages={undefined}
-				accountLabel={accountLabel}
 				onSelectList={handleSelectList}
-				onSignOut={() => {
-					void signOut({ callbackUrl: "/login" });
-				}}
 			/>
 
 			<div className={styles.stack}>

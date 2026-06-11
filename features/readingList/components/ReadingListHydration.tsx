@@ -10,13 +10,11 @@ import { getReadingListStore } from "../server/storage";
 import type { ReadingListSlug } from "../types/readingList";
 
 interface ReadingListHydrationProps {
-	accountLabel: string;
 	initialListSlug: ReadingListSlug;
 	userId: string;
 }
 
 export async function ReadingListHydration({
-	accountLabel,
 	initialListSlug,
 	userId,
 }: ReadingListHydrationProps) {
@@ -31,10 +29,7 @@ export async function ReadingListHydration({
 
 	return (
 		<HydrationBoundary state={dehydrate(queryClient)}>
-			<ReadingList
-				accountLabel={accountLabel}
-				initialListSlug={initialListSlug}
-			/>
+			<ReadingList initialListSlug={initialListSlug} />
 		</HydrationBoundary>
 	);
 }
