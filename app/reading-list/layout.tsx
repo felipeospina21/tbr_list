@@ -4,7 +4,6 @@ import type { FC, ReactNode } from "react";
 
 import { getAuthOptions } from "@/auth";
 import { PageSurface } from "@/components/layout/PageSurface";
-import { ReadingListNavbar } from "@/features/readingList/components/ReadingListNavbar";
 import styles from "./layout.module.css";
 
 interface ReadingListLayoutProps {
@@ -18,12 +17,8 @@ const ReadingListLayout: FC<ReadingListLayoutProps> = async ({ children }) => {
 		redirect("/login?callbackUrl=/reading-list");
 	}
 
-	const accountLabel =
-		session.user.email ?? session.user.name ?? "Signed in reader";
-
 	return (
 		<PageSurface
-			decorations={<ReadingListNavbar accountLabel={accountLabel} />}
 			shellClassName={styles.shell}
 			surfaceClassName={styles.surface}
 		>

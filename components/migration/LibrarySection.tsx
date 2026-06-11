@@ -1,0 +1,50 @@
+import { useState } from "react";
+import { Book, ShelfKey } from "./types";
+import { Shelves } from "./Shelves";
+import { BooksList } from "./BooksList";
+import { BookListActions } from "./BookListActions";
+import { useFetchReadingList } from "@/features/readingList/queries/useFetchReadingList";
+
+export const LibrarySection = ({
+	books,
+	setBooks,
+}: {
+	books: Book[];
+	setBooks: (b: Book[]) => void;
+}) => {
+	const [activeShelf, setActiveShelf] = useState<ShelfKey>("reading");
+	const [optionsBook, setOptionsBook] = useState<Book | null>(null);
+
+	const toBeReadQuery = useFetchReadingList("to_be_read");
+
+	if (toBeReadQuery.isLoading) {
+		return <div>loading</div>;
+	}
+
+	return (
+		<div className="flex flex-col h-full">
+			{/* Shelf selector — minimal pill row */}
+			<Shelves
+				activeShelf={activeShelf}
+				books={toBeReadQuery.data?.books}
+				setActiveShelf={setActiveShelf}
+			/>
+
+			{/* Book list */}
+			<BooksList
+				books={toBeReadQuery.data?.books}
+				setBooks={setBooks}
+				activeShelf={activeShelf}
+				setOptionsBook={setOptionsBook}
+			/>
+
+			{/* Options Sheet */}
+			<BookListActions
+				books={toBeReadQuery.data?.books}
+				optionsBook={optionsBook}
+				setBooks={setBooks}
+				setOptionsBook={setOptionsBook}
+			/>
+		</div>
+	);
+};

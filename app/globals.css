@@ -1,9 +1,24 @@
+@import "tailwindcss";
+
 :root {
 	--background: #f3efe8;
 	--foreground: #171412;
-	--app-font-sans: Arial, Helvetica, sans-serif;
-	--app-font-serif: Georgia, "Times New Roman", serif;
+	--app-font-sans: "Nunito Sans", Arial, Helvetica, sans-serif;
+	--app-font-serif: Lora, Georgia, "Times New Roman", serif;
 	--app-font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+	--night: #13171c;
+	--surface: #1a1f26;
+	--surface-raised: #212830;
+	--surface-high: #2a323c;
+	--stone: #3a4552;
+	--stone-light: #4d5a68;
+	--paper: #e8e0d0;
+	--paper-dim: #b8ad9e;
+	--amber: #c98a38;
+	--amber-bright: #e8a84a;
+	--amber-dim: rgba(201, 138, 56, 0.18);
+	--ember: #8b3a2a;
+	--ember-bg: rgba(139, 58, 42, 0.18);
 }
 
 * {

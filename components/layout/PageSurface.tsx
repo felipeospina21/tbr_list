@@ -8,7 +8,6 @@ interface PageSurfaceProps {
 	children: ReactNode;
 	after?: ReactNode;
 	className?: string;
-	decorations?: ReactNode;
 	shellClassName?: string;
 	surfaceClassName?: string;
 	withBackdrop?: boolean;
@@ -18,7 +17,6 @@ export const PageSurface: FC<PageSurfaceProps> = ({
 	children,
 	after,
 	className,
-	decorations,
 	shellClassName,
 	surfaceClassName,
 	withBackdrop = true,
@@ -27,7 +25,6 @@ export const PageSurface: FC<PageSurfaceProps> = ({
 		<main className={cn(styles.main, className)}>
 			<section className={cn(styles.surface, surfaceClassName)}>
 				{withBackdrop ? <SectionBackdrop /> : null}
-				{decorations}
 
 				<div className={cn(styles.shell, shellClassName)}>{children}</div>
 			</section>
