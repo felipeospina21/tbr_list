@@ -1,10 +1,10 @@
 ---
 id: mem_faec8815
 created: "2026-06-06T01:51:05.416Z"
-last_retrieved: "2026-06-11T01:52:04.916Z"
-retrieval_count: 61
+last_retrieved: "2026-06-11T01:54:42.407Z"
+retrieval_count: 62
 strength: 1
-half_life_days: 371
+half_life_days: 378
 layer: episodic
 tags: [error]
 emotional_valence: negative

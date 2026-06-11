@@ -1,13 +1,7 @@
 .toolbar {
 	display: flex;
-	flex-direction: column;
-	gap: 0.75rem;
-}
-
-@media (min-width: 640px) {
-	.toolbar {
-		flex-direction: row;
-	}
+	align-items: center;
+	gap: 0.5rem;
 }
 
 .searchWrap {
@@ -18,7 +12,7 @@
 .searchIcon {
 	pointer-events: none;
 	position: absolute;
-	left: 1rem;
+	left: 0.75rem;
 	top: 50%;
 	width: 1rem;
 	height: 1rem;
@@ -27,10 +21,14 @@
 }
 
 .input {
+	height: 2.35rem;
 	border-color: rgba(255, 255, 255, 0.1);
+	border-radius: 0.75rem;
 	background: rgba(255, 255, 255, 0.05);
-	padding-left: 2.75rem;
+	padding-left: 2.25rem;
+	padding-right: 0.8rem;
 	color: #fff;
+	box-shadow: none;
 }
 
 .input::placeholder {
@@ -43,9 +41,14 @@
 }
 
 .clearButton {
+	width: 2.35rem;
+	height: 2.35rem;
+	flex: 0 0 auto;
+	border-radius: 0.75rem;
 	border-color: rgba(255, 255, 255, 0.1);
 	background: rgba(255, 255, 255, 0.06);
 	color: #fff;
+	box-shadow: none;
 }
 
 .clearButton:hover {

@@ -1,9 +1,7 @@
 "use client";
 
 import type { UseQueryResult } from "@tanstack/react-query";
-import { Search } from "lucide-react";
-import iconStyles from "@/components/Icon.module.css";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Card, CardContent } from "@/components/ui/Card";
 import { debugComponentAttrs } from "@/lib/debug";
 import type { BookSearchQueryData } from "../queries/useBookSearchData";
 import type { SearchBook } from "../types/search";
@@ -32,15 +30,8 @@ export function SearchBooksPanel({
 
 	return (
 		<Card className={styles.panel} {...debugComponentAttrs("SearchBooksPanel")}>
-			<CardHeader className={styles.header}>
-				<div className={styles.headerIcon}>
-					<Search className={iconStyles.size4} />
-				</div>
-				<CardTitle className={styles.headerTitle}>Search books</CardTitle>
-			</CardHeader>
-
 			<CardContent className={styles.content}>
-				<div className={styles.results}>
+				<div className={styles.stack}>
 					<SearchBooksToolbar query={query} onQueryChange={onQueryChange} />
 
 					{hasResults ? (

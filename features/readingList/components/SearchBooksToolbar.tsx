@@ -31,12 +31,13 @@ export function SearchBooksToolbar({
 			<Button
 				type="button"
 				variant="outline"
+				size="icon"
+				aria-label="Clear search"
 				onClick={() => onQueryChange("")}
 				disabled={!canClear}
 				className={styles.clearButton}
 			>
 				<X className={iconStyles.size4} />
-				Clear
 			</Button>
 		</div>
 	);
