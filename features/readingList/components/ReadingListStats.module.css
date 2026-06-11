@@ -1,0 +1,41 @@
+.grid {
+	margin-top: 1rem;
+	display: grid;
+	width: min(100%, 22rem);
+	max-width: 100%;
+	grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
+	gap: 0.5rem;
+}
+
+.card {
+	border-radius: 0.85rem;
+	border-color: rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.04);
+	color: #fff;
+	box-shadow: none;
+}
+
+.content {
+	padding: 0.65rem 0.75rem;
+}
+
+.label {
+	margin: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 0.64rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.18em;
+	color: rgba(255, 255, 255, 0.48);
+}
+
+.value {
+	margin: 0.25rem 0 0;
+	font-size: 1.35rem;
+	font-weight: 600;
+	line-height: 1;
+	letter-spacing: 0;
+	color: #fff;
+}

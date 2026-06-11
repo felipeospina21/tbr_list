@@ -3,10 +3,10 @@
 import { Sparkles } from "lucide-react";
 import iconStyles from "@/components/Icon.module.css";
 import { Badge } from "@/components/ui/Badge";
-import { Card, CardContent } from "@/components/ui/Card";
 import { debugComponentAttrs } from "@/lib/debug";
 import { READING_LIST_DEFINITIONS } from "../types/readingList";
 import styles from "./ReadingListHero.module.css";
+import { ReadingListStats } from "./ReadingListStats";
 import { ReadingListSwitcher } from "./ReadingListSwitcher";
 
 type ReadingListHeroProps = {
@@ -40,24 +40,7 @@ export function ReadingListHero({
 				onSelectList={onSelectList}
 			/>
 
-			{/* TODO: extract this block */}
-			<div className={styles.statGrid}>
-				{[
-					{ label: "Books", value: booksCount ?? 0 },
-					{ label: "Pages", value: pages ?? 0 },
-				].map((stat) => (
-					<Card
-						key={stat.label}
-						className={styles.statCard}
-						{...debugComponentAttrs("ReadingListStatCard")}
-					>
-						<CardContent className={styles.statContent}>
-							<p className={styles.statLabel}>{stat.label}</p>
-							<p className={styles.statValue}>{stat.value}</p>
-						</CardContent>
-					</Card>
-				))}
-			</div>
+			<ReadingListStats booksCount={booksCount} pages={pages} />
 		</div>
 	);
 }

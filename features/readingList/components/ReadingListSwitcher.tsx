@@ -1,5 +1,8 @@
 "use client";
 
+import type { FC } from "react";
+
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { debugComponentAttrs } from "@/lib/debug";
 import {
 	READING_LIST_DEFINITIONS,
@@ -8,15 +11,15 @@ import {
 } from "../types/readingList";
 import styles from "./ReadingListSwitcher.module.css";
 
-type ReadingListSwitcherProps = {
+interface ReadingListSwitcherProps {
 	activeListSlug: ReadingListSlug;
 	onSelectList: (slug: ReadingListSlug) => void;
-};
+}
 
-export function ReadingListSwitcher({
+export const ReadingListSwitcher: FC<ReadingListSwitcherProps> = ({
 	activeListSlug,
 	onSelectList,
-}: ReadingListSwitcherProps) {
+}) => {
 	const lists: ReadingListSummary[] = READING_LIST_DEFINITIONS.map(
 		(definition) => ({
 			slug: definition.slug,
@@ -27,29 +30,30 @@ export function ReadingListSwitcher({
 	);
 
 	return (
-		<nav
+		<Tabs
 			className={styles.root}
-			aria-label="Reading list selector"
+			value={activeListSlug}
+			onValueChange={(value) => {
+				const selectedList = lists.find((list) => list.slug === value);
+
+				if (selectedList) {
+					onSelectList(selectedList.slug);
+				}
+			}}
 			{...debugComponentAttrs("ReadingListSwitcher")}
 		>
-			{lists.map((list) => {
-				const isActive = list.slug === activeListSlug;
-
-				return (
-					<button
+			<TabsList className={styles.list} aria-label="Reading list selector">
+				{lists.map((list) => (
+					<TabsTrigger
 						key={list.slug}
-						type="button"
-						className={`${styles.button} ${isActive ? styles.buttonActive : ""}`}
-						aria-pressed={isActive}
-						onClick={() => {
-							onSelectList(list.slug);
-						}}
+						className={styles.trigger}
+						value={list.slug}
 					>
 						<span className={styles.label}>{list.name}</span>
 						<span className={styles.count}>{list.booksCount}</span>
-					</button>
-				);
-			})}
-		</nav>
+					</TabsTrigger>
+				))}
+			</TabsList>
+		</Tabs>
 	);
-}
+};
