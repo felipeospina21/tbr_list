@@ -2,9 +2,8 @@
 
 import { Loader } from "@/components/layout/Loader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { debugComponentAttrs } from "@/lib/debug";
 import { useChangeBookPosition } from "../mutations/useChangeBookPosition";
-import { READING_LIST_DEFINITIONS, type Book } from "../types/readingList";
+import { type Book, READING_LIST_DEFINITIONS } from "../types/readingList";
 import { BookCard } from "./BookCard";
 import { ReadingListCardActions } from "./ReadingListCardActions";
 import styles from "./ReadingQueuePanel.module.css";
@@ -33,10 +32,7 @@ export function ReadingQueuePanel({
 	);
 
 	return (
-		<Card
-			className={styles.panel}
-			{...debugComponentAttrs("ReadingQueuePanel")}
-		>
+		<Card className={styles.panel}>
 			<CardHeader className={styles.header}>
 				<CardTitle className={styles.title}>
 					{activeList?.name ?? "To Be Read"}

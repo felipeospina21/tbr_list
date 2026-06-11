@@ -3,7 +3,6 @@
 import type { FC } from "react";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
-import { debugComponentAttrs } from "@/lib/debug";
 import {
 	READING_LIST_DEFINITIONS,
 	type ReadingListSlug,
@@ -40,7 +39,6 @@ export const ReadingListSwitcher: FC<ReadingListSwitcherProps> = ({
 					onSelectList(selectedList.slug);
 				}
 			}}
-			{...debugComponentAttrs("ReadingListSwitcher")}
 		>
 			<TabsList className={styles.list} aria-label="Reading list selector">
 				{lists.map((list) => (

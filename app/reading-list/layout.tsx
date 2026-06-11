@@ -26,8 +26,6 @@ const ReadingListLayout: FC<ReadingListLayoutProps> = async ({ children }) => {
 			decorations={<ReadingListNavbar accountLabel={accountLabel} />}
 			shellClassName={styles.shell}
 			surfaceClassName={styles.surface}
-			debugName="ReadingListPage"
-			surfaceDebugName="ReadingListSurface"
 		>
 			{children}
 		</PageSurface>

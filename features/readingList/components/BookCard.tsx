@@ -1,7 +1,6 @@
 "use client";
 
 import { ReactNode } from "react";
-import { debugComponentAttrs } from "@/lib/debug";
 import { cn } from "@/lib/utils";
 import type { Book } from "../types/readingList";
 import styles from "./BookCard.module.css";
@@ -17,10 +16,7 @@ type BookCardProps = {
 
 export function BookCard({ book, index, provider, action }: BookCardProps) {
 	return (
-		<div
-			className={cn(styles.item, index === 0 ? styles.top : styles.regular)}
-			{...debugComponentAttrs("ReadingQueueItem")}
-		>
+		<div className={cn(styles.item, index === 0 ? styles.top : styles.regular)}>
 			<div className={styles.grid}>
 				<BookCardImage index={index} book={book} />
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { debugComponentAttrs } from "@/lib/debug";
 import styles from "./ReadingListHero.module.css";
 import { ReadingListStats } from "./ReadingListStats";
 import { ReadingListSwitcher } from "./ReadingListSwitcher";
@@ -19,7 +18,7 @@ export function ReadingListHero({
 	onSelectList,
 }: ReadingListHeroProps) {
 	return (
-		<div className={styles.root} {...debugComponentAttrs("ReadingListHero")}>
+		<div className={styles.root}>
 			<ReadingListSwitcher
 				activeListSlug={activeListSlug}
 				onSelectList={onSelectList}

@@ -1,10 +1,10 @@
 ---
 id: mem_e3acdf26
 created: "2026-06-11T00:58:33.259Z"
-last_retrieved: "2026-06-11T01:54:42.407Z"
-retrieval_count: 14
+last_retrieved: "2026-06-11T16:54:05.568Z"
+retrieval_count: 15
 strength: 1
-half_life_days: 100
+half_life_days: 102
 layer: episodic
 tags: []
 emotional_valence: neutral

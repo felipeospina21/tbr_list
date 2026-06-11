@@ -1,6 +1,5 @@
 import type { FC, ReactNode } from "react";
 
-import { debugComponentAttrs } from "@/lib/debug";
 import { cn } from "@/lib/utils";
 import styles from "./PageSurface.module.css";
 import { SectionBackdrop } from "./SectionBackdrop";
@@ -10,10 +9,8 @@ interface PageSurfaceProps {
 	after?: ReactNode;
 	className?: string;
 	decorations?: ReactNode;
-	debugName?: string;
 	shellClassName?: string;
 	surfaceClassName?: string;
-	surfaceDebugName?: string;
 	withBackdrop?: boolean;
 }
 
@@ -22,21 +19,13 @@ export const PageSurface: FC<PageSurfaceProps> = ({
 	after,
 	className,
 	decorations,
-	debugName,
 	shellClassName,
 	surfaceClassName,
-	surfaceDebugName,
 	withBackdrop = true,
 }) => {
 	return (
-		<main
-			className={cn(styles.main, className)}
-			{...debugComponentAttrs(debugName ?? "PageSurface")}
-		>
-			<section
-				className={cn(styles.surface, surfaceClassName)}
-				{...debugComponentAttrs(surfaceDebugName ?? "PageSurfaceSection")}
-			>
+		<main className={cn(styles.main, className)}>
+			<section className={cn(styles.surface, surfaceClassName)}>
 				{withBackdrop ? <SectionBackdrop /> : null}
 				{decorations}
 

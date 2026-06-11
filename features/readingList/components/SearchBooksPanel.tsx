@@ -2,7 +2,6 @@
 
 import type { UseQueryResult } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/Card";
-import { debugComponentAttrs } from "@/lib/debug";
 import type { BookSearchQueryData } from "../queries/useBookSearchData";
 import type { SearchBook } from "../types/search";
 import { BookCard } from "./BookCard";
@@ -29,7 +28,7 @@ export function SearchBooksPanel({
 	const hasResults = results.length > 0;
 
 	return (
-		<Card className={styles.panel} {...debugComponentAttrs("SearchBooksPanel")}>
+		<Card className={styles.panel}>
 			<CardContent className={styles.content}>
 				<div className={styles.stack}>
 					<SearchBooksToolbar query={query} onQueryChange={onQueryChange} />

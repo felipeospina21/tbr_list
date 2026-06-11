@@ -7,7 +7,6 @@ import iconStyles from "@/components/Icon.module.css";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
-import { debugComponentAttrs } from "@/lib/debug";
 import styles from "./LoginPanel.module.css";
 
 type LoginPanelProps = {
@@ -20,7 +19,7 @@ export function LoginPanel({ callbackUrl }: LoginPanelProps) {
 	}
 
 	return (
-		<div className={styles.root} {...debugComponentAttrs("LoginPanel")}>
+		<div className={styles.root}>
 			<div className={styles.eyebrow}>
 				<Sparkles className={iconStyles.size4} />
 				<Badge className={styles.badge} variant="secondary">
@@ -28,7 +27,7 @@ export function LoginPanel({ callbackUrl }: LoginPanelProps) {
 				</Badge>
 			</div>
 
-			<Card className={styles.card} {...debugComponentAttrs("LoginCard")}>
+			<Card className={styles.card}>
 				<CardContent className={styles.content}>
 					<h1 className={styles.title}>Sign in to your reading queue.</h1>
 

@@ -3,7 +3,6 @@
 import type { FC } from "react";
 
 import { Card, CardContent } from "@/components/ui/Card";
-import { debugComponentAttrs } from "@/lib/debug";
 import styles from "./ReadingListStats.module.css";
 
 interface ReadingListStatsProps {
@@ -25,11 +24,7 @@ export const ReadingListStats: FC<ReadingListStatsProps> = ({
 	return (
 		<div className={styles.grid}>
 			{stats.map((stat) => (
-				<Card
-					key={stat.label}
-					className={styles.card}
-					{...debugComponentAttrs("ReadingListStatCard")}
-				>
+				<Card key={stat.label} className={styles.card}>
 					<CardContent className={styles.content}>
 						<p className={styles.label}>{stat.label}</p>
 						<p className={styles.value}>{stat.value}</p>

@@ -5,7 +5,6 @@ import { signOut } from "next-auth/react";
 import { type FC, useEffect, useId, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
-import { debugComponentAttrs } from "@/lib/debug";
 import styles from "./ReadingListNavbar.module.css";
 
 interface ReadingListNavbarProps {
@@ -46,10 +45,7 @@ export const ReadingListNavbar: FC<ReadingListNavbarProps> = ({
 	}, [isMenuOpen]);
 
 	return (
-		<nav
-			className={styles.navbar}
-			{...debugComponentAttrs("ReadingListNavbar")}
-		>
+		<nav className={styles.navbar}>
 			<div className={styles.brand}>
 				<p className={styles.brandEyebrow}>Reading room</p>
 				<p className={styles.brandTitle}>Queue</p>

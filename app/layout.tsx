@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { debugRootClassName } from "@/lib/debug";
 import styles from "./layout.module.css";
 import { Providers } from "./providers";
 
@@ -19,7 +18,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" className={styles.html}>
-			<body className={`${styles.body} ${debugRootClassName()}`}>
+			<body className={styles.body}>
 				<Providers>{children}</Providers>
 			</body>
 		</html>

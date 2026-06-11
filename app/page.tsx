@@ -19,7 +19,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/Card";
-import { debugComponentAttrs } from "@/lib/debug";
 import { cn } from "@/lib/utils";
 import styles from "./page.module.css";
 
@@ -48,11 +47,7 @@ const features = [
 
 const LandingPageAfter: FC = () => (
 	<>
-		<section
-			id="story"
-			className={styles.story}
-			{...debugComponentAttrs("LandingStory")}
-		>
+		<section id="story" className={styles.story}>
 			<div className={styles.storyGrid}>
 				<div className={styles.storyIntro}>
 					<p className={styles.eyebrowMuted}>What it solves</p>
@@ -77,7 +72,6 @@ const LandingPageAfter: FC = () => (
 									styles.featureCard,
 									index === 1 && styles.featureCardAccent,
 								)}
-								{...debugComponentAttrs("LandingFeatureCard")}
 							>
 								<CardHeader className={styles.featureHeader}>
 									<div
@@ -107,14 +101,8 @@ const LandingPageAfter: FC = () => (
 			</div>
 		</section>
 
-		<section
-			className={styles.cta}
-			{...debugComponentAttrs("LandingCallToAction")}
-		>
-			<Card
-				className={styles.ctaCard}
-				{...debugComponentAttrs("LandingCallToActionCard")}
-			>
+		<section className={styles.cta}>
+			<Card className={styles.ctaCard}>
 				<CardContent className={styles.ctaContent}>
 					<div className={styles.ctaIntro}>
 						<p className={styles.eyebrowMuted}>Ready to read</p>
@@ -152,9 +140,7 @@ export default function LandingPage() {
 	return (
 		<PageSurface
 			decorations={<div className={styles.heroGlow} />}
-			debugName="LandingPage"
 			shellClassName={styles.heroShell}
-			surfaceDebugName="LandingHero"
 			after={<LandingPageAfter />}
 		>
 			<div className={styles.intro}>
@@ -207,10 +193,7 @@ export default function LandingPage() {
 
 			<div className={styles.previewWrap}>
 				<div className={styles.previewGlow} />
-				<Card
-					className={styles.previewCard}
-					{...debugComponentAttrs("LandingPreviewCard")}
-				>
+				<Card className={styles.previewCard}>
 					<CardHeader className={styles.previewHeader}>
 						<div className={styles.previewRow}>
 							<div>
