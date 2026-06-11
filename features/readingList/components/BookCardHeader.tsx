@@ -38,6 +38,15 @@ export const BookCardHeader: FC<BookCardHeaderProps> = ({
 			</div>
 			<h3 className={styles.title}>{book.title}</h3>
 			<p className={styles.author}>{book.author}</p>
+			{book.moods.length > 0 ? (
+				<div className={styles.moodGroup}>
+					{book.moods.slice(0, 3).map((mood) => (
+						<Badge key={mood} className={styles.moodBadge}>
+							{mood}
+						</Badge>
+					))}
+				</div>
+			) : null}
 		</>
 	);
 };

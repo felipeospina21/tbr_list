@@ -17,8 +17,6 @@ export const ReadingListStats: FC<ReadingListStatsProps> = ({
 	const stats = [
 		{ label: "Books", value: booksCount ?? 0 },
 		{ label: "Pages", value: pages ?? 0 },
-		// TODO: remove mocked data
-		{ label: "Mocked Time", value: "85h" },
 	];
 
 	return (

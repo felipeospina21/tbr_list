@@ -8,6 +8,7 @@ import {
 	readingListSlugSchema,
 	removeBookSchema,
 	transferBookSchema,
+	updateBookMoodsSchema,
 } from "@/features/readingList/schemas/readingList.schema";
 import { getReadingListStore } from "@/features/readingList/server/storage";
 import type { ReadingListSlug } from "@/features/readingList/types/readingList";
@@ -131,7 +132,22 @@ export async function PATCH(request: Request) {
 			targetIndex?: unknown;
 			sourceListSlug?: unknown;
 			targetListSlug?: unknown;
+			moods?: unknown;
 		};
+
+		const parsedMoodUpdate = updateBookMoodsSchema.safeParse(body);
+
+		if (parsedMoodUpdate.success) {
+			const store = await getReadingListStore();
+			const snapshot = await store.updateBookMoods(
+				userId,
+				parsedMoodUpdate.data.bookId,
+				parsedMoodUpdate.data.moods,
+				getRequestedListSlug(request),
+			);
+
+			return NextResponse.json(snapshot);
+		}
 
 		const parsedTransfer = transferBookSchema.safeParse(body);
 

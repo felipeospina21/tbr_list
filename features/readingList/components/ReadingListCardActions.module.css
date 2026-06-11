@@ -10,49 +10,188 @@
 	gap: 0.55rem;
 }
 
-.moveButton,
-.removeButton,
+.optionsButton {
+	flex: 1 1 auto;
+	justify-content: flex-start;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(255, 255, 255, 0.035);
+	color: rgba(244, 214, 169, 0.9);
+}
+
+.optionsButton:hover {
+	background: rgba(194, 139, 74, 0.12);
+	color: #f8deb6;
+}
+
+.sheetLayer {
+	position: fixed;
+	inset: 0;
+	z-index: 40;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	padding: 1rem;
+}
+
+.backdrop {
+	position: absolute;
+	inset: 0;
+	border: 0;
+	background: rgba(0, 0, 0, 0.62);
+}
+
+.sheet {
+	position: relative;
+	z-index: 1;
+	width: min(100%, 32rem);
+	max-height: min(86vh, 42rem);
+	overflow: auto;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 1.35rem 1.35rem 0.8rem 0.8rem;
+	background: #20272e;
+	padding: 0.75rem;
+	color: #fff;
+	box-shadow: 0 -24px 80px rgba(0, 0, 0, 0.5);
+}
+
+.sheetHandle {
+	margin: 0.1rem auto 0.85rem;
+	width: 2rem;
+	height: 0.2rem;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.2);
+}
+
+.sheetHeader {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 0.25rem 0.25rem 1rem;
+}
+
+.sheetEyebrow,
+.sectionLabel {
+	margin: 0;
+	font-size: 0.68rem;
+	font-weight: 700;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: rgba(232, 168, 74, 0.9);
+}
+
+.sheetTitle {
+	margin: 0.25rem 0 0;
+	font-size: 1.1rem;
+	line-height: 1.18;
+	color: #f4ead8;
+}
+
+.sheetAuthor {
+	margin: 0.35rem 0 0;
+	font-size: 0.85rem;
+	color: rgba(232, 224, 208, 0.65);
+}
+
+.dragHint {
+	display: grid;
+	flex: 0 0 auto;
+	width: 2.25rem;
+	height: 2.25rem;
+	place-items: center;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.06);
+	color: rgba(232, 224, 208, 0.52);
+}
+
+.sheetSection {
+	display: grid;
+	gap: 0.6rem;
+	padding: 0.55rem 0.25rem;
+}
+
+.sheetAction {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	gap: 0.7rem;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 0.9rem;
+	background: rgba(255, 255, 255, 0.045);
+	padding: 0.85rem;
+	color: #f4ead8;
+	font: inherit;
+	font-size: 0.9rem;
+	font-weight: 650;
+	text-align: left;
+}
+
+.sheetAction:hover {
+	background: rgba(194, 139, 74, 0.12);
+}
+
+.removeAction {
+	border-color: rgba(164, 58, 47, 0.32);
+	background: rgba(164, 58, 47, 0.13);
+	color: #f1b0a8;
+}
+
+.destinationRow {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.45rem;
+}
+
+.destinationButton,
 .confirmButton,
 .cancelButton,
-.destinationButton {
+.doneButton {
 	border: 1px solid rgba(255, 255, 255, 0.08);
 	background: rgba(255, 255, 255, 0.035);
 	color: rgba(255, 255, 255, 0.78);
 }
 
-.moveButton {
-	flex: 1 1 auto;
-	justify-content: flex-start;
-	color: rgba(244, 214, 169, 0.9);
+.destinationButton {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
-.moveButton:hover,
-.destinationButton:hover {
+.destinationButton:hover,
+.doneButton:hover {
 	background: rgba(194, 139, 74, 0.12);
 	color: #f8deb6;
 }
 
-.removeButton {
-	flex: 0 0 auto;
-	width: 2.25rem;
-	padding: 0;
-	color: rgba(255, 255, 255, 0.58);
-}
-
-.removeButton:hover {
-	background: rgba(164, 58, 47, 0.14);
-	color: #f1b0a8;
-}
-
-.confirmGroup {
+.moodGrid {
 	display: flex;
-	gap: 0.35rem;
+	flex-wrap: wrap;
+	gap: 0.45rem;
 }
 
-.confirmButton,
-.cancelButton {
-	width: 2.25rem;
-	padding: 0;
+.moodButton {
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.05);
+	padding: 0.45rem 0.7rem;
+	color: rgba(232, 224, 208, 0.72);
+	font: inherit;
+	font-size: 0.78rem;
+	font-weight: 650;
+	text-transform: capitalize;
+}
+
+.moodButtonSelected {
+	border-color: rgba(232, 168, 74, 0.55);
+	background: rgba(201, 138, 56, 0.18);
+	color: #f8deb6;
+}
+
+.confirmRow {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0.5rem;
 }
 
 .confirmButton {
@@ -69,15 +208,17 @@
 	color: #fff;
 }
 
-.destinationRow {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 0.45rem;
+.doneButton {
+	width: 100%;
+	margin-top: 0.5rem;
 }
 
-.destinationButton {
-	min-width: 0;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+@media (min-width: 768px) {
+	.sheetLayer {
+		align-items: center;
+	}
+
+	.sheet {
+		border-radius: 1.2rem;
+	}
 }

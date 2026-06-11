@@ -19,6 +19,7 @@ interface SortableBookCardProps {
 	index: number;
 	onRemove: (bookId: string) => void;
 	onTransfer: (book: Book, targetListSlug: ReadingListSlug) => void;
+	onUpdateMoods: (bookId: string, moods: string[]) => void;
 }
 
 export const SortableBookCard: FC<SortableBookCardProps> = ({
@@ -27,6 +28,7 @@ export const SortableBookCard: FC<SortableBookCardProps> = ({
 	index,
 	onRemove,
 	onTransfer,
+	onUpdateMoods,
 }) => {
 	const {
 		attributes,
@@ -72,6 +74,7 @@ export const SortableBookCard: FC<SortableBookCardProps> = ({
 						dragHandle={dragHandle}
 						onRemove={onRemove}
 						onTransfer={onTransfer}
+						onUpdateMoods={onUpdateMoods}
 					/>
 				}
 			/>

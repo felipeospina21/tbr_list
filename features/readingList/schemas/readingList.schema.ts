@@ -31,6 +31,7 @@ export const bookSchema = z.object({
 	accent: z.string(),
 	seriesName: z.string().nullable(),
 	seriesPosition: z.string().nullable(),
+	moods: z.array(z.string()),
 	subjects: z.array(z.string()),
 });
 
@@ -52,6 +53,11 @@ export const transferBookSchema = z.object({
 	bookId: z.string(),
 	sourceListSlug: readingListSlugSchema,
 	targetListSlug: readingListSlugSchema,
+});
+
+export const updateBookMoodsSchema = z.object({
+	bookId: z.string(),
+	moods: z.array(z.string().trim().min(1)).max(12),
 });
 
 export { readingListSlugSchema };

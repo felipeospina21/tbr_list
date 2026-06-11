@@ -12,11 +12,13 @@ import styles from "./ReadingListSwitcher.module.css";
 
 interface ReadingListSwitcherProps {
 	activeListSlug: ReadingListSlug;
+	booksCountByList?: Partial<Record<ReadingListSlug, number>>;
 	onSelectList: (slug: ReadingListSlug) => void;
 }
 
 export const ReadingListSwitcher: FC<ReadingListSwitcherProps> = ({
 	activeListSlug,
+	booksCountByList,
 	onSelectList,
 }) => {
 	const lists: ReadingListSummary[] = READING_LIST_DEFINITIONS.map(
@@ -24,7 +26,7 @@ export const ReadingListSwitcher: FC<ReadingListSwitcherProps> = ({
 			slug: definition.slug,
 			name: definition.name,
 			isDefault: definition.isDefault,
-			booksCount: 0,
+			booksCount: booksCountByList?.[definition.slug] ?? 0,
 		}),
 	);
 

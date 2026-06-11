@@ -20,6 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { useChangeBookPosition } from "../mutations/useChangeBookPosition";
 import { useRemoveBookFromReadingList } from "../mutations/useRemoveBookFromReadingList";
 import { useTransferBookBetweenReadingLists } from "../mutations/useTransferBookBetweenReadingLists";
+import { useUpdateBookMoods } from "../mutations/useUpdateBookMoods";
 import { type Book, READING_LIST_DEFINITIONS } from "../types/readingList";
 import styles from "./ReadingQueuePanel.module.css";
 import { SortableBookCard } from "./SortableBookCard";
@@ -39,6 +40,7 @@ export function ReadingQueuePanel({
 	const removeBookMutation = useRemoveBookFromReadingList(activeListSlug);
 	const transferBookMutation =
 		useTransferBookBetweenReadingLists(activeListSlug);
+	const updateBookMoodsMutation = useUpdateBookMoods(activeListSlug);
 	const sortableBookIds = useMemo(
 		() => books?.map((book) => book.id) ?? [],
 		[books],
@@ -63,6 +65,10 @@ export function ReadingQueuePanel({
 		targetListSlug: "to_be_read" | "finished" | "did_not_finish",
 	) {
 		transferBookMutation.mutate({ book, targetListSlug });
+	}
+
+	function updateBookMoods(bookId: string, moods: string[]) {
+		updateBookMoodsMutation.mutate({ bookId, moods });
 	}
 
 	function reorderBook(event: DragEndEvent) {
@@ -124,6 +130,7 @@ export function ReadingQueuePanel({
 										index={index}
 										onRemove={removeBook}
 										onTransfer={transferBook}
+										onUpdateMoods={updateBookMoods}
 									/>
 								))}
 							</div>

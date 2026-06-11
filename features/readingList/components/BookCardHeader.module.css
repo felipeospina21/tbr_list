@@ -52,3 +52,16 @@
 	font-size: 0.875rem;
 	color: rgba(255, 255, 255, 0.6);
 }
+
+.moodGroup {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+	margin-bottom: 0.55rem;
+}
+
+.moodBadge {
+	background: rgba(201, 138, 56, 0.13);
+	color: rgba(244, 214, 169, 0.86);
+	text-transform: capitalize;
+}

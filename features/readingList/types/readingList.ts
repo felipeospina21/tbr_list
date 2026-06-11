@@ -50,6 +50,7 @@ export type Book = {
 	accent: string;
 	seriesName: string | null;
 	seriesPosition: string | null;
+	moods: string[];
 	subjects: string[];
 };
 

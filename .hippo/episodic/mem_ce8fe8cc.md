@@ -1,10 +1,10 @@
 ---
 id: mem_ce8fe8cc
 created: "2026-06-10T01:13:40.501Z"
-last_retrieved: "2026-06-11T17:46:14.564Z"
-retrieval_count: 46
+last_retrieved: "2026-06-11T21:06:11.943Z"
+retrieval_count: 48
 strength: 1
-half_life_days: 269
+half_life_days: 273
 layer: episodic
 tags: []
 emotional_valence: neutral

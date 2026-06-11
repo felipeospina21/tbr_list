@@ -33,6 +33,7 @@ const TABLES = {
 	books: "books",
 	bookIdentifiers: "book_identifiers",
 	bookSubjects: "book_subjects",
+	userBookMoods: "user_book_moods",
 	bookMetrics: "book_metrics",
 	listItems: "reading_list_items",
 } as const;
@@ -84,6 +85,11 @@ type ListBookRow = Omit<StoredBookRow, "id"> & {
 type BookSubjectRow = {
 	bookId: string;
 	subject: string;
+};
+
+type UserBookMoodRow = {
+	bookId: string;
+	mood: string;
 };
 
 type BookMetricRow = {
@@ -149,6 +155,7 @@ function normalizeSubjects(subjects: readonly string[]) {
 function toBookFromRow(
 	row: ListBookRow,
 	subjects: string[],
+	moods: string[],
 	metrics: BookMetrics,
 ): Book {
 	const art = buildBookArt(row.title);
@@ -174,6 +181,7 @@ function toBookFromRow(
 		accent: art.accent,
 		seriesName: row.seriesName,
 		seriesPosition: row.seriesPosition,
+		moods,
 		subjects,
 	};
 }
@@ -332,6 +340,22 @@ class NeonReadingListStore implements ReadingListStore {
 		`;
 
 		await this.sql`
+			CREATE TABLE IF NOT EXISTS ${this.sql.unsafe(TABLES.userBookMoods)} (
+				id TEXT PRIMARY KEY,
+				user_id TEXT NOT NULL REFERENCES ${this.sql.unsafe(TABLES.users)}(id) ON DELETE CASCADE,
+				book_id TEXT NOT NULL REFERENCES ${this.sql.unsafe(TABLES.books)}(id) ON DELETE CASCADE,
+				mood TEXT NOT NULL,
+				created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				UNIQUE (user_id, book_id, mood)
+			);
+		`;
+
+		await this.sql`
+			CREATE INDEX IF NOT EXISTS idx_user_book_moods_user_book
+			ON ${this.sql.unsafe(TABLES.userBookMoods)}(user_id, book_id);
+		`;
+
+		await this.sql`
 			CREATE TABLE IF NOT EXISTS ${this.sql.unsafe(TABLES.bookMetrics)} (
 				id TEXT PRIMARY KEY,
 				book_id TEXT NOT NULL REFERENCES ${this.sql.unsafe(TABLES.books)}(id) ON DELETE CASCADE,
@@ -379,11 +403,9 @@ class NeonReadingListStore implements ReadingListStore {
 		authSubject: string,
 		listSlug?: ReadingListSlug,
 	): Promise<ReadingListSnapshot> {
-		const { listId, activeListSlug } = await this.resolveReadingListContext(
-			authSubject,
-			listSlug,
-		);
-		const books = await this.selectBooks(listId);
+		const { userId, listId, activeListSlug } =
+			await this.resolveReadingListContext(authSubject, listSlug);
+		const books = await this.selectBooks(listId, userId);
 
 		return {
 			activeListSlug,
@@ -397,10 +419,8 @@ class NeonReadingListStore implements ReadingListStore {
 		book: Book,
 		listSlug?: ReadingListSlug,
 	): Promise<ReadingListSnapshot> {
-		const { listId, activeListSlug } = await this.resolveReadingListContext(
-			authSubject,
-			listSlug,
-		);
+		const { userId, listId, activeListSlug } =
+			await this.resolveReadingListContext(authSubject, listSlug);
 		const storedBook = await this.resolveBook(book);
 		const nextPosition = await this.getNextPosition(listId);
 
@@ -417,7 +437,9 @@ class NeonReadingListStore implements ReadingListStore {
 			ON CONFLICT (list_id, book_id) DO NOTHING
 		`;
 
-		const books = await this.selectBooks(listId);
+		await this.seedUserBookMoods(userId, storedBook.id, book.moods);
+
+		const books = await this.selectBooks(listId, userId);
 
 		return {
 			activeListSlug,
@@ -432,10 +454,8 @@ class NeonReadingListStore implements ReadingListStore {
 		targetIndex: number,
 		listSlug?: ReadingListSlug,
 	): Promise<ReadingListSnapshot> {
-		const { listId, activeListSlug } = await this.resolveReadingListContext(
-			authSubject,
-			listSlug,
-		);
+		const { userId, listId, activeListSlug } =
+			await this.resolveReadingListContext(authSubject, listSlug);
 		const books = await this.selectBooksWithInternalIds(listId);
 		const currentIndex = books.findIndex(
 			(book) => book.canonicalKey === bookId,
@@ -487,7 +507,7 @@ class NeonReadingListStore implements ReadingListStore {
 			throw error;
 		}
 
-		const updatedBooks = await this.selectBooks(listId);
+		const updatedBooks = await this.selectBooks(listId, userId);
 
 		return {
 			activeListSlug,
@@ -501,10 +521,8 @@ class NeonReadingListStore implements ReadingListStore {
 		bookId: string,
 		listSlug?: ReadingListSlug,
 	): Promise<ReadingListSnapshot> {
-		const { listId, activeListSlug } = await this.resolveReadingListContext(
-			authSubject,
-			listSlug,
-		);
+		const { userId, listId, activeListSlug } =
+			await this.resolveReadingListContext(authSubject, listSlug);
 
 		await this.sql`
 			DELETE FROM ${this.sql.unsafe(TABLES.listItems)} AS items
@@ -514,7 +532,7 @@ class NeonReadingListStore implements ReadingListStore {
 				AND books.canonical_key = ${bookId}
 		`;
 
-		const books = await this.selectBooks(listId);
+		const books = await this.selectBooks(listId, userId);
 
 		return {
 			activeListSlug,
@@ -572,12 +590,41 @@ class NeonReadingListStore implements ReadingListStore {
 			`,
 		]);
 
-		const books = await this.selectBooks(sourceContext.listId);
+		const books = await this.selectBooks(
+			sourceContext.listId,
+			sourceContext.userId,
+		);
 
 		return {
 			activeListSlug: sourceContext.activeListSlug,
 			books,
 			pages: totalPages(books),
+		};
+	}
+
+	async updateBookMoods(
+		authSubject: string,
+		bookId: string,
+		moods: readonly string[],
+		listSlug?: ReadingListSlug,
+	): Promise<ReadingListSnapshot> {
+		const { userId, listId, activeListSlug } =
+			await this.resolveReadingListContext(authSubject, listSlug);
+		const books = await this.selectBooksWithInternalIds(listId);
+		const matchingBook = books.find((book) => book.canonicalKey === bookId);
+
+		if (!matchingBook) {
+			return this.getBooks(authSubject, listSlug);
+		}
+
+		await this.syncUserBookMoods(userId, matchingBook.bookId, moods);
+
+		const updatedBooks = await this.selectBooks(listId, userId);
+
+		return {
+			activeListSlug,
+			books: updatedBooks,
+			pages: totalPages(updatedBooks),
 		};
 	}
 
@@ -943,6 +990,84 @@ class NeonReadingListStore implements ReadingListStore {
 		);
 	}
 
+	private async seedUserBookMoods(
+		userId: string,
+		bookId: string,
+		moods: readonly string[],
+	) {
+		const normalizedMoods = normalizeSubjects(moods);
+
+		if (normalizedMoods.length === 0) {
+			return;
+		}
+
+		const existingRows = (await this.sql`
+				SELECT mood
+				FROM ${this.sql.unsafe(TABLES.userBookMoods)}
+				WHERE user_id = ${userId}
+					AND book_id = ${bookId}
+				LIMIT 1
+			`) as Array<{ mood: string }>;
+
+		if (existingRows.length > 0) {
+			return;
+		}
+
+		await Promise.all(
+			normalizedMoods.map(
+				(mood) =>
+					this.sql`
+					INSERT INTO ${this.sql.unsafe(TABLES.userBookMoods)} (
+						id, user_id, book_id, mood
+					)
+					VALUES (
+						${randomUUID()},
+						${userId},
+						${bookId},
+						${mood}
+					)
+					ON CONFLICT (user_id, book_id, mood) DO NOTHING
+				`,
+			),
+		);
+	}
+
+	private async syncUserBookMoods(
+		userId: string,
+		bookId: string,
+		moods: readonly string[],
+	) {
+		const normalizedMoods = normalizeSubjects(moods);
+
+		await this.sql`
+			DELETE FROM ${this.sql.unsafe(TABLES.userBookMoods)}
+			WHERE user_id = ${userId}
+				AND book_id = ${bookId}
+		`;
+
+		if (normalizedMoods.length === 0) {
+			return;
+		}
+
+		await Promise.all(
+			normalizedMoods.map(
+				(mood) =>
+					this.sql`
+					INSERT INTO ${this.sql.unsafe(TABLES.userBookMoods)} (
+						id, user_id, book_id, mood
+					)
+					VALUES (
+						${randomUUID()},
+						${userId},
+						${bookId},
+						${mood}
+					)
+					ON CONFLICT (user_id, book_id, mood) DO NOTHING
+				`,
+			),
+		);
+	}
+
 	private async syncBookMetrics(bookId: string, book: Book) {
 		const metricEntries = [
 			{
@@ -1060,9 +1185,13 @@ class NeonReadingListStore implements ReadingListStore {
 		return rows[0]?.nextPosition ?? 0;
 	}
 
-	private async selectBooks(listId: string) {
+	private async selectBooks(listId: string, userId: string) {
 		const rows = await this.selectBooksWithInternalIds(listId);
 		const subjectsByBookId = await this.selectBookSubjects(
+			rows.map((row) => row.bookId),
+		);
+		const moodsByBookId = await this.selectUserBookMoods(
+			userId,
 			rows.map((row) => row.bookId),
 		);
 		const metricsByBookId = await this.selectBookMetrics(
@@ -1073,6 +1202,7 @@ class NeonReadingListStore implements ReadingListStore {
 			toBookFromRow(
 				row,
 				subjectsByBookId.get(row.bookId) ?? [],
+				moodsByBookId.get(row.bookId) ?? [],
 				metricsByBookId.get(row.bookId) ?? {
 					averageRating: null,
 					ratingsCount: null,
@@ -1136,6 +1266,35 @@ class NeonReadingListStore implements ReadingListStore {
 		}
 
 		return subjectMap;
+	}
+
+	private async selectUserBookMoods(
+		userId: string,
+		bookIds: readonly string[],
+	) {
+		if (bookIds.length === 0) {
+			return new Map<string, string[]>();
+		}
+
+		const rows = (await this.sql`
+				SELECT
+					book_id AS "bookId",
+					mood
+				FROM ${this.sql.unsafe(TABLES.userBookMoods)}
+				WHERE user_id = ${userId}
+					AND book_id = ANY(${bookIds})
+				ORDER BY mood ASC
+			`) as UserBookMoodRow[];
+
+		const moodMap = new Map<string, string[]>();
+
+		for (const row of rows) {
+			const moods = moodMap.get(row.bookId) ?? [];
+			moods.push(row.mood);
+			moodMap.set(row.bookId, moods);
+		}
+
+		return moodMap;
 	}
 
 	private async selectBookMetrics(bookIds: readonly string[]) {

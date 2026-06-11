@@ -35,4 +35,10 @@ export interface ReadingListStore {
 		sourceListSlug: ReadingListSlug,
 		targetListSlug: ReadingListSlug,
 	): Promise<ReadingListSnapshot>;
+	updateBookMoods(
+		userId: string,
+		bookId: string,
+		moods: readonly string[],
+		listSlug?: ReadingListSlug,
+	): Promise<ReadingListSnapshot>;
 }
