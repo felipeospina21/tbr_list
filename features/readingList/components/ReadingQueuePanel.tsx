@@ -1,5 +1,6 @@
 "use client";
 
+import { Loader } from "@/components/layout/Loader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { debugComponentAttrs } from "@/lib/debug";
 import { useChangeBookPosition } from "../mutations/useChangeBookPosition";
@@ -11,11 +12,13 @@ import styles from "./ReadingQueuePanel.module.css";
 type ReadingQueuePanelProps = {
 	books: Book[] | undefined;
 	activeListSlug: "to_be_read" | "finished" | "did_not_finish";
+	isLoading?: boolean;
 };
 
 export function ReadingQueuePanel({
 	activeListSlug,
 	books,
+	isLoading = false,
 }: ReadingQueuePanelProps) {
 	const moveBookMutation = useChangeBookPosition(activeListSlug);
 
@@ -37,7 +40,9 @@ export function ReadingQueuePanel({
 			</CardHeader>
 
 			<CardContent className={styles.content}>
-				{noBooks ? (
+				{isLoading ? (
+					<Loader className={styles.loader} />
+				) : noBooks ? (
 					<div className={styles.emptyState}>
 						No books yet. Use the search panel below to add your first title.
 					</div>

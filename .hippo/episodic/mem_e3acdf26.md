@@ -1,10 +1,10 @@
 ---
-id: mem_ce8fe8cc
-created: "2026-06-10T01:13:40.501Z"
+id: mem_e3acdf26
+created: "2026-06-11T00:58:33.259Z"
 last_retrieved: "2026-06-11T01:13:22.214Z"
-retrieval_count: 33
+retrieval_count: 5
 strength: 1
-half_life_days: 168
+half_life_days: 32
 layer: episodic
 tags: []
 emotional_valence: neutral
@@ -16,4 +16,4 @@ pinned: false
 confidence: verified
 ---
 
-use interfaces for component props definitions unless a type alias is required
+avoid having multiple components in a single file

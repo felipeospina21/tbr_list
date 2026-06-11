@@ -1,25 +1,13 @@
 "use client";
 
-import { type QueryKey, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import type {
-	Book,
 	ReadingListSlug,
 	ReadingListSnapshot,
 } from "../types/readingList";
+import { getReadingListQueryKey } from "./readingListQueryKeys";
 
-export const READING_LIST_QUERY_KEY: QueryKey = ["reading-list"];
-
-export const EMPTY_READING_LIST = {
-	books: [],
-	pages: 0,
-} satisfies {
-	books: Book[];
-	pages: number;
-};
-
-export function getReadingListQueryKey(listSlug: ReadingListSlug) {
-	return [...READING_LIST_QUERY_KEY, listSlug] as const;
-}
+export { getReadingListQueryKey } from "./readingListQueryKeys";
 
 export async function fetchReadingList(
 	listSlug: ReadingListSlug,

@@ -4,45 +4,32 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useMemo } from "react";
 
-import { ReadingListHero } from "./components/ReadingListHero";
-import { ReadingQueuePanel } from "./components/ReadingQueuePanel";
-import { SearchBooksPanel } from "./components/SearchBooksPanel";
-import { useBookSearch } from "./hooks/useBookSearch";
-import { useReadingList } from "./hooks/useReadingList";
-import styles from "./ReadingList.module.css";
+import { useBookSearch } from "../hooks/useBookSearch";
+import styles from "../ReadingList.module.css";
 import {
 	DEFAULT_READING_LIST_SLUG,
 	type ReadingListSlug,
-} from "./types/readingList";
+} from "../types/readingList";
+import { ReadingListHero } from "./ReadingListHero";
+import { ReadingQueuePanel } from "./ReadingQueuePanel";
+import { SearchBooksPanel } from "./SearchBooksPanel";
 
-type ReadingListProps = {
+interface ReadingListPendingProps {
 	accountLabel: string;
 	initialListSlug: ReadingListSlug;
-};
+}
 
-export function ReadingList({
+export function ReadingListPending({
 	accountLabel,
 	initialListSlug,
-}: ReadingListProps) {
+}: ReadingListPendingProps) {
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
-
-	const { activeListSlug, setSelectedListSlug, readingListQuery } =
-		useReadingList(initialListSlug);
-
-	const books = readingListQuery.data?.books;
-	const pages = readingListQuery.data?.pages;
-
 	const { query, setQuery, searchQuery } = useBookSearch();
-	const existingBookIds = useMemo(
-		() => new Set(books?.map((book) => book.id)),
-		[books],
-	);
+	const existingBookIds = useMemo(() => new Set<string>(), []);
 
 	function handleSelectList(slug: ReadingListSlug) {
-		setSelectedListSlug(slug);
-
 		const nextParams = new URLSearchParams(searchParams.toString());
 
 		if (slug === DEFAULT_READING_LIST_SLUG) {
@@ -60,9 +47,9 @@ export function ReadingList({
 	return (
 		<>
 			<ReadingListHero
-				activeListSlug={activeListSlug}
-				booksCount={books?.length}
-				pages={pages}
+				activeListSlug={initialListSlug}
+				booksCount={undefined}
+				pages={undefined}
 				accountLabel={accountLabel}
 				onSelectList={handleSelectList}
 				onSignOut={() => {
@@ -72,7 +59,7 @@ export function ReadingList({
 
 			<div className={styles.stack}>
 				<SearchBooksPanel
-					activeListSlug={activeListSlug}
+					activeListSlug={initialListSlug}
 					query={query}
 					searchQuery={searchQuery}
 					onQueryChange={setQuery}
@@ -80,9 +67,9 @@ export function ReadingList({
 				/>
 
 				<ReadingQueuePanel
-					activeListSlug={activeListSlug}
-					books={books}
-					isLoading={readingListQuery.isPending}
+					activeListSlug={initialListSlug}
+					books={undefined}
+					isLoading
 				/>
 			</div>
 		</>

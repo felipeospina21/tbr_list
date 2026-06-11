@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { getReadingListQueryKey } from "../queries/useFetchReadingList";
+import { getReadingListQueryKey } from "../queries/readingListQueryKeys";
 import type {
 	ReadingListSlug,
 	ReadingListSnapshot,
