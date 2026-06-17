@@ -3,6 +3,8 @@ import type { FC, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import styles from "./PageSurface.module.css";
 import { SectionBackdrop } from "./SectionBackdrop";
+import { Header } from "../migration/Header";
+import { NavDock } from "../migration/NavDock";
 
 interface PageSurfaceProps {
 	children: ReactNode;
@@ -24,12 +26,14 @@ export const PageSurface: FC<PageSurfaceProps> = ({
 	return (
 		<main className={cn(styles.main, className)}>
 			<section className={cn(styles.surface, surfaceClassName)}>
+				<Header activeNav="library" />
 				{withBackdrop ? <SectionBackdrop /> : null}
 
 				<div className={cn(styles.shell, shellClassName)}>{children}</div>
 			</section>
 
 			{after}
+			<NavDock activeNav="library" />
 		</main>
 	);
 };

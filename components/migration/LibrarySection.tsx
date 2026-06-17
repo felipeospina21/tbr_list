@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { useFetchReadingList } from "@/features/readingList/api/useFetchReadingList";
 import { BookListActions } from "./BookListActions";
@@ -5,13 +6,7 @@ import { BooksList } from "./BooksList";
 import { Shelves } from "./Shelves";
 import { Book, ShelfKey } from "./types";
 
-export const LibrarySection = ({
-	books,
-	setBooks,
-}: {
-	books: Book[];
-	setBooks: (b: Book[]) => void;
-}) => {
+export const LibrarySection = ({ books }: { books: Book[] }) => {
 	const [activeShelf, setActiveShelf] = useState<ShelfKey>("reading");
 	const [optionsBook, setOptionsBook] = useState<Book | null>(null);
 
@@ -30,21 +25,19 @@ export const LibrarySection = ({
 				setActiveShelf={setActiveShelf}
 			/>
 
-			{/* Book list */}
-			<BooksList
-				books={toBeReadQuery.data?.books}
-				setBooks={setBooks}
-				activeShelf={activeShelf}
-				setOptionsBook={setOptionsBook}
-			/>
-
-			{/* Options Sheet */}
-			<BookListActions
-				books={toBeReadQuery.data?.books}
-				optionsBook={optionsBook}
-				setBooks={setBooks}
-				setOptionsBook={setOptionsBook}
-			/>
+			{/* <BooksList */}
+			{/* 	books={toBeReadQuery.data?.books} */}
+			{/* 	setBooks={setBooks} */}
+			{/* 	activeShelf={activeShelf} */}
+			{/* 	setOptionsBook={setOptionsBook} */}
+			{/* /> */}
+			{/**/}
+			{/* <BookListActions */}
+			{/* 	books={toBeReadQuery.data?.books} */}
+			{/* 	optionsBook={optionsBook} */}
+			{/* 	setBooks={setBooks} */}
+			{/* 	setOptionsBook={setOptionsBook} */}
+			{/* /> */}
 		</div>
 	);
 };

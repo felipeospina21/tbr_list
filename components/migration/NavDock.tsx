@@ -1,23 +1,25 @@
+"use client";
 import { motion } from "framer-motion";
 import { BarChart2, BookOpen, Search, Smile } from "lucide-react";
 import { FC } from "react";
 import { T } from "./constants";
+import Link from "next/link";
 
+const base = "/reading-app";
 const NAV_ITEMS = [
-	{ id: "library", label: "Library", icon: BookOpen },
-	{ id: "search", label: "Search", icon: Search },
-	{ id: "mood", label: "Mood", icon: Smile },
-	{ id: "stats", label: "Stats", icon: BarChart2 },
+	{ id: "library", route: base, label: "Library", icon: BookOpen },
+	{ id: "search", label: "Search", route: `${base}/search`, icon: Search },
+	{ id: "mood", label: "Mood", route: `${base}/mood`, icon: Smile },
+	{ id: "stats", label: "Stats", route: `${base}/stats`, icon: BarChart2 },
 ] as const;
 
 export type NavId = (typeof NAV_ITEMS)[number]["id"];
 
 interface NavDockProps {
 	activeNav: "library" | "search" | "mood" | "stats";
-	navigate: (id: "search" | "library" | "mood" | "stats") => void;
 }
 
-export const NavDock: FC<NavDockProps> = ({ activeNav, navigate }) => {
+export const NavDock: FC<NavDockProps> = ({ activeNav }) => {
 	return (
 		<div
 			className="fixed bottom-0 left-0 right-0 z-30 flex-shrink-0 safe-bottom"
@@ -32,11 +34,11 @@ export const NavDock: FC<NavDockProps> = ({ activeNav, navigate }) => {
 					const Icon = item.icon;
 					const isActive = activeNav === item.id;
 					return (
-						<button
+						<Link
 							key={item.id}
 							className="flex-1 flex flex-col items-center justify-center gap-1 transition-all active:scale-90 min-h-[44px]"
-							onClick={() => navigate(item.id)}
 							aria-label={item.label}
+							href={item.route}
 						>
 							<motion.div
 								className="flex items-center justify-center w-10 h-7 rounded-xl"
@@ -60,7 +62,7 @@ export const NavDock: FC<NavDockProps> = ({ activeNav, navigate }) => {
 							>
 								{item.label}
 							</span>
-						</button>
+						</Link>
 					);
 				})}
 			</div>

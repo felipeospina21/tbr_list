@@ -1,3 +1,4 @@
+"use client";
 import { CheckCircle, Plus, Search, X } from "lucide-react";
 import { useState } from "react";
 import { T } from "./constants";
@@ -6,10 +7,10 @@ import { Book } from "./types";
 
 export const SearchSection = ({
 	books,
-	setBooks,
+	// setBooks,
 }: {
 	books: Book[];
-	setBooks: (b: Book[]) => void;
+	// setBooks: (b: Book[]) => void;
 }) => {
 	const [query, setQuery] = useState("");
 
@@ -44,7 +45,7 @@ export const SearchSection = ({
 				</div>
 			</div>
 
-			<SearchSuggestions query={query} books={books} setBooks={setBooks} />
+			{/* <SearchSuggestions query={query} books={books} setBooks={setBooks} /> */}
 		</div>
 	);
 };

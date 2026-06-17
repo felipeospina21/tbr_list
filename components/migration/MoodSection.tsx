@@ -1,3 +1,4 @@
+"use client";
 import { AnimatePresence, motion } from "framer-motion";
 import { Clock, Smile, X } from "lucide-react";
 import { SetStateAction, useState } from "react";

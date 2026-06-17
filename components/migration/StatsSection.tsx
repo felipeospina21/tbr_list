@@ -1,3 +1,4 @@
+"use client";
 import { CurrentlyReadingStats } from "./CurrentlyReadingStats";
 import { GenreBreakdownStats } from "./GenreBreakdownStats";
 import { LibraryBreakdownStats } from "./LibraryBreakdownStats";
