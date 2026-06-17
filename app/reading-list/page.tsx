@@ -1,11 +1,11 @@
 "use client";
 
+import { BarChart2, BookOpen, Search, Smile } from "lucide-react";
 import { useState } from "react";
-import { BookOpen, Search, Smile, BarChart2 } from "lucide-react";
-import { NavDock } from "@/components/migration/NavDock";
-import { Header } from "@/components/migration/Header";
-import { NavPageContent } from "@/components/migration/NavPageContent";
 import { T } from "@/components/migration/constants";
+import { Header } from "@/components/migration/Header";
+import { NavDock } from "@/components/migration/NavDock";
+import { NavPageContent } from "@/components/migration/NavPageContent";
 
 const NAV_ITEMS = [
 	{ id: "library", label: "Library", icon: BookOpen },

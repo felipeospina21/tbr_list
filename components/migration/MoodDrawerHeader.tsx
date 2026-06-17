@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
+import { Dispatch, FC, SetStateAction } from "react";
 import { T } from "./constants";
 import { MOOD_EMOJI } from "./MoodSection";
-import { Dispatch, SetStateAction, FC } from "react";
 
 interface MoodDrawerHeaderProps {
 	setDrawerOpen: Dispatch<SetStateAction<boolean>>;

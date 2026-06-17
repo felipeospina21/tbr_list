@@ -1,5 +1,5 @@
-import { useDragControls, motion } from "framer-motion";
-import { GripVertical, Star, MoreVertical } from "lucide-react";
+import { motion, useDragControls } from "framer-motion";
+import { GripVertical, MoreVertical, Star } from "lucide-react";
 import { T } from "./constants";
 import { Book } from "./types";
 

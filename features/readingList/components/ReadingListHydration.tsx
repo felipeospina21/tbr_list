@@ -4,7 +4,7 @@ import {
 	QueryClient,
 } from "@tanstack/react-query";
 
-import { getReadingListQueryKey } from "../queries/readingListQueryKeys";
+import { getReadingListQueryKey } from "../api/readingListQueryKeys";
 import { ReadingList } from "../ReadingList";
 import { getReadingListStore } from "../server/storage";
 import {

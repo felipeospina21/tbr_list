@@ -33,7 +33,10 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en" className={`${styles.html} ${lora.variable} ${nunitoSans.variable}`}>
+		<html
+			lang="en"
+			className={`${styles.html} ${lora.variable} ${nunitoSans.variable}`}
+		>
 			<body className={styles.body}>
 				<Providers>{children}</Providers>
 			</body>

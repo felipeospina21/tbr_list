@@ -1,8 +1,8 @@
-import { BookOpen, BookMarked, X } from "lucide-react";
-import { T } from "./constants";
-import { ShelfKey } from "./types";
+import { BookMarked, BookOpen, X } from "lucide-react";
 import { Dispatch, FC, SetStateAction } from "react";
 import { Book } from "@/features/readingList/types/readingList";
+import { T } from "./constants";
+import { ShelfKey } from "./types";
 
 interface ShelvesProps {
 	activeShelf: ShelfKey;

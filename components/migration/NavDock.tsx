@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { BookOpen, Search, Smile, BarChart2 } from "lucide-react";
+import { BarChart2, BookOpen, Search, Smile } from "lucide-react";
 import { FC } from "react";
 import { T } from "./constants";
 

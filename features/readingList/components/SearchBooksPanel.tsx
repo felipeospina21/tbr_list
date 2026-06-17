@@ -2,7 +2,7 @@
 
 import type { UseQueryResult } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/Card";
-import type { BookSearchQueryData } from "../queries/useBookSearchData";
+import type { BookSearchQueryData } from "../api/useBookSearchData";
 import type { SearchBook } from "../types/search";
 import { BookCard } from "./BookCard";
 import { SearchBooksCardActions } from "./SearchBooksCardActions";

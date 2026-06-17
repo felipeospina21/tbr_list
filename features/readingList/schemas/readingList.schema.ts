@@ -1,14 +1,13 @@
 import { z } from "zod";
 
-import { READING_LIST_DEFINITIONS } from "../types/readingList";
-
 const bookSourceSchema = z.enum(["google-books", "hardcover", "open-library"]);
-const readingListSlugSchema = z.enum(
-	READING_LIST_DEFINITIONS.map((definition) => definition.slug) as [
-		string,
-		...string[],
-	],
-);
+
+export const readingListTypeSchema = z.enum([
+	"to_be_read",
+	"reading",
+	"finished",
+	"did_not_finish",
+]);
 
 export const bookSchema = z.object({
 	id: z.string(),
@@ -51,13 +50,11 @@ export const removeBookSchema = z.object({
 
 export const transferBookSchema = z.object({
 	bookId: z.string(),
-	sourceListSlug: readingListSlugSchema,
-	targetListSlug: readingListSlugSchema,
+	// sourceListSlug: readingListSlugSchema,
+	// targetListSlug: readingListSlugSchema,
 });
 
 export const updateBookMoodsSchema = z.object({
 	bookId: z.string(),
 	moods: z.array(z.string().trim().min(1)).max(12),
 });
-
-export { readingListSlugSchema };

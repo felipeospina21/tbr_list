@@ -8,12 +8,16 @@
 		"start": "next start",
 		"lint": "biome lint --write",
 		"format": "biome format --write",
-		"check": "biome check --write"
+		"check": "biome check --write",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "tsx ./migrate.ts"
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "^1.1.0",
 		"@tailwindcss/postcss": "^4.3.0",
 		"@tanstack/react-query": "^5.101.0",
+		"dotenv": "^17.4.2",
+		"drizzle-orm": "^0.45.2",
 		"framer-motion": "^12.40.0",
 		"lucide-react": "^1.17.0",
 		"next": "16.2.7",
@@ -32,6 +36,8 @@
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
+		"drizzle-kit": "^0.31.10",
+		"tsx": "^4.22.4",
 		"typescript": "^5"
 	}
 }

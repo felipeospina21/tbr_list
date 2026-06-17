@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Book, ShelfKey } from "./types";
-import { Shelves } from "./Shelves";
-import { BooksList } from "./BooksList";
+import { useFetchReadingList } from "@/features/readingList/api/useFetchReadingList";
 import { BookListActions } from "./BookListActions";
-import { useFetchReadingList } from "@/features/readingList/queries/useFetchReadingList";
+import { BooksList } from "./BooksList";
+import { Shelves } from "./Shelves";
+import { Book, ShelfKey } from "./types";
 
 export const LibrarySection = ({
 	books,

@@ -12,7 +12,7 @@ export { getReadingListQueryKey } from "./readingListQueryKeys";
 export async function fetchReadingList(
 	listSlug: ReadingListSlug,
 ): Promise<ReadingListSnapshot> {
-	const response = await fetch(`/api/reading-list?listSlug=${listSlug}`);
+	const response = await fetch(`/api/reading-list?type=to_be_read`);
 
 	if (!response.ok) {
 		throw new Error("Reading list request failed");

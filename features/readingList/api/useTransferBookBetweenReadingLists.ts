@@ -1,14 +1,13 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-import { getReadingListQueryKey } from "../queries/readingListQueryKeys";
 import type {
 	Book,
 	ReadingListSlug,
 	ReadingListSnapshot,
 } from "../types/readingList";
 import { totalPages } from "../types/readingList";
+import { getReadingListQueryKey } from "./readingListQueryKeys";
 
 interface TransferBookInput {
 	book: Book;

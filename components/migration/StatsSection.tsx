@@ -1,8 +1,8 @@
-import { Book } from "./types";
 import { CurrentlyReadingStats } from "./CurrentlyReadingStats";
 import { GenreBreakdownStats } from "./GenreBreakdownStats";
 import { LibraryBreakdownStats } from "./LibraryBreakdownStats";
 import { StatsCards } from "./StatsCards";
+import { Book } from "./types";
 
 export const StatsSection = ({ books }: { books: Book[] }) => {
 	const total = books.length;

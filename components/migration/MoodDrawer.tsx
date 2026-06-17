@@ -2,11 +2,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Smile } from "lucide-react";
 import { Dispatch, FC, SetStateAction } from "react";
 import { T } from "./constants";
-import { Book } from "./types";
-import { MoodShuffling } from "./MoodShuffling";
-import { MoodSuggestion } from "./MoodSuggestion";
 import { EmptyMoodSuggestion } from "./EmptyMoodSuggestion";
 import { MoodDrawerHeader } from "./MoodDrawerHeader";
+import { MoodShuffling } from "./MoodShuffling";
+import { MoodSuggestion } from "./MoodSuggestion";
+import { Book } from "./types";
 
 interface MoodDrawerProps {
 	drawerOpen: boolean;

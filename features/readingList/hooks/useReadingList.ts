@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { useFetchReadingList } from "../queries/useFetchReadingList";
+import { useFetchReadingList } from "../api/useFetchReadingList";
 import {
 	DEFAULT_READING_LIST_SLUG,
 	type ReadingListSlug,

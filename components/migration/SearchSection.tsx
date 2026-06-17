@@ -1,8 +1,8 @@
-import { Search, X, CheckCircle, Plus } from "lucide-react";
+import { CheckCircle, Plus, Search, X } from "lucide-react";
 import { useState } from "react";
 import { T } from "./constants";
-import { Book } from "./types";
 import { SearchSuggestions } from "./SearchSuggestions";
+import { Book } from "./types";
 
 export const SearchSection = ({
 	books,

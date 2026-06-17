@@ -1,27 +1,23 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { getReadingListQueryKey } from "../queries/readingListQueryKeys";
 import type {
+	Book,
 	ReadingListSlug,
 	ReadingListSnapshot,
 } from "../types/readingList";
+import { getReadingListQueryKey } from "./readingListQueryKeys";
 
-export interface UpdateBookMoodsInput {
-	bookId: string;
-	moods: string[];
-}
-
-export async function updateReadingListBookMoods(
+export async function addReadingListBook(
 	listSlug: ReadingListSlug,
-	input: UpdateBookMoodsInput,
+	book: Book,
 ): Promise<ReadingListSnapshot> {
 	const response = await fetch(`/api/reading-list?listSlug=${listSlug}`, {
-		method: "PATCH",
+		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify(input),
+		body: JSON.stringify({ book }),
 	});
 
 	if (!response.ok) {
@@ -31,13 +27,12 @@ export async function updateReadingListBookMoods(
 	return (await response.json()) as ReadingListSnapshot;
 }
 
-export function useUpdateBookMoods(listSlug: ReadingListSlug) {
+export function useAddBookToReadingList(listSlug: ReadingListSlug) {
 	const queryClient = useQueryClient();
 	const queryKey = getReadingListQueryKey(listSlug);
 
 	return useMutation({
-		mutationFn: (input: UpdateBookMoodsInput) =>
-			updateReadingListBookMoods(listSlug, input),
+		mutationFn: (book: Book) => addReadingListBook(listSlug, book),
 		onMutate: async (input) => {
 			await queryClient.cancelQueries({ queryKey });
 
@@ -51,12 +46,7 @@ export function useUpdateBookMoods(listSlug: ReadingListSlug) {
 						return undefined;
 					}
 
-					return {
-						...snapshot,
-						books: snapshot.books.map((book) =>
-							book.id === input.bookId ? { ...book, moods: input.moods } : book,
-						),
-					};
+					return { ...snapshot, books: [...snapshot.books, input] };
 				},
 			);
 

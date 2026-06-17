@@ -1,49 +1,60 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-import { getReadingListQueryKey } from "../queries/readingListQueryKeys";
 import type {
 	ReadingListSlug,
 	ReadingListSnapshot,
 } from "../types/readingList";
-import { totalPages } from "../types/readingList";
+import { getReadingListQueryKey } from "./readingListQueryKeys";
 
-interface RemoveBookInput {
+type ChangeBookPositionInput = {
 	bookId: string;
-}
+	targetIndex: number;
+};
 
-interface RemoveBookContext {
+type ChangeBookPositionContext = {
 	previousSnapshot?: ReadingListSnapshot;
-}
+};
 
-function removeBookFromSnapshot(
+function reorderSnapshot(
 	snapshot: ReadingListSnapshot | undefined,
-	bookId: string,
+	{ bookId, targetIndex }: ChangeBookPositionInput,
 ) {
 	if (!snapshot) {
 		return snapshot;
 	}
 
-	const books = snapshot.books.filter((book) => book.id !== bookId);
+	const currentIndex = snapshot.books.findIndex((book) => book.id === bookId);
+
+	if (
+		currentIndex < 0 ||
+		targetIndex < 0 ||
+		targetIndex >= snapshot.books.length
+	) {
+		return snapshot;
+	}
+
+	const books = [...snapshot.books];
+	const [book] = books.splice(currentIndex, 1);
+	books.splice(targetIndex, 0, book);
 
 	return {
 		...snapshot,
 		books,
-		pages: totalPages(books),
 	};
 }
 
-export async function removeReadingListBook(
+export async function moveReadingListBook(
 	listSlug: ReadingListSlug,
 	bookId: string,
+	targetIndex: number,
 ): Promise<ReadingListSnapshot> {
 	const response = await fetch(`/api/reading-list?listSlug=${listSlug}`, {
-		method: "DELETE",
+		method: "PATCH",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify({ bookId }),
+		body: JSON.stringify({ bookId, targetIndex }),
 	});
 
 	if (!response.ok) {
@@ -53,18 +64,20 @@ export async function removeReadingListBook(
 	return (await response.json()) as ReadingListSnapshot;
 }
 
-export function useRemoveBookFromReadingList(listSlug: ReadingListSlug) {
+export function useChangeBookPosition(listSlug: ReadingListSlug) {
 	const queryClient = useQueryClient();
 	const queryKey = getReadingListQueryKey(listSlug);
 
 	return useMutation<
 		ReadingListSnapshot,
 		Error,
-		RemoveBookInput,
-		RemoveBookContext
+		ChangeBookPositionInput,
+		ChangeBookPositionContext
 	>({
-		mutationFn: ({ bookId }) => removeReadingListBook(listSlug, bookId),
-		onMutate: async ({ bookId }) => {
+		mutationFn: ({ bookId, targetIndex }: ChangeBookPositionInput) =>
+			moveReadingListBook(listSlug, bookId, targetIndex),
+
+		onMutate: async (input) => {
 			await queryClient.cancelQueries({ queryKey });
 
 			const previousSnapshot =
@@ -72,7 +85,7 @@ export function useRemoveBookFromReadingList(listSlug: ReadingListSlug) {
 
 			queryClient.setQueryData<ReadingListSnapshot | undefined>(
 				queryKey,
-				(snapshot) => removeBookFromSnapshot(snapshot, bookId),
+				(snapshot) => reorderSnapshot(snapshot, input),
 			);
 
 			return { previousSnapshot };

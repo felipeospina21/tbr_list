@@ -1,7 +1,7 @@
+import { BookMarked } from "lucide-react";
 import { FC } from "react";
 import { T } from "./constants";
 import { NavId } from "./NavDock";
-import { BookMarked } from "lucide-react";
 
 interface HeaderProps {
 	activeNav: "library" | "search" | "mood" | "stats";

@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import { FC } from "react";
 import { T } from "./constants";
-import { Book } from "./types";
 import { MOOD_EMOJI } from "./MoodSection";
+import { Book } from "./types";
 
 interface MoodCardProps {
 	mood: string;

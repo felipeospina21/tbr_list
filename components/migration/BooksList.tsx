@@ -1,4 +1,4 @@
-import { Reorder, AnimatePresence } from "framer-motion";
+import { AnimatePresence, Reorder } from "framer-motion";
 import { BookOpen } from "lucide-react";
 import { Dispatch, FC, SetStateAction } from "react";
 import { T } from "./constants";

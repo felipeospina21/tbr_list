@@ -3,6 +3,7 @@
 import { BookMarked } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
+import { useFetchReadingList } from "./api/useFetchReadingList";
 import { MoodMatchPanel } from "./components/MoodMatchPanel";
 import { ReadingListInsights } from "./components/ReadingListInsights";
 import { ReadingListSwitcher } from "./components/ReadingListSwitcher";
@@ -13,7 +14,6 @@ import {
 import { ReadingQueuePanel } from "./components/ReadingQueuePanel";
 import { SearchBooksPanel } from "./components/SearchBooksPanel";
 import { useBookSearch } from "./hooks/useBookSearch";
-import { useFetchReadingList } from "./queries/useFetchReadingList";
 import styles from "./ReadingList.module.css";
 import {
 	DEFAULT_READING_LIST_SLUG,

@@ -1,6 +1,6 @@
-import { useDragControls, Reorder } from "framer-motion";
-import { Book } from "./types";
+import { Reorder, useDragControls } from "framer-motion";
 import { BookCard } from "./BookCard";
+import { Book } from "./types";
 
 export const DraggableBookItem = ({
 	book,

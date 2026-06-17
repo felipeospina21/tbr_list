@@ -1,11 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { FC, useState } from "react";
 import { INITIAL_BOOKS, T } from "./constants";
-import { Book } from "./types";
 import { LibrarySection } from "./LibrarySection";
+import { MoodSection } from "./MoodSection";
 import { SearchSection } from "./SearchSection";
 import { StatsSection } from "./StatsSection";
-import { MoodSection } from "./MoodSection";
+import { Book } from "./types";
 
 interface NavPageContentProps {
 	activeNav: "library" | "search" | "mood" | "stats";
