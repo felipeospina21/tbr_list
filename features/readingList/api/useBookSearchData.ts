@@ -1,27 +1,25 @@
 "use client";
 
+import { SearchBook } from "@/f";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-
-import type { SearchBook, SearchDebugInfo } from "../types/search";
 
 const MIN_QUERY_LENGTH = 2;
 const SEARCH_QUERY_KEY = "book-search";
 
 export type BookSearchQueryData = {
 	results: SearchBook[];
-	debug: SearchDebugInfo | null;
 };
 
-export function useBookSearchData(searchTerm: string) {
+export function useBookSearchData(searchTerm: string, isSearching: boolean) {
 	return useQuery({
 		queryKey: [SEARCH_QUERY_KEY, searchTerm] as const,
-		enabled: searchTerm.length >= MIN_QUERY_LENGTH,
+		enabled: isSearching && searchTerm.length >= MIN_QUERY_LENGTH,
 		placeholderData: keepPreviousData,
 		retry: false,
 		queryFn: async ({ signal, queryKey }) => {
 			const [, query] = queryKey;
 			const response = await fetch(
-				`/api/bookSearch?q=${encodeURIComponent(query)}`,
+				`/api/book-search?q=${encodeURIComponent(query)}`,
 				{
 					signal,
 				},
@@ -32,13 +30,11 @@ export function useBookSearchData(searchTerm: string) {
 			}
 
 			return (await response.json()) as {
-				results?: SearchBook[];
-				debug?: SearchDebugInfo;
+				results?: [];
 			};
 		},
 		select: (data): BookSearchQueryData => ({
 			results: data.results ?? [],
-			debug: data.debug ?? null,
 		}),
 	});
 }

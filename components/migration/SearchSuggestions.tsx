@@ -2,76 +2,29 @@ import { CheckCircle, Plus } from "lucide-react";
 import { FC, useState } from "react";
 import { T } from "./constants";
 import { Book } from "./types";
-
-const SEARCH_SUGGESTIONS: Book[] = [
-	{
-		id: "s1",
-		title: "Tomorrow, and Tomorrow, and Tomorrow",
-		author: "Gabrielle Zevin",
-		img_url:
-			"https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_eff539b6eb_44a70fdcecbb0e24.png",
-		genre: "Literary Fiction",
-		pages: 480,
-		mood: ["hopeful", "contemplative"],
-		year: 2022,
-		shelf: "tbr",
-	},
-	{
-		id: "s2",
-		title: "Intermezzo",
-		author: "Sally Rooney",
-		img_url:
-			"https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_bc1f433cc6_8df5dac29d4c10e6.png",
-		genre: "Literary Fiction",
-		pages: 448,
-		mood: ["melancholic", "contemplative"],
-		year: 2024,
-		shelf: "tbr",
-	},
-	{
-		id: "s3",
-		title: "The Women",
-		author: "Kristin Hannah",
-		img_url:
-			"https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_3d0646b6b5_ed493411703f703e.png",
-		genre: "Historical Fiction",
-		pages: 480,
-		mood: ["tense", "hopeful"],
-		year: 2024,
-		shelf: "tbr",
-	},
-];
+import { SearchBook } from "@/f";
 
 interface SearchSuggestionsProps {
 	query: string;
-	books: Book[];
-	setBooks: (b: Book[]) => void;
+	books: SearchBook[] | undefined;
 }
 
 export const SearchSuggestions: FC<SearchSuggestionsProps> = ({
 	query,
 	books,
-	setBooks,
 }) => {
 	const [added, setAdded] = useState<Set<string>>(new Set());
 
+	if (!books || !books.length) {
+		return <div>no books</div>;
+	}
+
 	const addBook = (book: Book) => {
 		if (!books.find((b) => b.id === book.id)) {
-			setBooks([...books, { ...book, shelf: "tbr" }]);
 			setAdded((prev) => new Set([...prev, book.id]));
 		}
 	};
 
-	const allBooks = [...books, ...SEARCH_SUGGESTIONS];
-
-	const results =
-		query.length > 1
-			? allBooks.filter(
-					(b) =>
-						b.title.toLowerCase().includes(query.toLowerCase()) ||
-						b.author.toLowerCase().includes(query.toLowerCase()),
-				)
-			: SEARCH_SUGGESTIONS.filter((s) => !books.find((b) => b.id === s.id));
 	return (
 		<div className="flex-1 overflow-y-auto px-4 pt-4 pb-2">
 			{!query && (
@@ -83,7 +36,7 @@ export const SearchSuggestions: FC<SearchSuggestionsProps> = ({
 				</p>
 			)}
 			<div className="flex flex-col gap-2.5">
-				{results.map((book) => {
+				{books.map((book) => {
 					const inLibrary = !!books.find((b) => b.id === book.id);
 					return (
 						<div
@@ -99,7 +52,7 @@ export const SearchSuggestions: FC<SearchSuggestionsProps> = ({
 								style={{ width: 68, minHeight: 104 }}
 							>
 								<img
-									src={book.img_url}
+									src={book.cover}
 									alt={book.title}
 									className="w-full h-full object-cover"
 									style={{ minHeight: 104 }}
@@ -117,13 +70,13 @@ export const SearchSuggestions: FC<SearchSuggestionsProps> = ({
 										className="font-nunito text-xs mt-0.5"
 										style={{ color: T.paperDim }}
 									>
-										{book.author} · {book.year}
+										{book.author} · {book.publishedYear}
 									</p>
 									<span
 										className="inline-block font-nunito text-xs px-2 py-0.5 rounded-full mt-1.5"
 										style={{ backgroundColor: T.stone, color: T.paperDim }}
 									>
-										{book.genre}
+										{book.subjects[0]}
 									</span>
 								</div>
 							</div>

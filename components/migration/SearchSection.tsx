@@ -1,19 +1,20 @@
 "use client";
-import { CheckCircle, Plus, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useState } from "react";
 import { T } from "./constants";
 import { SearchSuggestions } from "./SearchSuggestions";
-import { Book } from "./types";
+import { useBookSearchData } from "@/features/readingList/api/useBookSearchData";
 
-export const SearchSection = ({
-	books,
-	// setBooks,
-}: {
-	books: Book[];
-	// setBooks: (b: Book[]) => void;
-}) => {
+export const SearchSection = () => {
 	const [query, setQuery] = useState("");
+	const [isSearching, setIsSearching] = useState(false);
+	const searchBook = useBookSearchData(query, isSearching);
 
+	if (searchBook.isFetching) {
+		return <>...loading</>;
+	}
+
+	console.log(searchBook.data?.results);
 	return (
 		<div className="flex flex-col h-full">
 			{/* Search input */}
@@ -35,17 +36,26 @@ export const SearchSection = ({
 						style={{ color: T.paper }}
 					/>
 					{query && (
-						<button
-							onClick={() => setQuery("")}
-							style={{ color: T.stoneLight }}
-						>
-							<X size={15} />
-						</button>
+						<>
+							<button
+								onClick={() => {
+									setIsSearching(true);
+								}}
+							>
+								search
+							</button>
+							<button
+								onClick={() => setQuery("")}
+								style={{ color: T.stoneLight }}
+							>
+								<X size={15} />
+							</button>
+						</>
 					)}
 				</div>
 			</div>
 
-			{/* <SearchSuggestions query={query} books={books} setBooks={setBooks} /> */}
+			<SearchSuggestions query={query} books={searchBook.data?.results} />
 		</div>
 	);
 };
