@@ -11,7 +11,7 @@ import iconStyles from "@/components/Icon.module.css";
 import { Button } from "@/components/ui/Button";
 import { READING_LIST_MOODS } from "../constants/readingListMoods";
 import {
-	type Book,
+	type SchemaBook,
 	READING_LIST_DEFINITIONS,
 	type ReadingListSlug,
 } from "../types/readingList";
@@ -19,10 +19,10 @@ import styles from "./ReadingListCardActions.module.css";
 
 interface ReadingListCardActionsProps {
 	activeListSlug: ReadingListSlug;
-	book: Book;
+	book: SchemaBook;
 	dragHandle: ReactNode;
 	onRemove: (bookId: string) => void;
-	onTransfer: (book: Book, targetListSlug: ReadingListSlug) => void;
+	onTransfer: (book: SchemaBook, targetListSlug: ReadingListSlug) => void;
 	onUpdateMoods: (bookId: string, moods: string[]) => void;
 }
 

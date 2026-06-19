@@ -1,12 +1,12 @@
 "use client";
 
 import type { FC } from "react";
-import type { Book, ReadingListSlug } from "../types/readingList";
+import type { SchemaBook, ReadingListSlug } from "../types/readingList";
 import { READING_LIST_DEFINITIONS, totalPages } from "../types/readingList";
 import styles from "./ReadingListInsights.module.css";
 
 interface ReadingListInsightsProps {
-	booksByList: Record<ReadingListSlug, Book[]>;
+	booksByList: Record<ReadingListSlug, SchemaBook[]>;
 }
 
 export const ReadingListInsights: FC<ReadingListInsightsProps> = ({
@@ -98,7 +98,7 @@ export const ReadingListInsights: FC<ReadingListInsightsProps> = ({
 	);
 };
 
-function getTopSubjects(books: readonly Book[]) {
+function getTopSubjects(books: readonly SchemaBook[]) {
 	const subjectCounts = new Map<string, number>();
 
 	for (const book of books) {

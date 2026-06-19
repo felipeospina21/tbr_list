@@ -8,17 +8,17 @@ import type { CSSProperties, FC } from "react";
 import iconStyles from "@/components/Icon.module.css";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
-import type { Book, ReadingListSlug } from "../types/readingList";
+import type { SchemaBook, ReadingListSlug } from "../types/readingList";
 import { BookCard } from "./BookCard";
 import { ReadingListCardActions } from "./ReadingListCardActions";
 import styles from "./SortableBookCard.module.css";
 
 interface SortableBookCardProps {
 	activeListSlug: ReadingListSlug;
-	book: Book;
+	book: SchemaBook;
 	index: number;
 	onRemove: (bookId: string) => void;
-	onTransfer: (book: Book, targetListSlug: ReadingListSlug) => void;
+	onTransfer: (book: SchemaBook, targetListSlug: ReadingListSlug) => void;
 	onUpdateMoods: (bookId: string, moods: string[]) => void;
 }
 

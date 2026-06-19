@@ -1,16 +1,18 @@
 "use client";
-import { useState } from "react";
 import { useFetchReadingList } from "@/features/readingList/api/useFetchReadingList";
-import { BookListActions } from "./BookListActions";
 import { BooksList } from "./BooksList";
 import { Shelves } from "./Shelves";
-import { Book, ShelfKey } from "./types";
+import { useSearchParams } from "next/navigation";
+import { ReadingListType } from "@/features/readingList/types/readingList";
 
-export const LibrarySection = ({ books }: { books: Book[] }) => {
-	const [activeShelf, setActiveShelf] = useState<ShelfKey>("reading");
-	const [optionsBook, setOptionsBook] = useState<Book | null>(null);
+export const LibrarySection = () => {
+	const searchParams = useSearchParams();
 
-	const toBeReadQuery = useFetchReadingList("to_be_read");
+	// Read the current list from the URL, fallback to 'to_be_read'
+	const currentList = (searchParams.get("type") ||
+		"to_be_read") as ReadingListType;
+
+	const toBeReadQuery = useFetchReadingList(currentList);
 
 	if (toBeReadQuery.isLoading) {
 		return <div>loading</div>;
@@ -19,18 +21,9 @@ export const LibrarySection = ({ books }: { books: Book[] }) => {
 	return (
 		<div className="flex flex-col h-full">
 			{/* Shelf selector — minimal pill row */}
-			<Shelves
-				activeShelf={activeShelf}
-				books={toBeReadQuery.data?.books}
-				setActiveShelf={setActiveShelf}
-			/>
+			<Shelves currentList={currentList} books={toBeReadQuery.data?.books} />
 
-			{/* <BooksList */}
-			{/* 	books={toBeReadQuery.data?.books} */}
-			{/* 	setBooks={setBooks} */}
-			{/* 	activeShelf={activeShelf} */}
-			{/* 	setOptionsBook={setOptionsBook} */}
-			{/* /> */}
+			<BooksList books={toBeReadQuery.data?.books} currentList={currentList} />
 			{/**/}
 			{/* <BookListActions */}
 			{/* 	books={toBeReadQuery.data?.books} */}

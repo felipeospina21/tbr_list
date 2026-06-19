@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
 import { searchHardcover } from "@/f";
+import { ApiResponseHelper } from "@/lib/api/apiResponse";
+import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
 	const url = new URL(request.url);
@@ -12,11 +13,8 @@ export async function GET(request: Request) {
 	try {
 		const outcome = await searchHardcover(query);
 
-		return NextResponse.json(outcome);
-	} catch {
-		return NextResponse.json(
-			{ results: [], error: "Unable to search books right now." },
-			{ status: 500 },
-		);
+		return ApiResponseHelper.success(outcome, 200);
+	} catch (error) {
+		return ApiResponseHelper.handle(error);
 	}
 }

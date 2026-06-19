@@ -21,12 +21,15 @@ import { useChangeBookPosition } from "../mutations/useChangeBookPosition";
 import { useRemoveBookFromReadingList } from "../mutations/useRemoveBookFromReadingList";
 import { useTransferBookBetweenReadingLists } from "../mutations/useTransferBookBetweenReadingLists";
 import { useUpdateBookMoods } from "../mutations/useUpdateBookMoods";
-import { type Book, READING_LIST_DEFINITIONS } from "../types/readingList";
+import {
+	type SchemaBook,
+	READING_LIST_DEFINITIONS,
+} from "../types/readingList";
 import styles from "./ReadingQueuePanel.module.css";
 import { SortableBookCard } from "./SortableBookCard";
 
 type ReadingQueuePanelProps = {
-	books: Book[] | undefined;
+	books: SchemaBook[] | undefined;
 	activeListSlug: "to_be_read" | "finished" | "did_not_finish";
 	isLoading?: boolean;
 };
@@ -61,7 +64,7 @@ export function ReadingQueuePanel({
 	}
 
 	function transferBook(
-		book: Book,
+		book: SchemaBook,
 		targetListSlug: "to_be_read" | "finished" | "did_not_finish",
 	) {
 		transferBookMutation.mutate({ book, targetListSlug });

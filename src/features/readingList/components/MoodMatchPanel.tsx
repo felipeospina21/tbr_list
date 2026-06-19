@@ -9,11 +9,11 @@ import {
 	READING_LIST_MOOD_EMOJI,
 	READING_LIST_MOODS,
 } from "../constants/readingListMoods";
-import type { Book } from "../types/readingList";
+import type { SchemaBook } from "../types/readingList";
 import styles from "./MoodMatchPanel.module.css";
 
 interface MoodMatchPanelProps {
-	books: Book[];
+	books: SchemaBook[];
 }
 
 export const MoodMatchPanel: FC<MoodMatchPanelProps> = ({ books }) => {

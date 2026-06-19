@@ -2,13 +2,13 @@
 
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import type { Book } from "../types/readingList";
+import type { SchemaBook } from "../types/readingList";
 import styles from "./BookCard.module.css";
 import { BookCardHeader } from "./BookCardHeader";
 import { BookCardImage } from "./BookCardImage";
 
 type BookCardProps = {
-	book: Book;
+	book: SchemaBook;
 	action: ReactNode;
 	index: number;
 	provider?: string;

@@ -2,23 +2,25 @@ import { unauthorized } from "next/navigation";
 import { getCurrentUserId } from "@/features/auth/server/getCurrentUserId";
 import { readingListTypeSchema } from "@/features/readingList/schemas/readingList.schema";
 import { addBookToReadingList } from "@/features/readingList/server/commands/addBookToReadingList";
-import { getReadingList } from "@/features/readingList/server/queries/getReadingList";
-import { errorResponse } from "@/lib/api/errorResponse";
+import {
+	GetReadingListWithBooks,
+	getReadingListWithBooks,
+} from "@/features/readingList/server/queries/getReadingListWithBooks";
+import { ApiResponseHelper } from "@/lib/api/apiResponse";
 
 export async function GET(request: Request) {
 	try {
 		const userId = await getCurrentUserId();
-		console.log(userId);
 		if (!userId) {
 			return unauthorized();
 		}
 
 		const type = getRequestedListType(request);
-		const readingList = await getReadingList(userId, type);
+		const readingList = await getReadingListWithBooks(userId, type);
 
-		return Response.json(readingList ?? {});
+		return ApiResponseHelper.success<GetReadingListWithBooks>(readingList, 200);
 	} catch (error) {
-		errorResponse(error);
+		return ApiResponseHelper.handle(error);
 	}
 }
 
@@ -37,14 +39,9 @@ export async function POST(request: Request) {
 			book: input.book,
 		});
 
-		return Response.json(
-			{
-				id: book.id,
-			},
-			{ status: 201 },
-		);
+		return ApiResponseHelper.success(book.id, 201);
 	} catch (error) {
-		errorResponse(error);
+		return ApiResponseHelper.handle(error);
 	}
 }
 

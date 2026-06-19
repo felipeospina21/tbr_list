@@ -1,25 +1,46 @@
-import { BookMarked, BookOpen, X } from "lucide-react";
-import { Dispatch, FC, SetStateAction } from "react";
-import { Book } from "@/features/readingList/types/readingList";
+import { BookMarked, BookOpen, BookCheck, X } from "lucide-react";
+import { FC } from "react";
 import { T } from "./constants";
-import { ShelfKey } from "./types";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { ReadingListType } from "@/features/readingList/types/readingList";
+import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
 
 interface ShelvesProps {
-	activeShelf: ShelfKey;
-	setActiveShelf: Dispatch<SetStateAction<ShelfKey>>;
-	books: Book[];
-	selectedSlug: string;
+	currentList: ReadingListType;
+	books: ReadingListBook[] | undefined;
 }
-export const Shelves: FC<ShelvesProps> = ({
-	activeShelf,
-	books,
-	setActiveShelf,
-}) => {
-	const shelves: { key: ShelfKey; label: string; icon: React.ReactNode }[] = [
-		{ key: "to_be_read", label: "TBR", icon: <BookMarked size={13} /> },
-		{ key: "reading", label: "Reading", icon: <BookOpen size={13} /> },
-		{ key: "dnf", label: "DNF", icon: <X size={13} /> },
+export const Shelves: FC<ShelvesProps> = ({ currentList, books }) => {
+	const shelves: {
+		type: ReadingListType;
+		label: string;
+		icon: React.ReactNode;
+	}[] = [
+		{
+			type: "to_be_read",
+			label: "TBR",
+			icon: <BookMarked size={13} />,
+		},
+		{
+			type: "reading",
+			label: "Reading",
+			icon: <BookOpen size={13} />,
+		},
+		{ type: "finished", label: "Finished", icon: <BookCheck size={13} /> },
+		{ type: "did_not_finish", label: "DNF", icon: <X size={13} /> },
 	];
+
+	const router = useRouter();
+	const pathname = usePathname();
+	const searchParams = useSearchParams();
+
+	const handleTabChange = (newType: string) => {
+		console.log(newType);
+		const params = new URLSearchParams(searchParams);
+		params.set("type", newType);
+
+		// Updates the URL bar without reloading the full page
+		router.push(`${pathname}?${params.toString()}`);
+	};
 
 	return (
 		<div
@@ -28,27 +49,27 @@ export const Shelves: FC<ShelvesProps> = ({
 		>
 			{shelves.map((s) => (
 				<button
-					key={s.key}
+					key={s.type}
 					className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold font-nunito transition-all active:scale-95"
 					style={{
 						backgroundColor:
-							activeShelf === s.key ? T.surfaceHigh : "transparent",
-						color: activeShelf === s.key ? T.amberBright : T.paperDim,
+							currentList === s.type ? T.surfaceHigh : "transparent",
+						color: currentList === s.type ? T.amberBright : T.paperDim,
 						boxShadow:
-							activeShelf === s.key ? "0 1px 6px rgba(0,0,0,0.3)" : "none",
+							currentList === s.type ? "0 1px 6px rgba(0,0,0,0.3)" : "none",
 					}}
-					onClick={() => setActiveShelf(s.key)}
+					onClick={() => handleTabChange(s.type)}
 				>
 					{s.icon}
 					{s.label}
 					<span
 						className="ml-0.5 text-xs rounded-full px-1.5 py-px"
 						style={{
-							backgroundColor: activeShelf === s.key ? T.amberDim : T.stone,
-							color: activeShelf === s.key ? T.amberBright : T.paperDim,
+							backgroundColor: currentList === s.type ? T.amberDim : T.stone,
+							color: currentList === s.type ? T.amberBright : T.paperDim,
 						}}
 					>
-						{books.filter((b) => b.shelf === s.key).length}
+						{books?.length}
 					</span>
 				</button>
 			))}

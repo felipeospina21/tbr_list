@@ -2,14 +2,14 @@ import { BookOpenText } from "lucide-react";
 import { FC } from "react";
 import iconStyles from "@/components/Icon.module.css";
 import { Badge } from "@/components/ui/Badge";
-import { Book } from "../types/readingList";
+import { SchemaBook } from "../types/readingList";
 import { formatSeriesMetadata } from "../utils/formatSeriesMetadata";
 import styles from "./BookCardHeader.module.css";
 
 interface BookCardHeaderProps {
 	index: number;
 	provider?: string;
-	book: Book;
+	book: SchemaBook;
 }
 
 export const BookCardHeader: FC<BookCardHeaderProps> = ({

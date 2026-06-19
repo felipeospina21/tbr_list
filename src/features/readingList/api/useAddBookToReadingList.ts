@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type {
-	Book,
+	SchemaBook,
 	ReadingListSlug,
 	ReadingListSnapshot,
 } from "../types/readingList";
@@ -10,7 +10,7 @@ import { getReadingListQueryKey } from "./readingListQueryKeys";
 
 export async function addReadingListBook(
 	listSlug: ReadingListSlug,
-	book: Book,
+	book: SchemaBook,
 ): Promise<ReadingListSnapshot> {
 	const response = await fetch(`/api/reading-list?listSlug=${listSlug}`, {
 		method: "POST",
@@ -32,7 +32,7 @@ export function useAddBookToReadingList(listSlug: ReadingListSlug) {
 	const queryKey = getReadingListQueryKey(listSlug);
 
 	return useMutation({
-		mutationFn: (book: Book) => addReadingListBook(listSlug, book),
+		mutationFn: (book: SchemaBook) => addReadingListBook(listSlug, book),
 		onMutate: async (input) => {
 			await queryClient.cancelQueries({ queryKey });
 

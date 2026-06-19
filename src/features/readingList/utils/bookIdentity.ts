@@ -1,10 +1,13 @@
-import type { Book } from "../types/readingList";
+import type { SchemaBook } from "../types/readingList";
 
 function normalizeIsbn(isbn: string) {
 	return isbn.replace(/[-\s]/g, "").trim();
 }
 
-function buildSourceIdentifier(source: Book["source"], sourceBookId: string) {
+function buildSourceIdentifier(
+	source: SchemaBook["source"],
+	sourceBookId: string,
+) {
 	return `source:${source}:${sourceBookId}`;
 }
 
@@ -13,7 +16,7 @@ function buildIsbnIdentifier(version: "10" | "13", isbn: string) {
 }
 
 export function buildBookIdentityKey(
-	book: Pick<Book, "source" | "sourceBookId" | "isbn10" | "isbn13">,
+	book: Pick<SchemaBook, "source" | "sourceBookId" | "isbn10" | "isbn13">,
 ) {
 	if (book.isbn13) {
 		return buildIsbnIdentifier("13", book.isbn13);
@@ -27,7 +30,7 @@ export function buildBookIdentityKey(
 }
 
 export function getBookIdentifierKeys(
-	book: Pick<Book, "source" | "sourceBookId" | "isbn10" | "isbn13">,
+	book: Pick<SchemaBook, "source" | "sourceBookId" | "isbn10" | "isbn13">,
 ) {
 	const keys = new Set<string>();
 

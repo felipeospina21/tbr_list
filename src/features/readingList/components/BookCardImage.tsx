@@ -1,10 +1,10 @@
 import Image from "next/image";
 import { FC } from "react";
-import { Book } from "../types/readingList";
+import { SchemaBook } from "../types/readingList";
 import styles from "./BookCardImage.module.css";
 
 interface BookCardImageProps {
-	book: Book;
+	book: SchemaBook;
 	index: number;
 }
 

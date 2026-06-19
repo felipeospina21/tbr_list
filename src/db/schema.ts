@@ -11,6 +11,7 @@ import {
 	uuid,
 } from "drizzle-orm/pg-core";
 import { timeStamps as timestamps } from "./schema.helpers";
+import { relations } from "drizzle-orm";
 
 /* USERS */
 export const users = pgTable("users", {
@@ -203,6 +204,25 @@ export const readingListItems = pgTable(
 		),
 		index("idx_list_items_list_position").on(table.listId, table.position),
 	],
+);
+
+export const booksRelations = relations(books, ({ many }) => ({
+	genres: many(bookGenres),
+	moods: many(bookMoods),
+}));
+
+export const readingListsRelations = relations(readingLists, ({ many }) => ({
+	items: many(readingListItems),
+}));
+
+export const readingListItemsRelations = relations(
+	readingListItems,
+	({ one }) => ({
+		book: one(books, {
+			fields: [readingListItems.bookId],
+			references: [books.id],
+		}),
+	}),
 );
 
 // /* AUTH ACCOUNTS */

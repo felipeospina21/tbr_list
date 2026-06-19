@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type {
-	Book,
+	SchemaBook,
 	ReadingListSlug,
 	ReadingListSnapshot,
 } from "../types/readingList";
@@ -10,7 +10,7 @@ import { totalPages } from "../types/readingList";
 import { getReadingListQueryKey } from "./readingListQueryKeys";
 
 interface TransferBookInput {
-	book: Book;
+	book: SchemaBook;
 	targetListSlug: ReadingListSlug;
 }
 
@@ -39,7 +39,7 @@ function removeBookFromSnapshot(
 
 function appendBookToSnapshot(
 	snapshot: ReadingListSnapshot | undefined,
-	book: Book,
+	book: SchemaBook,
 ) {
 	if (
 		!snapshot ||

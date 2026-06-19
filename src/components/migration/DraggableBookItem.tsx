@@ -1,14 +1,13 @@
 import { Reorder, useDragControls } from "framer-motion";
 import { BookCard } from "./BookCard";
-import { Book } from "./types";
+import { SchemaBook } from "@/features/readingList/types/readingList";
+import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
+import { FC } from "react";
 
-export const DraggableBookItem = ({
-	book,
-	onOptions,
-}: {
-	book: Book;
-	onOptions: (b: Book) => void;
-}) => {
+interface DraggableBookItemProps {
+	book: ReadingListBook;
+}
+export const DraggableBookItem: FC<DraggableBookItemProps> = ({ book }) => {
 	const controls = useDragControls();
 	return (
 		<Reorder.Item
@@ -18,7 +17,7 @@ export const DraggableBookItem = ({
 			dragControls={controls}
 			style={{ listStyle: "none" }}
 		>
-			<BookCard book={book} onOptions={onOptions} dragControls={controls} />
+			<BookCard book={book} dragControls={controls} />
 		</Reorder.Item>
 	);
 };

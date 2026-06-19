@@ -1,23 +1,26 @@
 import { motion, useDragControls } from "framer-motion";
 import { GripVertical, MoreVertical, Star } from "lucide-react";
 import { T } from "./constants";
-import { Book } from "./types";
+import { SchemaBook } from "@/features/readingList/types/readingList";
+import Image from "next/image";
+import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
+import { FC } from "react";
 
-export const BookCard = ({
-	book,
-	onOptions,
-	isDragging,
-	dragControls,
-}: {
-	book: Book;
-	onOptions: (b: Book) => void;
+interface BookCardProps {
+	book: ReadingListBook;
 	isDragging?: boolean;
 	dragControls?: ReturnType<typeof useDragControls>;
+}
+export const BookCard: FC<BookCardProps> = ({
+	book,
+	dragControls,
+	isDragging,
 }) => {
-	const progress =
-		book.pages > 0 && book.pagesRead
-			? Math.round((book.pagesRead / book.pages) * 100)
-			: 0;
+	// const progress =
+	// 	book.pages > 0 && book.pagesRead
+	// 		? Math.round((book.pagesRead / book.pages) * 100)
+	// 		: 0;
+	const progress = 0;
 
 	return (
 		<motion.div
@@ -50,19 +53,20 @@ export const BookCard = ({
 				className="relative flex-shrink-0"
 				style={{ width: 68, minHeight: 104 }}
 			>
-				<img
-					src={book.img_url}
+				<Image
+					src={book.cover}
 					alt={book.title}
 					className="w-full h-full object-cover"
-					style={{ minHeight: 104 }}
+					width={100}
+					height={150}
 				/>
 				{/* Subtle left edge amber glow for "reading" */}
-				{book.shelf === "reading" && (
-					<div
-						className="absolute left-0 top-0 bottom-0 w-0.5"
-						style={{ backgroundColor: T.amber }}
-					/>
-				)}
+				{/* {book.shelf === "reading" && ( */}
+				{/* 	<div */}
+				{/* 		className="absolute left-0 top-0 bottom-0 w-0.5" */}
+				{/* 		style={{ backgroundColor: T.amber }} */}
+				{/* 	/> */}
+				{/* )} */}
 			</div>
 
 			{/* Metadata */}
@@ -85,83 +89,82 @@ export const BookCard = ({
 							className="font-nunito text-xs px-2 py-0.5 rounded-full"
 							style={{ backgroundColor: T.stone, color: T.paperDim }}
 						>
-							{book.genre}
+							{book.genres}
 						</span>
-						{book.shelf === "reading" && (
-							<span
-								className="font-nunito text-xs px-2 py-0.5 rounded-full font-semibold"
-								style={{ backgroundColor: T.amberDim, color: T.amberBright }}
-							>
-								Reading
-							</span>
-						)}
-						{book.shelf === "dnf" && (
-							<span
-								className="font-nunito text-xs px-2 py-0.5 rounded-full"
-								style={{ backgroundColor: T.emberBg, color: "#c97060" }}
-							>
-								DNF
-							</span>
-						)}
+						{/* {book.shelf === "reading" && ( */}
+						{/* 	<span */}
+						{/* 		className="font-nunito text-xs px-2 py-0.5 rounded-full font-semibold" */}
+						{/* 		style={{ backgroundColor: T.amberDim, color: T.amberBright }} */}
+						{/* 	> */}
+						{/* 		Reading */}
+						{/* 	</span> */}
+						{/* )} */}
+						{/* {book.shelf === "dnf" && ( */}
+						{/* 	<span */}
+						{/* 		className="font-nunito text-xs px-2 py-0.5 rounded-full" */}
+						{/* 		style={{ backgroundColor: T.emberBg, color: "#c97060" }} */}
+						{/* 	> */}
+						{/* 		DNF */}
+						{/* 	</span> */}
+						{/* )} */}
 					</div>
 				</div>
 
 				{/* Progress bar for reading */}
-				{book.shelf === "reading" && book.pagesRead !== undefined && (
-					<div className="mt-2">
-						<div className="flex justify-between items-center mb-1">
-							<span
-								className="font-nunito text-xs"
-								style={{ color: T.paperDim }}
-							>
-								{book.pagesRead}/{book.pages} pages
-							</span>
-							<span
-								className="font-nunito text-xs font-semibold"
-								style={{ color: T.amberBright }}
-							>
-								{progress}%
-							</span>
-						</div>
-						<div
-							className="w-full rounded-full overflow-hidden"
-							style={{ height: 3, backgroundColor: T.stone }}
-						>
-							<motion.div
-								className="h-full rounded-full"
-								style={{ backgroundColor: T.amber }}
-								initial={{ width: 0 }}
-								animate={{ width: `${progress}%` }}
-								transition={{ duration: 0.7, ease: "easeOut" }}
-							/>
-						</div>
-					</div>
-				)}
-
-				{/* Rating for DNF */}
-				{book.shelf === "dnf" && book.rating && (
-					<div className="flex items-center gap-0.5 mt-2">
-						{[1, 2, 3, 4, 5].map((s) => (
-							<Star
-								key={s}
-								size={11}
-								fill={s <= book.rating! ? T.amber : "transparent"}
-								stroke={s <= book.rating! ? T.amber : T.stoneLight}
-							/>
-						))}
-					</div>
-				)}
+				{/* {book.shelf === "reading" && book.pagesRead !== undefined && ( */}
+				{/* 	<div className="mt-2"> */}
+				{/* 		<div className="flex justify-between items-center mb-1"> */}
+				{/* 			<span */}
+				{/* 				className="font-nunito text-xs" */}
+				{/* 				style={{ color: T.paperDim }} */}
+				{/* 			> */}
+				{/* 				{book.pagesRead}/{book.pages} pages */}
+				{/* 			</span> */}
+				{/* 			<span */}
+				{/* 				className="font-nunito text-xs font-semibold" */}
+				{/* 				style={{ color: T.amberBright }} */}
+				{/* 			> */}
+				{/* 				{progress}% */}
+				{/* 			</span> */}
+				{/* 		</div> */}
+				{/* 		<div */}
+				{/* 			className="w-full rounded-full overflow-hidden" */}
+				{/* 			style={{ height: 3, backgroundColor: T.stone }} */}
+				{/* 		> */}
+				{/* 			<motion.div */}
+				{/* 				className="h-full rounded-full" */}
+				{/* 				style={{ backgroundColor: T.amber }} */}
+				{/* 				initial={{ width: 0 }} */}
+				{/* 				animate={{ width: `${progress}%` }} */}
+				{/* 				transition={{ duration: 0.7, ease: "easeOut" }} */}
+				{/* 			/> */}
+				{/* 		</div> */}
+				{/* 	</div> */}
+				{/* )} */}
+				{/**/}
+				{/* {book.shelf === "dnf" && book.rating && ( */}
+				{/* 	<div className="flex items-center gap-0.5 mt-2"> */}
+				{/* 		{[1, 2, 3, 4, 5].map((s) => ( */}
+				{/* 			<Star */}
+				{/* 				key={s} */}
+				{/* 				size={11} */}
+				{/* 				fill={s <= book.rating! ? T.amber : "transparent"} */}
+				{/* 				stroke={s <= book.rating! ? T.amber : T.stoneLight} */}
+				{/* 			/> */}
+				{/* 		))} */}
+				{/* 	</div> */}
+				{/* )} */}
 			</div>
 
 			{/* Options */}
-			<button
-				className="flex items-start pt-3 pr-2 pl-1 min-w-[44px] justify-center active:opacity-60"
-				onClick={() => onOptions(book)}
-				style={{ color: T.stoneLight }}
-				aria-label="Book options"
-			>
-				<MoreVertical size={16} />
-			</button>
+			{/* <button */}
+			{/* 	className="flex items-start pt-3 pr-2 pl-1 min-w-[44px] justify-center active:opacity-60" */}
+			{/* 	onClick={() => onOptions(book)} */}
+			{/* 	style={{ color: T.stoneLight }} */}
+			{/* 	aria-label="Book options" */}
+			{/* > */}
+			{/* 	<MoreVertical size={16} /> */}
+			{/* </button> */}
 		</motion.div>
 	);
 };

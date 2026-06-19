@@ -1,30 +1,24 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import type {
-	ReadingListSlug,
-	ReadingListSnapshot,
-} from "../types/readingList";
 import { getReadingListQueryKey } from "./readingListQueryKeys";
-
+import { apiFetch } from "@/lib/api/apiFetch";
+import { ReadingListType } from "@/features/readingList/types/readingList";
+import { GetReadingListWithBooks } from "../server/queries/getReadingListWithBooks";
 export { getReadingListQueryKey } from "./readingListQueryKeys";
 
 export async function fetchReadingList(
-	listSlug: ReadingListSlug,
-): Promise<ReadingListSnapshot> {
-	const response = await fetch(`/api/reading-list?type=to_be_read`);
-
-	if (!response.ok) {
-		throw new Error("Reading list request failed");
-	}
-
-	return (await response.json()) as ReadingListSnapshot;
+	listType: ReadingListType,
+): Promise<GetReadingListWithBooks> {
+	return apiFetch<GetReadingListWithBooks>(
+		`/api/reading-list?type=${listType}`,
+	);
 }
 
-export function useFetchReadingList(listSlug: ReadingListSlug) {
+export function useFetchReadingList(listType: ReadingListType) {
 	return useQuery({
-		queryKey: getReadingListQueryKey(listSlug),
-		queryFn: () => fetchReadingList(listSlug),
+		queryKey: getReadingListQueryKey(listType),
+		queryFn: () => fetchReadingList(listType),
 		refetchOnWindowFocus: false,
 		throwOnError: true,
 	});

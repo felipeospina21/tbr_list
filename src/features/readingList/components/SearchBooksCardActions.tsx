@@ -4,13 +4,13 @@ import iconStyles from "@/components/Icon.module.css";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { useAddBookToReadingList } from "../mutations/useAddBookToReadingList";
-import { Book } from "../types/readingList";
+import { SchemaBook } from "../types/readingList";
 import style from "./SearchBooksCardActions.module.css";
 
 interface SearchBooksCardActionsProps {
 	isAdded: boolean;
 	activeListSlug: "to_be_read" | "finished" | "did_not_finish";
-	book: Book;
+	book: SchemaBook;
 }
 
 export const SearchBooksCardActions: FC<SearchBooksCardActionsProps> = ({

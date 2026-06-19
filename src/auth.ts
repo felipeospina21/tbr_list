@@ -1,4 +1,4 @@
-import type { NextAuthOptions } from "next-auth";
+import type { Account, NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { initializeUserAccount } from "./db/initializeUserAccount";
 
@@ -36,7 +36,7 @@ export function getAuthOptions(): NextAuthOptions {
 		callbacks: {
 			async jwt({ token, account }) {
 				if (account?.provider && account.providerAccountId) {
-					token.sub = `${account.provider}:${account.providerAccountId}`;
+					token.sub = getPrefixedUserId(account);
 				}
 
 				return token;
@@ -48,12 +48,18 @@ export function getAuthOptions(): NextAuthOptions {
 
 				return session;
 			},
-			async signIn({ user }) {
-				if (user.id) {
+			async signIn({ user, account }) {
+				if (user.id && account?.provider && account.providerAccountId) {
+					await initializeUserAccount(getPrefixedUserId(account));
+				} else if (user.id) {
 					await initializeUserAccount(user.id);
 				}
 				return true;
 			},
 		},
 	};
+}
+
+function getPrefixedUserId(account: Account) {
+	return `${account.provider}:${account.providerAccountId}`;
 }

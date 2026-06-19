@@ -1,3 +1,5 @@
+import { books, readingLists } from "@/db/schema";
+
 export type BookSource = "google-books" | "hardcover" | "open-library";
 
 export const READING_LIST_DEFINITIONS = [
@@ -29,40 +31,13 @@ export type ReadingListSummary = {
 	booksCount: number;
 };
 
-export type Book = {
-	id: string;
-	source: BookSource;
-	sourceBookId: string;
-	isbn10: string | null;
-	isbn13: string | null;
-	title: string;
-	subtitle: string | null;
-	author: string;
-	pages: number | null;
-	language: string | null;
-	publishedYear: number | null;
-	publishedDate: string | null;
-	publisher: string | null;
-	averageRating: number | null;
-	ratingsCount: number | null;
-	description: string;
-	cover: string;
-	accent: string;
-	seriesName: string | null;
-	seriesPosition: string | null;
-	moods: string[];
-	subjects: string[];
-};
+export type SchemaBook = typeof books.$inferSelect;
 
-export type ReadingListSnapshot = {
-	activeListSlug: ReadingListSlug;
-	books: Book[];
-	pages: number;
-};
-
-export function totalPages(books: readonly Book[]) {
+export function totalPages(books: readonly SchemaBook[]) {
 	return books.reduce(
 		(sum, book) => sum + (typeof book.pages === "number" ? book.pages : 0),
 		0,
 	);
 }
+
+export type ReadingListType = typeof readingLists.$inferSelect.type;

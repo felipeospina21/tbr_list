@@ -1,6 +1,6 @@
-import type { Book } from "../types/readingList";
+import type { SchemaBook } from "../types/readingList";
 
-export function formatSeriesMetadata(book: Book) {
+export function formatSeriesMetadata(book: SchemaBook) {
 	const seriesName = book.seriesName?.trim();
 	const seriesPosition = book.seriesPosition?.trim();
 
