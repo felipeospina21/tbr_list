@@ -7,7 +7,15 @@ import {
 	getReadingListWithBooks,
 } from "@/features/readingList/server/queries/getReadingListWithBooks";
 import { ApiResponseHelper } from "@/lib/api/apiResponse";
+import {
+	GetReadingListCounts,
+	getReadingListCounts,
+} from "@/features/readingList/server/queries/getReadingListsCount";
 
+export interface FetchRedingLists {
+	items: GetReadingListWithBooks;
+	counts: GetReadingListCounts;
+}
 export async function GET(request: Request) {
 	try {
 		const userId = await getCurrentUserId();
@@ -16,9 +24,21 @@ export async function GET(request: Request) {
 		}
 
 		const type = getRequestedListType(request);
-		const readingList = await getReadingListWithBooks(userId, type);
 
-		return ApiResponseHelper.success<GetReadingListWithBooks>(readingList, 200);
+		// Run both database queries simultaneously for optimal performance
+		const [readingList, counts] = await Promise.all([
+			getReadingListWithBooks(userId, type),
+			getReadingListCounts(userId),
+		]);
+
+		// Combine them into a single clean envelope
+		return ApiResponseHelper.success<FetchRedingLists>(
+			{
+				items: readingList,
+				counts,
+			},
+			200,
+		);
 	} catch (error) {
 		return ApiResponseHelper.handle(error);
 	}

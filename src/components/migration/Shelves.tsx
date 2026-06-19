@@ -4,29 +4,47 @@ import { T } from "./constants";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { ReadingListType } from "@/features/readingList/types/readingList";
 import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
+import { useFetchReadingList } from "@/features/readingList/api/useFetchReadingList";
+import { Loader } from "../layout/Loader";
+import { Spinner } from "../ui/Spinner";
 
 interface ShelvesProps {
 	currentList: ReadingListType;
-	books: ReadingListBook[] | undefined;
 }
-export const Shelves: FC<ShelvesProps> = ({ currentList, books }) => {
+export const Shelves: FC<ShelvesProps> = ({ currentList }) => {
+	const listBooksQuery = useFetchReadingList(currentList);
+	const listsCount = listBooksQuery.data?.counts;
+
 	const shelves: {
 		type: ReadingListType;
 		label: string;
 		icon: React.ReactNode;
+		count: number | undefined;
 	}[] = [
 		{
 			type: "to_be_read",
 			label: "TBR",
 			icon: <BookMarked size={13} />,
+			count: listsCount?.to_be_read,
 		},
 		{
 			type: "reading",
 			label: "Reading",
 			icon: <BookOpen size={13} />,
+			count: listsCount?.reading,
 		},
-		{ type: "finished", label: "Finished", icon: <BookCheck size={13} /> },
-		{ type: "did_not_finish", label: "DNF", icon: <X size={13} /> },
+		{
+			type: "finished",
+			label: "Finished",
+			icon: <BookCheck size={13} />,
+			count: listsCount?.finished,
+		},
+		{
+			type: "did_not_finish",
+			label: "DNF",
+			icon: <X size={13} />,
+			count: listsCount?.did_not_finish,
+		},
 	];
 
 	const router = useRouter();
@@ -69,7 +87,7 @@ export const Shelves: FC<ShelvesProps> = ({ currentList, books }) => {
 							color: currentList === s.type ? T.amberBright : T.paperDim,
 						}}
 					>
-						{books?.length}
+						{!s.count && s.count !== 0 ? <Spinner /> : s.count}
 					</span>
 				</button>
 			))}

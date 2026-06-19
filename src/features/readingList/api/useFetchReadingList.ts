@@ -4,15 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import { getReadingListQueryKey } from "./readingListQueryKeys";
 import { apiFetch } from "@/lib/api/apiFetch";
 import { ReadingListType } from "@/features/readingList/types/readingList";
-import { GetReadingListWithBooks } from "../server/queries/getReadingListWithBooks";
+import { FetchRedingLists } from "@/app/api/reading-list/route";
 export { getReadingListQueryKey } from "./readingListQueryKeys";
 
 export async function fetchReadingList(
 	listType: ReadingListType,
-): Promise<GetReadingListWithBooks> {
-	return apiFetch<GetReadingListWithBooks>(
-		`/api/reading-list?type=${listType}`,
-	);
+): Promise<FetchRedingLists> {
+	return apiFetch<FetchRedingLists>(`/api/reading-list?type=${listType}`);
 }
 
 export function useFetchReadingList(listType: ReadingListType) {

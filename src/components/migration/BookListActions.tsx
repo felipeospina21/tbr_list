@@ -5,13 +5,11 @@ import { T } from "./constants";
 import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
 
 interface BookListActionsProps {
-	books: ReadingListBook[] | undefined;
 	optionsBook: ReadingListBook | null;
 	setOptionsBook: Dispatch<SetStateAction<ReadingListBook | null>>;
 }
 
 export const BookListActions: FC<BookListActionsProps> = ({
-	books,
 	optionsBook,
 	setOptionsBook,
 }) => {
