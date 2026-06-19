@@ -1,16 +1,14 @@
 import { unauthorized } from "next/navigation";
-import { NextResponse } from "next/server";
 import { getCurrentUserId } from "@/features/auth/server/getCurrentUserId";
 import { readingListTypeSchema } from "@/features/readingList/schemas/readingList.schema";
 import { addBookToReadingList } from "@/features/readingList/server/commands/addBookToReadingList";
 import { getReadingList } from "@/features/readingList/server/queries/getReadingList";
 import { errorResponse } from "@/lib/api/errorResponse";
-import { isDevelopment } from "@/lib/env";
-import { toErrorMessage } from "@/lib/errors";
 
 export async function GET(request: Request) {
 	try {
 		const userId = await getCurrentUserId();
+		console.log(userId);
 		if (!userId) {
 			return unauthorized();
 		}
@@ -18,7 +16,7 @@ export async function GET(request: Request) {
 		const type = getRequestedListType(request);
 		const readingList = await getReadingList(userId, type);
 
-		return Response.json(readingList);
+		return Response.json(readingList ?? {});
 	} catch (error) {
 		errorResponse(error);
 	}

@@ -16,7 +16,7 @@ export async function getReadingList(userId: string, type: ReadingListType) {
 			position: readingListItems.position,
 		})
 		.from(readingListItems)
-		.innerJoin(readingListItems, eq(readingListItems.listId, readingLists.id))
+		.innerJoin(readingLists, eq(readingListItems.listId, readingLists.id))
 		.innerJoin(books, eq(readingListItems.bookId, books.id))
 		.where(and(eq(readingLists.userId, userId), eq(readingLists.type, type)))
 		.orderBy(readingListItems.position);

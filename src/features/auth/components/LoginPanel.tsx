@@ -15,7 +15,7 @@ type LoginPanelProps = {
 
 export function LoginPanel({ callbackUrl }: LoginPanelProps) {
 	function handleSignIn() {
-		void signIn("google", { callbackUrl });
+		signIn("google", { callbackUrl });
 	}
 
 	return (

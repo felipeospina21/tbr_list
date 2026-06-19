@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
-import { getAuthOptions } from "@/auth";
 import { SectionBackdrop } from "@/components/layout/SectionBackdrop";
 import { LoginPanel } from "@/features/auth/components/LoginPanel";
 import styles from "./page.module.css";
+import { getAuthOptions } from "@/auth";
 
 export const metadata: Metadata = {
 	title: "Sign In",
@@ -21,14 +21,14 @@ type LoginPageProps = {
 
 function normalizeCallbackUrl(callbackUrl?: string) {
 	if (!callbackUrl) {
-		return "/reading-list";
+		return "/reading-app";
 	}
 
 	if (callbackUrl.startsWith("/") && !callbackUrl.startsWith("//")) {
 		return callbackUrl;
 	}
 
-	return "/reading-list";
+	return "/reading-app";
 }
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {

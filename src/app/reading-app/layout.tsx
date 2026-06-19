@@ -14,7 +14,7 @@ const ReadingListLayout: FC<ReadingListLayoutProps> = async ({ children }) => {
 	const session = await getServerSession(getAuthOptions());
 
 	if (!session?.user?.id) {
-		redirect("/login?callbackUrl=/reading-list");
+		redirect("/login?callbackUrl=/");
 	}
 
 	return (
