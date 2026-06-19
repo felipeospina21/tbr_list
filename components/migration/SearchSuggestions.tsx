@@ -1,8 +1,8 @@
 import { CheckCircle, Plus } from "lucide-react";
-import { FC, useState } from "react";
-import { T } from "./constants";
-import { Book } from "./types";
+import Image from "next/image";
+import { FC } from "react";
 import { SearchBook } from "@/f";
+import { T } from "./constants";
 
 interface SearchSuggestionsProps {
 	query: string;
@@ -13,15 +13,13 @@ export const SearchSuggestions: FC<SearchSuggestionsProps> = ({
 	query,
 	books,
 }) => {
-	const [added, setAdded] = useState<Set<string>>(new Set());
-
 	if (!books || !books.length) {
 		return <div>no books</div>;
 	}
 
-	const addBook = (book: Book) => {
+	const addBook = (book: SearchBook) => {
 		if (!books.find((b) => b.id === book.id)) {
-			setAdded((prev) => new Set([...prev, book.id]));
+			// TODO: add book mutation
 		}
 	};
 
@@ -51,11 +49,12 @@ export const SearchSuggestions: FC<SearchSuggestionsProps> = ({
 								className="flex-shrink-0"
 								style={{ width: 68, minHeight: 104 }}
 							>
-								<img
+								<Image
 									src={book.cover}
 									alt={book.title}
 									className="w-full h-full object-cover"
-									style={{ minHeight: 104 }}
+									width={100}
+									height={150}
 								/>
 							</div>
 							<div className="flex-1 py-3 px-3 flex flex-col justify-between min-w-0">
@@ -76,7 +75,7 @@ export const SearchSuggestions: FC<SearchSuggestionsProps> = ({
 										className="inline-block font-nunito text-xs px-2 py-0.5 rounded-full mt-1.5"
 										style={{ backgroundColor: T.stone, color: T.paperDim }}
 									>
-										{book.subjects[0]}
+										{book.genres[0]}
 									</span>
 								</div>
 							</div>
@@ -96,7 +95,7 @@ export const SearchSuggestions: FC<SearchSuggestionsProps> = ({
 						</div>
 					);
 				})}
-				{results.length === 0 && query.length > 1 && (
+				{books.length === 0 && query.length > 1 && (
 					<div className="text-center py-12">
 						<p className="font-lora text-base" style={{ color: T.paperDim }}>
 							No results found

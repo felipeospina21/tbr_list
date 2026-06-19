@@ -1,34 +1,21 @@
 {
-	"id": "e20bc392-40d7-4bb4-b2d7-eca2c1949e06",
+	"id": "b4dad5c9-1ed5-45bd-8379-b8929212ea9b",
 	"prevId": "00000000-0000-0000-0000-000000000000",
 	"version": "7",
 	"dialect": "postgresql",
 	"tables": {
-		"public.book_identifiers": {
-			"name": "book_identifiers",
+		"public.book_genres": {
+			"name": "book_genres",
 			"schema": "",
 			"columns": {
-				"id": {
-					"name": "id",
-					"type": "uuid",
-					"primaryKey": true,
-					"notNull": true,
-					"default": "gen_random_uuid()"
-				},
 				"book_id": {
 					"name": "book_id",
 					"type": "uuid",
 					"primaryKey": false,
 					"notNull": true
 				},
-				"identifier": {
-					"name": "identifier",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true
-				},
-				"identifier_type": {
-					"name": "identifier_type",
+				"genre": {
+					"name": "genre",
 					"type": "text",
 					"primaryKey": false,
 					"notNull": true
@@ -42,11 +29,11 @@
 				}
 			},
 			"indexes": {
-				"idx_book_identifiers_book_id": {
-					"name": "idx_book_identifiers_book_id",
+				"idx_book_genres_genre": {
+					"name": "idx_book_genres_genre",
 					"columns": [
 						{
-							"expression": "book_id",
+							"expression": "genre",
 							"isExpression": false,
 							"asc": true,
 							"nulls": "last"
@@ -59,9 +46,9 @@
 				}
 			},
 			"foreignKeys": {
-				"book_identifiers_book_id_books_id_fk": {
-					"name": "book_identifiers_book_id_books_id_fk",
-					"tableFrom": "book_identifiers",
+				"book_genres_book_id_books_id_fk": {
+					"name": "book_genres_book_id_books_id_fk",
+					"tableFrom": "book_genres",
 					"tableTo": "books",
 					"columnsFrom": ["book_id"],
 					"columnsTo": ["id"],
@@ -69,14 +56,13 @@
 					"onUpdate": "no action"
 				}
 			},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {
-				"book_identifiers_identifier_key": {
-					"name": "book_identifiers_identifier_key",
-					"nullsNotDistinct": false,
-					"columns": ["identifier"]
+			"compositePrimaryKeys": {
+				"book_genres_book_id_genre_pk": {
+					"name": "book_genres_book_id_genre_pk",
+					"columns": ["book_id", "genre"]
 				}
 			},
+			"uniqueConstraints": {},
 			"policies": {},
 			"checkConstraints": {},
 			"isRLSEnabled": false
@@ -198,25 +184,18 @@
 			"checkConstraints": {},
 			"isRLSEnabled": false
 		},
-		"public.book_subjects": {
-			"name": "book_subjects",
+		"public.book_moods": {
+			"name": "book_moods",
 			"schema": "",
 			"columns": {
-				"id": {
-					"name": "id",
-					"type": "uuid",
-					"primaryKey": true,
-					"notNull": true,
-					"default": "gen_random_uuid()"
-				},
 				"book_id": {
 					"name": "book_id",
 					"type": "uuid",
 					"primaryKey": false,
 					"notNull": true
 				},
-				"subject": {
-					"name": "subject",
+				"mood": {
+					"name": "mood",
 					"type": "text",
 					"primaryKey": false,
 					"notNull": true
@@ -230,26 +209,11 @@
 				}
 			},
 			"indexes": {
-				"idx_book_subjects_book_id": {
-					"name": "idx_book_subjects_book_id",
+				"idx_book_moods_mood": {
+					"name": "idx_book_moods_mood",
 					"columns": [
 						{
-							"expression": "book_id",
-							"isExpression": false,
-							"asc": true,
-							"nulls": "last"
-						}
-					],
-					"isUnique": false,
-					"concurrently": false,
-					"method": "btree",
-					"with": {}
-				},
-				"idx_book_subjects_subject": {
-					"name": "idx_book_subjects_subject",
-					"columns": [
-						{
-							"expression": "subject",
+							"expression": "mood",
 							"isExpression": false,
 							"asc": true,
 							"nulls": "last"
@@ -262,9 +226,9 @@
 				}
 			},
 			"foreignKeys": {
-				"book_subjects_book_id_books_id_fk": {
-					"name": "book_subjects_book_id_books_id_fk",
-					"tableFrom": "book_subjects",
+				"book_moods_book_id_books_id_fk": {
+					"name": "book_moods_book_id_books_id_fk",
+					"tableFrom": "book_moods",
 					"tableTo": "books",
 					"columnsFrom": ["book_id"],
 					"columnsTo": ["id"],
@@ -272,14 +236,13 @@
 					"onUpdate": "no action"
 				}
 			},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {
-				"book_subjects_book_id_subject_key": {
-					"name": "book_subjects_book_id_subject_key",
-					"nullsNotDistinct": false,
-					"columns": ["book_id", "subject"]
+			"compositePrimaryKeys": {
+				"book_moods_book_id_mood_pk": {
+					"name": "book_moods_book_id_mood_pk",
+					"columns": ["book_id", "mood"]
 				}
 			},
+			"uniqueConstraints": {},
 			"policies": {},
 			"checkConstraints": {},
 			"isRLSEnabled": false
@@ -295,9 +258,9 @@
 					"notNull": true,
 					"default": "gen_random_uuid()"
 				},
-				"canonical_key": {
-					"name": "canonical_key",
-					"type": "text",
+				"canonical_id": {
+					"name": "canonical_id",
+					"type": "integer",
 					"primaryKey": false,
 					"notNull": true
 				},
@@ -468,10 +431,10 @@
 			"foreignKeys": {},
 			"compositePrimaryKeys": {},
 			"uniqueConstraints": {
-				"books_canonical_key_key": {
-					"name": "books_canonical_key_key",
+				"books_canonical_id_id": {
+					"name": "books_canonical_id_id",
 					"nullsNotDistinct": false,
-					"columns": ["canonical_key"]
+					"columns": ["canonical_id"]
 				},
 				"books_source_book_key": {
 					"name": "books_source_book_key",
@@ -660,13 +623,6 @@
 			"name": "user_book_moods",
 			"schema": "",
 			"columns": {
-				"id": {
-					"name": "id",
-					"type": "uuid",
-					"primaryKey": true,
-					"notNull": true,
-					"default": "gen_random_uuid()"
-				},
 				"user_id": {
 					"name": "user_id",
 					"type": "text",
@@ -736,14 +692,13 @@
 					"onUpdate": "no action"
 				}
 			},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {
-				"user_book_moods_user_id_book_id_mood_key": {
-					"name": "user_book_moods_user_id_book_id_mood_key",
-					"nullsNotDistinct": false,
+			"compositePrimaryKeys": {
+				"user_book_moods_user_id_book_id_mood_pk": {
+					"name": "user_book_moods_user_id_book_id_mood_pk",
 					"columns": ["user_id", "book_id", "mood"]
 				}
 			},
+			"uniqueConstraints": {},
 			"policies": {},
 			"checkConstraints": {},
 			"isRLSEnabled": false

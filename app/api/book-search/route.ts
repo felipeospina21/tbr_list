@@ -1,5 +1,5 @@
-import { searchHardcover } from "@/f";
 import { NextResponse } from "next/server";
+import { searchHardcover } from "@/f";
 
 export async function GET(request: Request) {
 	const url = new URL(request.url);

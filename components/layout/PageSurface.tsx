@@ -1,10 +1,10 @@
 import type { FC, ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
-import styles from "./PageSurface.module.css";
-import { SectionBackdrop } from "./SectionBackdrop";
 import { Header } from "../migration/Header";
 import { NavDock } from "../migration/NavDock";
+import styles from "./PageSurface.module.css";
+import { SectionBackdrop } from "./SectionBackdrop";
 
 interface PageSurfaceProps {
 	children: ReactNode;

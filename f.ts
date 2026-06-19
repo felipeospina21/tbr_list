@@ -23,31 +23,11 @@ export type Book = {
 	accent: string;
 	seriesName: string | null;
 	seriesPosition: string | null;
-	subjects: string[];
+	genres: string[];
 };
-export type SearchBook = {
-	id: string;
-	source: BookSource;
-	sourceBookId: string;
-	isbn10: string | null;
-	isbn13: string | null;
-	title: string;
-	subtitle: string | null;
-	author: string;
-	pages: number | null;
-	language: string | null;
-	publishedYear: number | null;
-	publishedDate: string | null;
-	publisher: string | null;
-	averageRating: number | null;
-	ratingsCount: number | null;
-	description: string;
-	cover: string;
-	accent: string;
-	seriesName: string | null;
-	seriesPosition: string | null;
+export type SearchBook = Book & {
+	bookId: number;
 	moods: string[];
-	subjects: string[];
 	provider: "Google Books" | "Hardcover" | "Open Library";
 };
 
@@ -75,7 +55,7 @@ type HardcoverSearchResponse = {
 				hits?: Array<{
 					document?: HardcoverBookDocument;
 					highlight?: HardcoverSearchHighlight;
-					highlights?: HardcoverSearchHighlightMatch[];
+					highlights: HardcoverSearchHighlightMatch[];
 				}>;
 			};
 		};
@@ -133,10 +113,12 @@ type HardcoverSearchHighlight = {
 type HardcoverSearchHighlightMatch = {
 	field?: string;
 	snippets?: string[];
+	matched_tokens: string[];
 };
 
 type HardcoverEdition = {
 	id?: string | number;
+	book_id: number;
 	title?: string;
 	subtitle?: string | null;
 	isbn_10?: string | null;
@@ -155,7 +137,7 @@ type HardcoverEdition = {
 	} | null;
 };
 export async function searchHardcover(query: string): Promise<{
-	results: SearchBook[];
+	results: SearchBook[] | undefined;
 	status: number;
 	error: string | null;
 }> {
@@ -208,18 +190,20 @@ export async function searchHardcover(query: string): Promise<{
 	const hits = data.data?.search?.results?.hits ?? [];
 	let results;
 	try {
-		results = await Promise.all(
-			hits
-				.filter(
-					(hit): hit is typeof hit & { document: HardcoverBookDocument } =>
-						Boolean(hit.document),
-				)
-				.map(async (hit) =>
-					mapHardcoverBook(
-						hit.document,
-						await findMatchingHardcoverEdition(hit),
-					),
-				),
+		const unresolvedPromises = hits
+			.filter((hit): hit is typeof hit & { document: HardcoverBookDocument } =>
+				Boolean(hit.document),
+			)
+			.map(async (hit) => {
+				const edition = await findMatchingHardcoverEdition(hit);
+				if (!edition) return null; // Return null if it doesn't exist
+
+				return mapHardcoverBook(hit.document, edition);
+			});
+
+		const resolvedResults = await Promise.all(unresolvedPromises);
+		results = resolvedResults.filter(
+			(book): book is SearchBook => book !== null,
 		);
 	} catch (e) {
 		console.error(e);
@@ -233,7 +217,7 @@ export async function searchHardcover(query: string): Promise<{
 }
 function mapHardcoverBook(
 	document: HardcoverBookDocument,
-	edition: HardcoverEdition | null,
+	edition: HardcoverEdition,
 ): SearchBook {
 	const title = edition?.title?.trim() || document.title?.trim() || "Untitled";
 	const subtitle =
@@ -293,11 +277,8 @@ function mapHardcoverBook(
 		document.featured_series?.details?.trim() ??
 		null;
 	const moods = normalizeSubjects(document.moods);
-	const subjects = normalizeSubjects([
-		...(document.moods ?? []),
-		...(document.genres ?? []),
-		...(document.tags ?? []),
-	]);
+	const genres = normalizeSubjects(document.genres);
+	const bookId = edition?.book_id;
 
 	return {
 		id: buildBookIdentityKey({
@@ -308,6 +289,7 @@ function mapHardcoverBook(
 		}),
 		source: "hardcover" as const,
 		sourceBookId,
+		bookId,
 		isbn10,
 		isbn13,
 		title,
@@ -326,7 +308,7 @@ function mapHardcoverBook(
 		seriesName,
 		seriesPosition,
 		moods,
-		subjects,
+		genres,
 		provider: "Hardcover" as const,
 	};
 }
@@ -334,19 +316,18 @@ function mapHardcoverBook(
 async function findMatchingHardcoverEdition(hit: {
 	document: HardcoverBookDocument;
 	highlight?: HardcoverSearchHighlight;
-	highlights?: HardcoverSearchHighlightMatch[];
+	highlights: HardcoverSearchHighlightMatch[];
 }) {
 	const matchedTitle = resolveMatchedAlternativeTitle(hit);
-	const bookId = toHardcoverIntegerId(hit.document.id);
 
-	if (!matchedTitle || bookId === null) {
+	if (!matchedTitle) {
 		return null;
 	}
 
-	return fetchHardcoverEditionByTitle(bookId, matchedTitle);
+	return fetchHardcoverEditionByTitle(matchedTitle);
 }
 
-async function fetchHardcoverEditionByTitle(bookId: number, title: string) {
+async function fetchHardcoverEditionByTitle(title: string) {
 	const response = await fetch("https://api.hardcover.app/v1/graphql", {
 		method: "POST",
 		headers: {
@@ -359,13 +340,13 @@ async function fetchHardcoverEditionByTitle(bookId: number, title: string) {
 				query MatchingEdition($bookId: Int!, $title: String!) {
 					editions(
 						where: {
-							book_id: { _eq: $bookId },
 							title: { _eq: $title }
 						},
 						limit: 1,
 						order_by: { users_count: desc }
 					) {
 						id
+						book_id
 						title
 						subtitle
 						isbn_10
@@ -386,7 +367,6 @@ async function fetchHardcoverEditionByTitle(bookId: number, title: string) {
 				}
 			`,
 			variables: {
-				bookId,
 				title,
 			},
 		}),
@@ -411,41 +391,9 @@ function normalizeIsbn(isbn: string) {
 
 function resolveMatchedAlternativeTitle(hit: {
 	highlight?: HardcoverSearchHighlight;
-	highlights?: HardcoverSearchHighlightMatch[];
+	highlights: HardcoverSearchHighlightMatch[];
 }) {
-	const highlightedSnippet = hit.highlights?.find(
-		(highlight) => highlight.field === "alternative_titles",
-	)?.snippets?.[0];
-
-	if (highlightedSnippet) {
-		return stripHighlightMarkup(highlightedSnippet);
-	}
-
-	const highlightedAlternative = hit.highlight?.alternative_titles?.find(
-		(alternativeTitle) => (alternativeTitle.matched_tokens?.length ?? 0) > 0,
-	);
-
-	return highlightedAlternative?.snippet
-		? stripHighlightMarkup(highlightedAlternative.snippet)
-		: null;
-}
-
-function stripHighlightMarkup(value: string) {
-	return value.replace(/<\/?mark>/g, "").trim() || null;
-}
-
-function toHardcoverIntegerId(value: string | number | undefined) {
-	if (typeof value === "number") {
-		return Number.isInteger(value) ? value : null;
-	}
-
-	if (!value) {
-		return null;
-	}
-
-	const parsedValue = Number(value);
-
-	return Number.isInteger(parsedValue) ? parsedValue : null;
+	return hit.highlights[0].matched_tokens[0];
 }
 
 function formatSeriesPosition(position: number | undefined) {

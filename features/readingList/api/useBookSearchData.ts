@@ -1,7 +1,7 @@
 "use client";
 
-import { SearchBook } from "@/f";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { SearchBook } from "@/f";
 
 const MIN_QUERY_LENGTH = 2;
 const SEARCH_QUERY_KEY = "book-search";

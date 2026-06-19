@@ -1,11 +1,9 @@
 CREATE TYPE "public"."reading_list_type" AS ENUM('to_be_read', 'reading', 'finished', 'did_not_finish');--> statement-breakpoint
-CREATE TABLE "book_identifiers" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+CREATE TABLE "book_genres" (
 	"book_id" uuid NOT NULL,
-	"identifier" text NOT NULL,
-	"identifier_type" text NOT NULL,
+	"genre" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "book_identifiers_identifier_key" UNIQUE("identifier")
+	CONSTRAINT "book_genres_book_id_genre_pk" PRIMARY KEY("book_id","genre")
 );
 --> statement-breakpoint
 CREATE TABLE "book_metrics" (
@@ -21,17 +19,16 @@ CREATE TABLE "book_metrics" (
 	CONSTRAINT "book_metrics_book_id_source_metric_key_key" UNIQUE("book_id","source","metric_key")
 );
 --> statement-breakpoint
-CREATE TABLE "book_subjects" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+CREATE TABLE "book_moods" (
 	"book_id" uuid NOT NULL,
-	"subject" text NOT NULL,
+	"mood" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "book_subjects_book_id_subject_key" UNIQUE("book_id","subject")
+	CONSTRAINT "book_moods_book_id_mood_pk" PRIMARY KEY("book_id","mood")
 );
 --> statement-breakpoint
 CREATE TABLE "books" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"canonical_key" text NOT NULL,
+	"canonical_id" integer NOT NULL,
 	"title" text NOT NULL,
 	"subtitle" text,
 	"author" text NOT NULL,
@@ -50,7 +47,7 @@ CREATE TABLE "books" (
 	"series_position" text,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "books_canonical_key_key" UNIQUE("canonical_key"),
+	CONSTRAINT "books_canonical_id_id" UNIQUE("canonical_id"),
 	CONSTRAINT "books_source_book_key" UNIQUE("primary_source","primary_source_book_id")
 );
 --> statement-breakpoint
@@ -76,12 +73,11 @@ CREATE TABLE "reading_lists" (
 );
 --> statement-breakpoint
 CREATE TABLE "user_book_moods" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" text NOT NULL,
 	"book_id" uuid NOT NULL,
 	"mood" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "user_book_moods_user_id_book_id_mood_key" UNIQUE("user_id","book_id","mood")
+	CONSTRAINT "user_book_moods_user_id_book_id_mood_pk" PRIMARY KEY("user_id","book_id","mood")
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
@@ -89,19 +85,18 @@ CREATE TABLE "users" (
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "book_identifiers" ADD CONSTRAINT "book_identifiers_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "book_genres" ADD CONSTRAINT "book_genres_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "book_metrics" ADD CONSTRAINT "book_metrics_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "book_subjects" ADD CONSTRAINT "book_subjects_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "book_moods" ADD CONSTRAINT "book_moods_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "reading_list_items" ADD CONSTRAINT "reading_list_items_list_id_reading_lists_id_fk" FOREIGN KEY ("list_id") REFERENCES "public"."reading_lists"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "reading_list_items" ADD CONSTRAINT "reading_list_items_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "reading_lists" ADD CONSTRAINT "reading_lists_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_book_moods" ADD CONSTRAINT "user_book_moods_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_book_moods" ADD CONSTRAINT "user_book_moods_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX "idx_book_identifiers_book_id" ON "book_identifiers" USING btree ("book_id");--> statement-breakpoint
+CREATE INDEX "idx_book_genres_genre" ON "book_genres" USING btree ("genre");--> statement-breakpoint
 CREATE INDEX "idx_book_metrics_book_id" ON "book_metrics" USING btree ("book_id");--> statement-breakpoint
 CREATE INDEX "idx_book_metrics_key" ON "book_metrics" USING btree ("metric_key");--> statement-breakpoint
-CREATE INDEX "idx_book_subjects_book_id" ON "book_subjects" USING btree ("book_id");--> statement-breakpoint
-CREATE INDEX "idx_book_subjects_subject" ON "book_subjects" USING btree ("subject");--> statement-breakpoint
+CREATE INDEX "idx_book_moods_mood" ON "book_moods" USING btree ("mood");--> statement-breakpoint
 CREATE INDEX "idx_books_isbn10" ON "books" USING btree ("isbn10");--> statement-breakpoint
 CREATE INDEX "idx_books_isbn13" ON "books" USING btree ("isbn13");--> statement-breakpoint
 CREATE INDEX "idx_books_source" ON "books" USING btree ("primary_source","primary_source_book_id");--> statement-breakpoint

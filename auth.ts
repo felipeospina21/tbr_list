@@ -1,5 +1,6 @@
 import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { initializeUserAccount } from "./db/initializeUserAccount";
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
@@ -46,6 +47,12 @@ export function getAuthOptions(): NextAuthOptions {
 				}
 
 				return session;
+			},
+			async signIn({ user }) {
+				if (user.id) {
+					await initializeUserAccount(user.id);
+				}
+				return true;
 			},
 		},
 	};

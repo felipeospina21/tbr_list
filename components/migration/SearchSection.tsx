@@ -1,9 +1,9 @@
 "use client";
 import { Search, X } from "lucide-react";
 import { useState } from "react";
+import { useBookSearchData } from "@/features/readingList/api/useBookSearchData";
 import { T } from "./constants";
 import { SearchSuggestions } from "./SearchSuggestions";
-import { useBookSearchData } from "@/features/readingList/api/useBookSearchData";
 
 export const SearchSection = () => {
 	const [query, setQuery] = useState("");

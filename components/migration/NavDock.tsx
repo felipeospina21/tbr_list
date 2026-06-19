@@ -1,9 +1,9 @@
 "use client";
 import { motion } from "framer-motion";
 import { BarChart2, BookOpen, Search, Smile } from "lucide-react";
+import Link from "next/link";
 import { FC } from "react";
 import { T } from "./constants";
-import Link from "next/link";
 
 const base = "/reading-app";
 const NAV_ITEMS = [

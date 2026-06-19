@@ -4,6 +4,7 @@ import {
 	jsonb,
 	pgEnum,
 	pgTable,
+	primaryKey,
 	real,
 	text,
 	unique,
@@ -17,35 +18,37 @@ export const users = pgTable("users", {
 	createdAt: timestamps.createdAt,
 });
 
-// /* AUTH ACCOUNTS */
-// leaving commented for later implementation
-//
-// export const authAccounts = pgTable(
-// 	"auth_accounts",
-// 	{
-// 		id: uuid().primaryKey().defaultRandom(),
-// 		userId: uuid()
-// 			.notNull()
-// 			.references(() => users.id, { onDelete: "cascade" }),
-// 		provider: text().notNull(),
-// 		providerAccountId: text().notNull(),
-// 		createdAt: timestamps.createdAt,
-// 	},
-// 	(table) => [
-// 		unique("auth_accounts_provider_provider_account_id_key").on(
-// 			table.provider,
-// 			table.providerAccountId,
-// 		),
-// 		index("idx_auth_accounts_user_id").on(table.userId),
-// 	],
-// );
+/* USER BOOK MOODS */
+export const userBookMoods = pgTable(
+	"user_book_moods",
+	{
+		userId: text()
+			.notNull()
+			.references(() => users.id, {
+				onDelete: "cascade",
+			}),
+		bookId: uuid()
+			.notNull()
+			.references(() => books.id, {
+				onDelete: "cascade",
+			}),
+		mood: text().notNull(),
+		createdAt: timestamps.createdAt,
+	},
+	(table) => [
+		primaryKey({
+			columns: [table.userId, table.bookId, table.mood],
+		}),
+		index("idx_user_book_moods_user_book").on(table.userId, table.bookId),
+	],
+);
 
 /* BOOKS */
 export const books = pgTable(
 	"books",
 	{
 		id: uuid().primaryKey().defaultRandom(),
-		canonicalKey: text().notNull(),
+		canonicalId: integer().notNull(),
 		title: text().notNull(),
 		subtitle: text(),
 		author: text().notNull(),
@@ -65,7 +68,7 @@ export const books = pgTable(
 		...timestamps,
 	},
 	(table) => [
-		unique("books_canonical_key_key").on(table.canonicalKey),
+		unique("books_canonical_id_id").on(table.canonicalId),
 		unique("books_source_book_key").on(
 			table.primarySource,
 			table.primarySourceBookId,
@@ -76,26 +79,6 @@ export const books = pgTable(
 			table.primarySource,
 			table.primarySourceBookId,
 		),
-	],
-);
-
-/* BOOK IDENTIFIERS */
-export const bookIdentifiers = pgTable(
-	"book_identifiers",
-	{
-		id: uuid().primaryKey().defaultRandom(),
-		bookId: uuid()
-			.notNull()
-			.references(() => books.id, {
-				onDelete: "cascade",
-			}),
-		identifier: text().notNull(),
-		identifierType: text().notNull(),
-		createdAt: timestamps.createdAt,
-	},
-	(table) => [
-		unique("book_identifiers_identifier_key").on(table.identifier),
-		index("idx_book_identifiers_book_id").on(table.bookId),
 	],
 );
 
@@ -127,23 +110,43 @@ export const bookMetrics = pgTable(
 	],
 );
 
-/* BOOK SUBJECTS */
-export const bookSubjects = pgTable(
-	"book_subjects",
+/* BOOK GENRES */
+export const bookGenres = pgTable(
+	"book_genres",
 	{
-		id: uuid().primaryKey().defaultRandom(),
 		bookId: uuid()
 			.notNull()
 			.references(() => books.id, {
 				onDelete: "cascade",
 			}),
-		subject: text().notNull(),
+		genre: text().notNull(),
 		createdAt: timestamps.createdAt,
 	},
 	(table) => [
-		unique("book_subjects_book_id_subject_key").on(table.bookId, table.subject),
-		index("idx_book_subjects_book_id").on(table.bookId),
-		index("idx_book_subjects_subject").on(table.subject),
+		primaryKey({
+			columns: [table.bookId, table.genre],
+		}),
+		index("idx_book_genres_genre").on(table.genre),
+	],
+);
+
+/* BOOK MOODS */
+export const bookMoods = pgTable(
+	"book_moods",
+	{
+		bookId: uuid()
+			.notNull()
+			.references(() => books.id, {
+				onDelete: "cascade",
+			}),
+		mood: text().notNull(),
+		createdAt: timestamps.createdAt,
+	},
+	(table) => [
+		primaryKey({
+			columns: [table.bookId, table.mood],
+		}),
+		index("idx_book_moods_mood").on(table.mood),
 	],
 );
 
@@ -202,30 +205,25 @@ export const readingListItems = pgTable(
 	],
 );
 
-/* USER BOOK MOODS */
-export const userBookMoods = pgTable(
-	"user_book_moods",
-	{
-		id: uuid().primaryKey().defaultRandom(),
-		userId: text()
-			.notNull()
-			.references(() => users.id, {
-				onDelete: "cascade",
-			}),
-		bookId: uuid()
-			.notNull()
-			.references(() => books.id, {
-				onDelete: "cascade",
-			}),
-		mood: text().notNull(),
-		createdAt: timestamps.createdAt,
-	},
-	(table) => [
-		unique("user_book_moods_user_id_book_id_mood_key").on(
-			table.userId,
-			table.bookId,
-			table.mood,
-		),
-		index("idx_user_book_moods_user_book").on(table.userId, table.bookId),
-	],
-);
+// /* AUTH ACCOUNTS */
+// leaving commented for later implementation
+//
+// export const authAccounts = pgTable(
+// 	"auth_accounts",
+// 	{
+// 		id: uuid().primaryKey().defaultRandom(),
+// 		userId: uuid()
+// 			.notNull()
+// 			.references(() => users.id, { onDelete: "cascade" }),
+// 		provider: text().notNull(),
+// 		providerAccountId: text().notNull(),
+// 		createdAt: timestamps.createdAt,
+// 	},
+// 	(table) => [
+// 		unique("auth_accounts_provider_provider_account_id_key").on(
+// 			table.provider,
+// 			table.providerAccountId,
+// 		),
+// 		index("idx_auth_accounts_user_id").on(table.userId),
+// 	],
+// );
