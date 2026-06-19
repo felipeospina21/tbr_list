@@ -32,7 +32,6 @@ export async function getReadingListWithBooks(
 	userId: string,
 	type: ReadingListType,
 ) {
-	console.log("ARGS PASSED TO METHOD:", { userId, type });
 	const rows = await db
 		.select({
 			id: books.id,
@@ -54,7 +53,6 @@ export async function getReadingListWithBooks(
 		.where(and(eq(readingLists.userId, userId), eq(readingLists.type, type)))
 		.orderBy(readingListItems.position);
 
-	console.log(rows);
 	// Accumulator object to group flat database rows by book ID
 	const booksMap: Record<
 		string,

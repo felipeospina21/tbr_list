@@ -2,30 +2,30 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Trash2 } from "lucide-react";
 import { Dispatch, FC, SetStateAction } from "react";
 import { T } from "./constants";
-import { Book, ShelfKey } from "./types";
+import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
 
 interface BookListActionsProps {
-	books: Book[];
-	optionsBook: Book | null;
-	setBooks: (b: Book[]) => void;
-	setOptionsBook: Dispatch<SetStateAction<Book | null>>;
+	books: ReadingListBook[] | undefined;
+	optionsBook: ReadingListBook | null;
+	setOptionsBook: Dispatch<SetStateAction<ReadingListBook | null>>;
 }
 
 export const BookListActions: FC<BookListActionsProps> = ({
 	books,
 	optionsBook,
-	setBooks,
 	setOptionsBook,
 }) => {
-	const moveBook = (book: Book, shelf: ShelfKey) => {
-		setBooks(books.map((b) => (b.id === book.id ? { ...b, shelf } : b)));
-		setOptionsBook(null);
-	};
-
-	const removeBook = (book: Book) => {
-		setBooks(books.filter((b) => b.id !== book.id));
-		setOptionsBook(null);
-	};
+	// const moveBook = (book: Book, shelf: ShelfKey) => {
+	// 	setBooks(books.map((b) => (b.id === book.id ? { ...b, shelf } : b)));
+	// 	setOptionsBook(null);
+	// };
+	//
+	// const removeBook = (book: Book) => {
+	// 	setBooks(books.filter((b) => b.id !== book.id));
+	// 	setOptionsBook(null);
+	// };
+	//
+	const navDockHeight = "-72px";
 	return (
 		<AnimatePresence>
 			{optionsBook && (
@@ -46,7 +46,7 @@ export const BookListActions: FC<BookListActionsProps> = ({
 							paddingBottom: "calc(16px + env(safe-area-inset-bottom, 0px))",
 						}}
 						initial={{ y: "100%" }}
-						animate={{ y: 0 }}
+						animate={{ y: navDockHeight }}
 						exit={{ y: "100%" }}
 						transition={{ type: "spring", stiffness: 400, damping: 40 }}
 					>
@@ -67,29 +67,19 @@ export const BookListActions: FC<BookListActionsProps> = ({
 							{optionsBook.author}
 						</p>
 						<div className="flex flex-col gap-2">
-							{(["tbr", "reading", "dnf"] as ShelfKey[])
-								.filter((s) => s !== optionsBook.shelf)
-								.map((s) => (
-									<button
-										key={s}
-										className="flex items-center gap-3 w-full py-3.5 px-3 rounded-xl text-sm font-nunito font-semibold active:scale-[0.98] transition-transform"
-										style={{
-											backgroundColor: T.surfaceRaised,
-											color: T.paper,
-											borderColor: T.stone,
-											border: `1px solid ${T.stone}`,
-										}}
-										onClick={() => moveBook(optionsBook, s)}
-									>
-										<ArrowRight size={15} style={{ color: T.amber }} />
-										Move to{" "}
-										{s === "tbr"
-											? "To Be Read"
-											: s === "reading"
-												? "Currently Reading"
-												: "Did Not Finish"}
-									</button>
-								))}
+							<button
+								className="flex items-center gap-3 w-full py-3.5 px-3 rounded-xl text-sm font-nunito font-semibold active:scale-[0.98] transition-transform"
+								style={{
+									backgroundColor: T.surfaceRaised,
+									color: T.paper,
+									borderColor: T.stone,
+									border: `1px solid ${T.stone}`,
+								}}
+								onClick={() => {}}
+							>
+								<ArrowRight size={15} style={{ color: T.amber }} />
+								Move to
+							</button>
 							<button
 								className="flex items-center gap-3 w-full py-3.5 px-3 rounded-xl text-sm font-nunito font-semibold mt-1 active:scale-[0.98] transition-transform"
 								style={{
@@ -97,7 +87,7 @@ export const BookListActions: FC<BookListActionsProps> = ({
 									color: "#c97060",
 									border: `1px solid rgba(139,58,42,0.35)`,
 								}}
-								onClick={() => removeBook(optionsBook)}
+								onClick={() => {}}
 							>
 								<Trash2 size={15} />
 								Remove from library
