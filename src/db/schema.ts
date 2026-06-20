@@ -206,25 +206,6 @@ export const readingListItems = pgTable(
 	],
 );
 
-export const booksRelations = relations(books, ({ many }) => ({
-	genres: many(bookGenres),
-	moods: many(bookMoods),
-}));
-
-export const readingListsRelations = relations(readingLists, ({ many }) => ({
-	items: many(readingListItems),
-}));
-
-export const readingListItemsRelations = relations(
-	readingListItems,
-	({ one }) => ({
-		book: one(books, {
-			fields: [readingListItems.bookId],
-			references: [books.id],
-		}),
-	}),
-);
-
 // /* AUTH ACCOUNTS */
 // leaving commented for later implementation
 //

@@ -1,102 +1,123 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type {
-	ReadingListSlug,
-	ReadingListSnapshot,
-} from "../types/readingList";
+import type { ReadingListType } from "../types/readingList";
 import { getReadingListQueryKey } from "./readingListQueryKeys";
+import { apiFetch } from "@/lib/api/apiFetch";
+import { ReorderSingleItemInput } from "../server/commands/reorderSingleItem";
+import { ReadingListBook } from "../server/queries/getReadingListWithBooks";
 
-type ChangeBookPositionInput = {
-	bookId: string;
-	targetIndex: number;
-};
+export type UpdateServerOrderPayload = Omit<ReorderSingleItemInput, "userId">;
 
-type ChangeBookPositionContext = {
-	previousSnapshot?: ReadingListSnapshot;
-};
-
-function reorderSnapshot(
-	snapshot: ReadingListSnapshot | undefined,
-	{ bookId, targetIndex }: ChangeBookPositionInput,
-) {
-	if (!snapshot) {
-		return snapshot;
-	}
-
-	const currentIndex = snapshot.books.findIndex((book) => book.id === bookId);
-
-	if (
-		currentIndex < 0 ||
-		targetIndex < 0 ||
-		targetIndex >= snapshot.books.length
-	) {
-		return snapshot;
-	}
-
-	const books = [...snapshot.books];
-	const [book] = books.splice(currentIndex, 1);
-	books.splice(targetIndex, 0, book);
-
-	return {
-		...snapshot,
-		books,
-	};
-}
-
-export async function moveReadingListBook(
-	listSlug: ReadingListSlug,
-	bookId: string,
-	targetIndex: number,
-): Promise<ReadingListSnapshot> {
-	const response = await fetch(`/api/reading-list?listSlug=${listSlug}`, {
+export async function updateServerOrder(payload: UpdateServerOrderPayload) {
+	return apiFetch(`/api/reading-list`, {
 		method: "PATCH",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify({ bookId, targetIndex }),
+		body: JSON.stringify(payload),
 	});
+}
+type ReorderSingleInputContext = {
+	previousBooks: R;
+};
 
-	if (!response.ok) {
-		throw new Error("Reading list request failed");
-	}
+type R = unknown;
 
-	return (await response.json()) as ReadingListSnapshot;
+interface ReadingListCacheData {
+	items: {
+		books: ReadingListBook[];
+	};
 }
 
-export function useChangeBookPosition(listSlug: ReadingListSlug) {
+export function useUpdateBookOrderMutation(readingListType: ReadingListType) {
 	const queryClient = useQueryClient();
-	const queryKey = getReadingListQueryKey(listSlug);
+	const queryKey = getReadingListQueryKey(readingListType);
 
 	return useMutation<
-		ReadingListSnapshot,
+		R,
 		Error,
-		ChangeBookPositionInput,
-		ChangeBookPositionContext
+		UpdateServerOrderPayload,
+		ReorderSingleInputContext
 	>({
-		mutationFn: ({ bookId, targetIndex }: ChangeBookPositionInput) =>
-			moveReadingListBook(listSlug, bookId, targetIndex),
+		mutationFn: async (input) => {
+			return updateServerOrder(input);
+		},
 
-		onMutate: async (input) => {
+		onMutate: async (payload) => {
+			// 1. Cancel outgoing queries so they don't overwrite us
 			await queryClient.cancelQueries({ queryKey });
 
-			const previousSnapshot =
-				queryClient.getQueryData<ReadingListSnapshot>(queryKey);
+			// 2. Snapshot the current cache state for rollback purposes
+			const previousBooks = queryClient.getQueryData(queryKey);
 
-			queryClient.setQueryData<ReadingListSnapshot | undefined>(
-				queryKey,
-				(snapshot) => reorderSnapshot(snapshot, input),
-			);
-
-			return { previousSnapshot };
-		},
-		onError: (_error, _input, context) => {
-			if (context?.previousSnapshot) {
-				queryClient.setQueryData(queryKey, context.previousSnapshot);
+			// 3. OPTIMISTIC UPDATE: Calculate the new float location immediately in cache
+			let calculatedPosition: number;
+			if (payload.abovePosition === null && payload.belowPosition !== null) {
+				calculatedPosition = payload.belowPosition / 2;
+			} else if (
+				payload.abovePosition !== null &&
+				payload.belowPosition === null
+			) {
+				calculatedPosition = payload.abovePosition + 1.0;
+			} else if (
+				payload.abovePosition !== null &&
+				payload.belowPosition !== null
+			) {
+				calculatedPosition =
+					(payload.abovePosition + payload.belowPosition) / 2;
+			} else {
+				calculatedPosition = 1.0;
 			}
+
+			// 4. Safely update ONLY the target book's position property inside the array
+			queryClient.setQueryData<ReadingListCacheData>(queryKey, (oldData) => {
+				// Make sure this matches your exact cached structure (e.g., oldData.items.books)
+				if (!oldData?.items?.books) return oldData;
+
+				const updatedBooks = oldData.items.books.map((book: ReadingListBook) =>
+					book.id === payload.bookId
+						? { ...book, position: calculatedPosition }
+						: book,
+				);
+
+				// Return the intact structural wrapper with our single modified book item
+				return {
+					...oldData,
+					items: {
+						...oldData.items,
+						books: updatedBooks,
+					},
+				};
+			});
+
+			return { previousBooks };
 		},
-		onSuccess: (snapshot) => {
-			queryClient.setQueryData(queryKey, snapshot);
+
+		onSuccess: (responseData, payload) => {
+			// Ensure the cache matches the definitive precision float returned by Postgres
+			queryClient.setQueryData<ReadingListCacheData>(queryKey, (oldData) => {
+				if (!oldData?.items?.books) return oldData;
+
+				return {
+					...oldData,
+					items: {
+						...oldData.items,
+						books: oldData.items.books.map((book: ReadingListBook) =>
+							book.id === payload.bookId
+								? { ...book, position: responseData.position }
+								: book,
+						),
+					},
+				};
+			});
+		},
+
+		onError: (_err, _variables, context) => {
+			// Roll back completely if server rejects the transaction operation
+			if (context?.previousBooks) {
+				queryClient.setQueryData(queryKey, context.previousBooks);
+			}
 		},
 	});
 }

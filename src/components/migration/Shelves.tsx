@@ -3,9 +3,7 @@ import { FC } from "react";
 import { T } from "./constants";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { ReadingListType } from "@/features/readingList/types/readingList";
-import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
 import { useFetchReadingList } from "@/features/readingList/api/useFetchReadingList";
-import { Loader } from "../layout/Loader";
 import { Spinner } from "../ui/Spinner";
 
 interface ShelvesProps {
@@ -52,7 +50,6 @@ export const Shelves: FC<ShelvesProps> = ({ currentList }) => {
 	const searchParams = useSearchParams();
 
 	const handleTabChange = (newType: string) => {
-		console.log(newType);
 		const params = new URLSearchParams(searchParams);
 		params.set("type", newType);
 

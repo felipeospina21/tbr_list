@@ -11,6 +11,11 @@ import {
 	GetReadingListCounts,
 	getReadingListCounts,
 } from "@/features/readingList/server/queries/getReadingListsCount";
+import {
+	ReorderSingleItemInput,
+	reorderSingleItem,
+} from "@/features/readingList/server/commands/reorderSingleItem";
+import { UpdateServerOrderPayload } from "@/features/readingList/api/useChangeBookPosition";
 
 export interface FetchRedingLists {
 	items: GetReadingListWithBooks;
@@ -60,6 +65,32 @@ export async function POST(request: Request) {
 		});
 
 		return ApiResponseHelper.success(book.id, 201);
+	} catch (error) {
+		return ApiResponseHelper.handle(error);
+	}
+}
+
+export async function PATCH(request: Request) {
+	try {
+		const userId = await getCurrentUserId();
+		if (!userId) {
+			return unauthorized();
+		}
+
+		const body: UpdateServerOrderPayload = await request.json();
+		const { bookId, abovePosition, belowPosition, listType } = body;
+
+		const res = await reorderSingleItem({
+			listType,
+			userId,
+			bookId,
+			belowPosition,
+			abovePosition,
+		});
+
+		return ApiResponseHelper.success(res.success, 200, {
+			newPosition: res.position,
+		});
 	} catch (error) {
 		return ApiResponseHelper.handle(error);
 	}
