@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import {
 	books,
 	readingLists,
@@ -32,7 +32,8 @@ export async function getReadingListWithBooks(
 	userId: string,
 	type: ReadingListType,
 ) {
-	const rows = await db
+	// 1. Fetch the distinct list of books and their list position metrics (Exactly 1 row per book)
+	const baseBooks = await db
 		.select({
 			id: books.id,
 			title: books.title,
@@ -42,53 +43,46 @@ export async function getReadingListWithBooks(
 			seriesName: books.seriesName,
 			seriesPosition: books.seriesPosition,
 			position: readingListItems.position,
-			genre: bookGenres.genre,
-			mood: bookMoods.mood,
 		})
 		.from(readingListItems)
 		.innerJoin(readingLists, eq(readingListItems.listId, readingLists.id))
 		.innerJoin(books, eq(readingListItems.bookId, books.id))
-		.leftJoin(bookGenres, eq(books.id, bookGenres.bookId)) // Left join to include books without genres
-		.leftJoin(bookMoods, eq(books.id, bookMoods.bookId)) // Left join to include books without moods
 		.where(and(eq(readingLists.userId, userId), eq(readingLists.type, type)))
 		.orderBy(readingListItems.position);
 
-	// Accumulator object to group flat database rows by book ID
-	const booksMap: Record<
-		string,
-		Omit<ReadingListBook, "genres" | "moods"> & {
-			genres: Set<string>;
-			moods: Set<string>;
-		}
-	> = {};
-
-	for (const row of rows) {
-		if (!booksMap[row.id]) {
-			booksMap[row.id] = {
-				id: row.id,
-				title: row.title,
-				author: row.author,
-				cover: row.cover,
-				pages: row.pages,
-				seriesName: row.seriesName,
-				seriesPosition: row.seriesPosition,
-				position: row.position,
-				genres: new Set<string>(),
-				moods: new Set<string>(),
-			};
-		}
-		if (row.genre) booksMap[row.id].genres.add(row.genre);
-		if (row.mood) booksMap[row.id].moods.add(row.mood);
+	// Safe escape clause if the user has no books in this list
+	if (baseBooks.length === 0) {
+		return {
+			type,
+			books: [],
+			pages: 0,
+		};
 	}
 
-	// Convert Sets back to arrays for the final response
-	const formattedBooks = Object.values(booksMap)
-		.map((book) => ({
+	const bookIds = baseBooks.map((b) => b.id);
+
+	// 2. Fetch all matching tags in parallel (Each returns small, compact flat rows)
+	const [genresData, moodsData] = await Promise.all([
+		db.select().from(bookGenres).where(inArray(bookGenres.bookId, bookIds)),
+		db.select().from(bookMoods).where(inArray(bookMoods.bookId, bookIds)),
+	]);
+
+	// 3. Map the isolated relational arrays back to the respective target books
+	const formattedBooks = baseBooks.map((book) => {
+		const genres = genresData
+			.filter((g) => g.bookId === book.id)
+			.map((g) => g.genre);
+
+		const moods = moodsData
+			.filter((m) => m.bookId === book.id)
+			.map((m) => m.mood);
+
+		return {
 			...book,
-			genres: Array.from(book.genres),
-			moods: Array.from(book.moods),
-		}))
-		.sort((a, b) => a.position - b.position); // Maintain position order
+			genres,
+			moods,
+		};
+	});
 
 	return {
 		type,

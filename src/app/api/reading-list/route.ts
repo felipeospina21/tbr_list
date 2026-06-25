@@ -11,10 +11,7 @@ import {
 	GetReadingListCounts,
 	getReadingListCounts,
 } from "@/features/readingList/server/queries/getReadingListsCount";
-import {
-	ReorderSingleItemInput,
-	reorderSingleItem,
-} from "@/features/readingList/server/commands/reorderSingleItem";
+import { reorderSingleItem } from "@/features/readingList/server/commands/reorderSingleItem";
 import { UpdateServerOrderPayload } from "@/features/readingList/api/useChangeBookPosition";
 
 export interface FetchRedingLists {

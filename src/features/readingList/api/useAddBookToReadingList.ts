@@ -1,64 +1,33 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type {
-	SchemaBook,
-	ReadingListSlug,
-	ReadingListSnapshot,
-} from "../types/readingList";
 import { getReadingListQueryKey } from "./readingListQueryKeys";
+import { apiFetch } from "@/lib/api/apiFetch";
+import { AddBookToReadingListInput } from "../server/commands/addBookToReadingList";
 
-export async function addReadingListBook(
-	listSlug: ReadingListSlug,
-	book: SchemaBook,
-): Promise<ReadingListSnapshot> {
-	const response = await fetch(`/api/reading-list?listSlug=${listSlug}`, {
+export type AddReadingListBookPayload = Omit<
+	AddBookToReadingListInput,
+	"userId"
+>;
+
+export async function addReadingListBook(payload: AddReadingListBookPayload) {
+	return apiFetch(`/api/reading-list`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify({ book }),
+		body: JSON.stringify(payload),
 	});
-
-	if (!response.ok) {
-		throw new Error("Reading list request failed");
-	}
-
-	return (await response.json()) as ReadingListSnapshot;
 }
 
-export function useAddBookToReadingList(listSlug: ReadingListSlug) {
+export function useAddBookToReadingList() {
 	const queryClient = useQueryClient();
-	const queryKey = getReadingListQueryKey(listSlug);
+	const queryKey = getReadingListQueryKey("to_be_read");
 
-	return useMutation({
-		mutationFn: (book: SchemaBook) => addReadingListBook(listSlug, book),
-		onMutate: async (input) => {
-			await queryClient.cancelQueries({ queryKey });
-
-			const previousSnapshot =
-				queryClient.getQueryData<ReadingListSnapshot>(queryKey);
-
-			queryClient.setQueryData<ReadingListSnapshot | undefined>(
-				queryKey,
-				(snapshot) => {
-					if (!snapshot) {
-						return undefined;
-					}
-
-					return { ...snapshot, books: [...snapshot.books, input] };
-				},
-			);
-
-			return { previousSnapshot };
-		},
-		onError: (_error, _input, context) => {
-			if (context?.previousSnapshot) {
-				queryClient.setQueryData(queryKey, context.previousSnapshot);
-			}
-		},
-		onSuccess: (snapshot) => {
-			queryClient.setQueryData(queryKey, snapshot);
+	return useMutation<unknown, Error, AddReadingListBookPayload>({
+		mutationFn: (input) => addReadingListBook(input),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey });
 		},
 	});
 }

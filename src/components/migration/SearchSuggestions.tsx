@@ -3,29 +3,36 @@ import Image from "next/image";
 import { FC } from "react";
 import { SearchBook } from "@/f";
 import { T } from "./constants";
+import { cn } from "@/lib/utils";
+import { useAddBookToReadingList } from "@/features/readingList/api/useAddBookToReadingList";
+import { Spinner } from "../ui/Spinner";
 
 interface SearchSuggestionsProps {
 	query: string;
 	books: SearchBook[] | undefined;
+	isPending: boolean;
 }
 
 export const SearchSuggestions: FC<SearchSuggestionsProps> = ({
 	query,
 	books,
+	isPending,
 }) => {
-	if (!books || !books.length) {
-		return <div>no books</div>;
-	}
+	const addBookMutation = useAddBookToReadingList();
+	const isEmpty = !query && (!books || !books.length);
 
 	const addBook = (book: SearchBook) => {
-		if (!books.find((b) => b.id === book.id)) {
-			// TODO: add book mutation
-		}
+		addBookMutation.mutate({ book, type: "to_be_read" });
 	};
 
 	return (
-		<div className="flex-1 overflow-y-auto px-4 pt-4 pb-2">
-			{!query && (
+		<div
+			className={cn(
+				"flex-1 overflow-y-auto px-4 pt-4 pb-2",
+				isPending ? "opacity-50 transition-opacity" : "",
+			)}
+		>
+			{isEmpty && (
 				<p
 					className="font-nunito text-xs font-semibold mb-3 uppercase tracking-widest"
 					style={{ color: T.stoneLight }}
@@ -34,11 +41,10 @@ export const SearchSuggestions: FC<SearchSuggestionsProps> = ({
 				</p>
 			)}
 			<div className="flex flex-col gap-2.5">
-				{books.map((book) => {
-					const inLibrary = !!books.find((b) => b.id === book.id);
+				{books?.map((book) => {
 					return (
 						<div
-							key={book.id}
+							key={book.sourceBookId}
 							className="flex items-stretch rounded-xl overflow-hidden"
 							style={{
 								backgroundColor: T.surfaceRaised,
@@ -83,19 +89,18 @@ export const SearchSuggestions: FC<SearchSuggestionsProps> = ({
 								<button
 									className="flex items-center justify-center w-9 h-9 rounded-full transition-all active:scale-90"
 									style={{
-										backgroundColor: inLibrary ? T.stone : T.amber,
-										color: inLibrary ? T.paperDim : T.night,
+										backgroundColor: T.amber,
+										color: T.night,
 									}}
-									onClick={() => !inLibrary && addBook(book)}
-									disabled={inLibrary}
+									onClick={() => addBook(book)}
 								>
-									{inLibrary ? <CheckCircle size={15} /> : <Plus size={15} />}
+									{addBookMutation.isPending ? <Spinner /> : <Plus size={15} />}
 								</button>
 							</div>
 						</div>
 					);
 				})}
-				{books.length === 0 && query.length > 1 && (
+				{books?.length === 0 && query.length > 1 && (
 					<div className="text-center py-12">
 						<p className="font-lora text-base" style={{ color: T.paperDim }}>
 							No results found

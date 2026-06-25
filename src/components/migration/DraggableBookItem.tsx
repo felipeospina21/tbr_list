@@ -90,14 +90,17 @@ export const DraggableBookItem: FC<DraggableBookItemProps> = ({
 								className="font-nunito text-xs px-2 py-0.5 rounded-full"
 								style={{ backgroundColor: T.stone, color: T.paperDim }}
 							>
-								{book.genres}
+								{book.genres[0]}
 							</span>
-							<span
-								className="font-nunito text-xs px-2 py-0.5 rounded-full font-semibold"
-								style={{ backgroundColor: T.amberDim, color: T.amberBright }}
-							>
-								{book.moods}
-							</span>
+							{book.moods.slice(0, 5).map((mood, idx) => (
+								<span
+									key={idx}
+									className="font-nunito text-xs px-2 py-0.5 rounded-full font-semibold"
+									style={{ backgroundColor: T.amberDim, color: T.amberBright }}
+								>
+									{mood}
+								</span>
+							))}
 						</div>
 					</div>
 

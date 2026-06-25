@@ -191,8 +191,9 @@ export async function searchHardcover(query: string): Promise<{
 	let results;
 	try {
 		const unresolvedPromises = hits
-			.filter((hit): hit is typeof hit & { document: HardcoverBookDocument } =>
-				Boolean(hit.document),
+			.filter(
+				(hit): hit is typeof hit & { document: HardcoverBookDocument } =>
+					!!hit.document?.author_names && hit.document.author_names.length > 0,
 			)
 			.map(async (hit) => {
 				const edition = await findMatchingHardcoverEdition(hit);
@@ -250,8 +251,7 @@ function mapHardcoverBook(
 			? document.ratings_count
 			: null;
 	const art = buildBookArt(title);
-	const cover =
-		edition?.image?.url?.trim() || document.image?.url?.trim() || art.cover;
+	const cover = edition?.image?.url?.trim() || art.cover;
 	const isbn13 =
 		edition?.isbn_13?.trim() ??
 		document.isbns?.find((identifier) => {
@@ -324,10 +324,16 @@ async function findMatchingHardcoverEdition(hit: {
 		return null;
 	}
 
-	return fetchHardcoverEditionByTitle(matchedTitle);
+	const id = hit.document.id;
+	const bookId = typeof id === "string" ? Number(id) : id;
+
+	return fetchHardcoverEditionByTitle(matchedTitle, bookId);
 }
 
-async function fetchHardcoverEditionByTitle(title: string) {
+async function fetchHardcoverEditionByTitle(
+	title: string,
+	bookId: number | undefined,
+) {
 	const response = await fetch("https://api.hardcover.app/v1/graphql", {
 		method: "POST",
 		headers: {
@@ -337,10 +343,11 @@ async function fetchHardcoverEditionByTitle(title: string) {
 		},
 		body: JSON.stringify({
 			query: `
-				query MatchingEdition($bookId: Int!, $title: String!) {
+				query MatchingEdition($title: String!, $bookId:Int!) {
 					editions(
 						where: {
 							title: { _eq: $title }
+							book_id: { _eq: $bookId }
 						},
 						limit: 1,
 						order_by: { users_count: desc }
@@ -368,6 +375,7 @@ async function fetchHardcoverEditionByTitle(title: string) {
 			`,
 			variables: {
 				title,
+				bookId,
 			},
 		}),
 	});
@@ -393,7 +401,9 @@ function resolveMatchedAlternativeTitle(hit: {
 	highlight?: HardcoverSearchHighlight;
 	highlights: HardcoverSearchHighlightMatch[];
 }) {
-	return hit.highlights[0].matched_tokens[0];
+	return hit.highlight?.alternative_titles
+		?.find((title) => title.matched_tokens?.length)
+		?.matched_tokens?.join(" ");
 }
 
 function formatSeriesPosition(position: number | undefined) {
