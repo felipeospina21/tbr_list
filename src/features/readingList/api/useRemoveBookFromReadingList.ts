@@ -1,11 +1,8 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type {
-	ReadingListSlug,
-	ReadingListSnapshot,
-} from "../types/readingList";
-import { totalPages } from "../types/readingList";
+import type { ReadingListSlug, ReadingListSnapshot } from "../types";
+import { totalPages } from "../types";
 import { getReadingListQueryKey } from "./readingListQueryKeys";
 
 interface RemoveBookInput {

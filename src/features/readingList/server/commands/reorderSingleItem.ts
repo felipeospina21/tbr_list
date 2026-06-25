@@ -1,7 +1,7 @@
 import { db } from "@/db/drizzle";
 import { readingListItems, readingLists } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
-import { ReadingListType } from "../../types/readingList";
+import { ReadingListType } from "../../types";
 
 export interface ReorderSingleItemInput {
 	userId: string;

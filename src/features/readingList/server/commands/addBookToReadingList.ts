@@ -2,7 +2,7 @@ import { and, eq, max, sql } from "drizzle-orm";
 
 import { db } from "@/db/drizzle";
 import { readingListItems, readingLists } from "@/db/schema";
-import { ReadingListType } from "@/features/readingList/types/readingList";
+import { ReadingListType } from "@/features/readingList/types";
 import { SearchBook } from "@/f";
 import { upsertBook } from "./upsertBook";
 

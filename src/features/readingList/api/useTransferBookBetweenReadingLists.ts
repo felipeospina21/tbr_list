@@ -5,8 +5,8 @@ import type {
 	SchemaBook,
 	ReadingListSlug,
 	ReadingListSnapshot,
-} from "../types/readingList";
-import { totalPages } from "../types/readingList";
+} from "../types";
+import { totalPages } from "../types";
 import { getReadingListQueryKey } from "./readingListQueryKeys";
 
 interface TransferBookInput {

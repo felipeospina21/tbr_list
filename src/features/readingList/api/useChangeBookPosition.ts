@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { ReadingListType } from "../types/readingList";
+import type { ReadingListType } from "../types";
 import { getReadingListQueryKey } from "./readingListQueryKeys";
 import { apiFetch } from "@/lib/api/apiFetch";
 import { ReorderSingleItemInput } from "../server/commands/reorderSingleItem";

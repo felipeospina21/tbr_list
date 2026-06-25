@@ -1,4 +1,4 @@
-import { ReadingListType } from "@/features/readingList/types/readingList";
+import { ReadingListType } from "@/features/readingList/types";
 
 export const READING_LIST_QUERY_KEY = ["reading-list"] as const;
 

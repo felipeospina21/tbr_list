@@ -1,5 +1,5 @@
-import { LibrarySection } from "@/components/migration/LibrarySection";
+import { Library } from "@/features/readingList/components/Library";
 
 export default function Index() {
-	return <LibrarySection books={[]} />;
+	return <Library books={[]} />;
 }

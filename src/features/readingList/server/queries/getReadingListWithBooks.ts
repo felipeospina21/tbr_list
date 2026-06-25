@@ -7,7 +7,7 @@ import {
 	bookMoods,
 } from "@/db/schema";
 import { db } from "@/db/drizzle";
-import { ReadingListType } from "@/features/readingList/types/readingList";
+import { ReadingListType } from "@/features/readingList/types";
 
 export interface ReadingListBook {
 	id: string;
