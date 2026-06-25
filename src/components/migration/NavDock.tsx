@@ -4,6 +4,7 @@ import { BarChart2, BookOpen, Search, Smile } from "lucide-react";
 import Link from "next/link";
 import { FC } from "react";
 import { T } from "./constants";
+import { NavItems } from "../layout/PageSurface";
 
 const base = "/reading-app";
 const NAV_ITEMS = [
@@ -16,7 +17,7 @@ const NAV_ITEMS = [
 export type NavId = (typeof NAV_ITEMS)[number]["id"];
 
 interface NavDockProps {
-	activeNav: "library" | "search" | "mood" | "stats";
+	activeNav: NavItems;
 }
 
 export const NavDock: FC<NavDockProps> = ({ activeNav }) => {

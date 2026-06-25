@@ -2,9 +2,10 @@ import { BookMarked } from "lucide-react";
 import { FC } from "react";
 import { T } from "./constants";
 import { NavId } from "./NavDock";
+import { NavItems } from "../layout/PageSurface";
 
 interface HeaderProps {
-	activeNav: "library" | "search" | "mood" | "stats";
+	activeNav: NavItems;
 }
 
 export const Header: FC<HeaderProps> = ({ activeNav }) => {
