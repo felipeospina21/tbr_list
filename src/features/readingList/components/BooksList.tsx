@@ -62,8 +62,7 @@ export const BooksList: FC<BooksListProps> = ({
 				values={localBooks}
 				onReorder={setLocalBooks}
 				onPointerUp={handleDragEnd}
-				className="flex flex-col gap-2.5"
-				style={{ listStyle: "none", padding: 0, margin: 0 }}
+				className="flex flex-col gap-2.5 list-none p-0 m-0"
 			>
 				<AnimatePresence>
 					{localBooks?.map((book) => (

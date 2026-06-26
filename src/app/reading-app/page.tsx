@@ -1,5 +1,5 @@
 import { Library } from "@/features/readingList/components/Library";
 
 export default function Index() {
-	return <Library books={[]} />;
+	return <Library />;
 }

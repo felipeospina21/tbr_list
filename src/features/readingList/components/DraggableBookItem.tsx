@@ -3,7 +3,7 @@ import { isDragging, motion, Reorder, useDragControls } from "framer-motion";
 import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
 import { FC } from "react";
 import { GripVertical, MoreVertical } from "lucide-react";
-import { T } from "@/tokens";
+import { cn } from "@/lib/utils";
 
 interface DraggableBookItemProps {
 	book: ReadingListBook;
@@ -26,27 +26,26 @@ export const DraggableBookItem: FC<DraggableBookItemProps> = ({
 			value={book}
 			dragListener={false}
 			dragControls={controls}
-			style={{ listStyle: "none" }}
+			className="list-none"
 		>
 			<motion.div
 				layout
 				initial={{ opacity: 0, y: 6 }}
 				animate={{ opacity: 1, y: 0 }}
 				exit={{ opacity: 0, y: -6 }}
-				style={{
-					backgroundColor: isDragging ? T.surfaceHigh : T.surfaceRaised,
-					borderColor: isDragging ? T.amber : T.stone,
-					boxShadow: isDragging
-						? `0 16px 40px rgba(0,0,0,0.5), 0 0 0 1px ${T.amber}`
-						: "0 1px 4px rgba(0,0,0,0.25)",
-				}}
-				className="flex items-stretch rounded-xl border overflow-hidden transition-shadow relative"
+				className={cn(
+					"flex items-stretch rounded-xl border overflow-hidden transition-shadow relative",
+					isDragging.y ? "bg-surface-high " : "bg-surface-raised",
+					isDragging.y ? "border-amber" : "border-stone",
+					isDragging.y
+						? `shadow-[0_16px_40px_rgba(0,0,0,0.5),_0_0_0_1px_var(--color-amber)]`
+						: "shadow-[0_1px_4px_rgba(0,0,0,0.25)]",
+				)}
 			>
 				{/* Drag handle */}
 				{controls && (
 					<div
-						className="flex items-center px-2 cursor-grab active:cursor-grabbing touch-none"
-						style={{ color: T.stoneLight }}
+						className="flex items-center px-2 cursor-grab active:cursor-grabbing touch-none text-stone-light"
 						onPointerDown={(e) => {
 							console.log(e);
 							controls.start(e);
@@ -57,10 +56,7 @@ export const DraggableBookItem: FC<DraggableBookItemProps> = ({
 				)}
 
 				{/* Cover */}
-				<div
-					className="relative flex-shrink-0"
-					style={{ width: 68, minHeight: 104 }}
-				>
+				<div className="relative flex-shrink-0 w-[68] min-h-[104]">
 					<Image
 						src={book.cover}
 						alt={book.title}
@@ -73,30 +69,20 @@ export const DraggableBookItem: FC<DraggableBookItemProps> = ({
 				{/* Metadata */}
 				<div className="flex-1 py-3 px-3 flex flex-col justify-between min-w-0">
 					<div>
-						<p
-							className="font-lora text-sm font-semibold leading-tight line-clamp-2"
-							style={{ color: T.paper }}
-						>
+						<p className="font-lora text-sm font-semibold leading-tight line-clamp-2 text-paper">
 							{book.title}
 						</p>
-						<p
-							className="font-nunito text-xs mt-0.5 truncate"
-							style={{ color: T.paperDim }}
-						>
+						<p className="font-nunito text-xs mt-0.5 truncate text-paper-dim">
 							{book.author}
 						</p>
 						<div className="flex items-center gap-1.5 mt-2 flex-wrap">
-							<span
-								className="font-nunito text-xs px-2 py-0.5 rounded-full"
-								style={{ backgroundColor: T.stone, color: T.paperDim }}
-							>
+							<span className="font-nunito text-xs px-2 py-0.5 rounded-full bg-stone text-paper-dim">
 								{book.genres[0]}
 							</span>
 							{book.moods.slice(0, 5).map((mood, idx) => (
 								<span
 									key={idx}
-									className="font-nunito text-xs px-2 py-0.5 rounded-full font-semibold"
-									style={{ backgroundColor: T.amberDim, color: T.amberBright }}
+									className="font-nunito text-xs px-2 py-0.5 rounded-full font-semibold bg-amber-dim text-amber-bright"
 								>
 									{mood}
 								</span>
@@ -146,9 +132,8 @@ export const DraggableBookItem: FC<DraggableBookItemProps> = ({
 
 				{/* Options */}
 				<button
-					className="flex items-start pt-3 pr-2 pl-1 min-w-[44px] justify-center active:opacity-60"
+					className="flex items-start pt-3 pr-2 pl-1 min-w-[44px] justify-center active:opacity-60 text-stone-light"
 					onClick={() => onBookOptions(book)}
-					style={{ color: T.stoneLight }}
 					aria-label="Book options"
 				>
 					<MoreVertical size={16} />

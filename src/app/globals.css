@@ -1,5 +1,21 @@
 @import "tailwindcss";
 
+@theme {
+	--color-night: #13171c;
+	--color-surface: #1a1f26;
+	--color-surface-raised: #212830;
+	--color-surface-high: #2a323c;
+	--color-stone: #3a4552;
+	--color-stone-light: #4d5a68;
+	--color-paper: #e8e0d0;
+	--color-paper-dim: #b8ad9e;
+	--color-amber: #c98a38;
+	--color-amber-bright: #e8a84a;
+	--color-amber-dim: rgba(201, 138, 56, 0.18);
+	--color-ember: #8b3a2a;
+	--color-ember-bg: rgba(139, 58, 42, 0.18);
+}
+
 :root {
 	--background: #f3efe8;
 	--foreground: #171412;
