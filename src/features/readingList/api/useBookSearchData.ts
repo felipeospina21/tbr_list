@@ -1,7 +1,7 @@
 "use client";
 
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { SearchBook } from "@/f";
+import { SearchBook } from "@/features/search/types/search.types";
 import { apiFetch } from "@/lib/api/apiFetch";
 import { SafeQueryOptions } from "@/types";
 

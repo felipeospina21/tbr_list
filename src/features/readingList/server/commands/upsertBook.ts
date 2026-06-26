@@ -1,6 +1,6 @@
 import { DbClient, db } from "@/db/drizzle";
 import { bookGenres, bookMoods, books } from "@/db/schema";
-import { SearchBook } from "@/f";
+import { SearchBook } from "@/features/search/types/search.types";
 
 export async function upsertBook(input: SearchBook, tx: DbClient = db) {
 	let existingBook = null;

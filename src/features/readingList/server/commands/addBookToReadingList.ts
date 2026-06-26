@@ -3,7 +3,7 @@ import { and, eq, max, sql } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { readingListItems, readingLists } from "@/db/schema";
 import { ReadingListType } from "@/features/readingList/types";
-import { SearchBook } from "@/f";
+import { SearchBook } from "@/features/search/types/search.types";
 import { upsertBook } from "./upsertBook";
 
 export type AddBookToReadingListInput = {

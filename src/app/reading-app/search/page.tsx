@@ -1,4 +1,4 @@
-import { SearchSection } from "@/components/migration/SearchSection";
+import { SearchSection } from "@/features/search/components/SearchSection";
 
 export default function SearchPage() {
 	return <SearchSection />;

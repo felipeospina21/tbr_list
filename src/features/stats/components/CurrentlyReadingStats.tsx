@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { FC } from "react";
 import { T } from "@/tokens";
-import { Book } from "@/f";
+import { Book } from "@/lib/book";
 
 interface CurrentlyReadingStatsProps {
 	books: Book[];

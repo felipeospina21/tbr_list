@@ -1,8 +1,5 @@
-import { searchHardcover } from "@/f";
-import { getCurrentUserId } from "@/features/auth/server/getCurrentUserId";
-import { addBookToReadingList } from "@/features/readingList/server/commands/addBookToReadingList";
+import { searchHardcover } from "@/features/search/api/searchHardcover";
 import { ApiResponseHelper } from "@/lib/api/apiResponse";
-import { unauthorized } from "next/navigation";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {

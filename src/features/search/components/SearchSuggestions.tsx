@@ -1,11 +1,11 @@
 import { CheckCircle, Plus } from "lucide-react";
 import Image from "next/image";
 import { FC } from "react";
-import { SearchBook } from "@/f";
 import { T } from "@/tokens";
 import { cn } from "@/lib/utils";
 import { useAddBookToReadingList } from "@/features/readingList/api/useAddBookToReadingList";
-import { Spinner } from "../ui/Spinner";
+import { Spinner } from "@/components/ui/Spinner";
+import { SearchBook } from "../types/search.types";
 
 interface SearchSuggestionsProps {
 	query: string;
