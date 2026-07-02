@@ -7,11 +7,18 @@ import {
 	primaryKey,
 	real,
 	text,
+	timestamp,
 	unique,
 	uuid,
 } from "drizzle-orm/pg-core";
 import { timeStamps as timestamps } from "./schema.helpers";
-import { relations } from "drizzle-orm";
+
+export const readingListTypeEnum = pgEnum("reading_list_type", [
+	"to_be_read",
+	"reading",
+	"finished",
+	"did_not_finish",
+]);
 
 /* USERS */
 export const users = pgTable("users", {
@@ -41,6 +48,30 @@ export const userBookMoods = pgTable(
 			columns: [table.userId, table.bookId, table.mood],
 		}),
 		index("idx_user_book_moods_user_book").on(table.userId, table.bookId),
+	],
+);
+
+/* USER READING SESSIONS */
+export const userReadingSessions = pgTable(
+	"user_reading_sessions",
+	{
+		id: uuid().primaryKey().defaultRandom(),
+		userId: text()
+			.notNull()
+			.references(() => users.id, { onDelete: "cascade" }),
+		bookId: uuid()
+			.notNull()
+			.references(() => books.id, { onDelete: "cascade" }),
+		status: readingListTypeEnum().notNull(),
+
+		// Nullable because they might not have started or finished yet
+		addedToTbrAt: timestamp({ withTimezone: true, mode: "date" }),
+		startedReadingAt: timestamp({ withTimezone: true, mode: "date" }),
+		finishedAt: timestamp({ withTimezone: true, mode: "date" }),
+		dnfAt: timestamp({ withTimezone: true, mode: "date" }),
+	},
+	(table) => [
+		index("idx_reading_sessions_user_book").on(table.userId, table.bookId),
 	],
 );
 
@@ -150,13 +181,6 @@ export const bookMoods = pgTable(
 		index("idx_book_moods_mood").on(table.mood),
 	],
 );
-
-export const readingListTypeEnum = pgEnum("reading_list_type", [
-	"to_be_read",
-	"reading",
-	"finished",
-	"did_not_finish",
-]);
 
 /* READING LISTS */
 export const readingLists = pgTable(
