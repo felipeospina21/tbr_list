@@ -8,10 +8,12 @@ import { cn } from "@/lib/utils";
 interface DraggableBookItemProps {
 	book: ReadingListBook;
 	onBookOptions: (book: ReadingListBook) => void;
+	handleDragEnd: () => void;
 }
 export const DraggableBookItem: FC<DraggableBookItemProps> = ({
 	book,
 	onBookOptions,
+	handleDragEnd,
 }) => {
 	const controls = useDragControls();
 
@@ -26,6 +28,7 @@ export const DraggableBookItem: FC<DraggableBookItemProps> = ({
 			value={book}
 			dragListener={false}
 			dragControls={controls}
+			onDragEnd={handleDragEnd}
 			className="list-none"
 		>
 			<motion.div
@@ -47,7 +50,6 @@ export const DraggableBookItem: FC<DraggableBookItemProps> = ({
 					<div
 						className="flex items-center px-2 cursor-grab active:cursor-grabbing touch-none text-stone-light"
 						onPointerDown={(e) => {
-							console.log(e);
 							controls.start(e);
 						}}
 					>

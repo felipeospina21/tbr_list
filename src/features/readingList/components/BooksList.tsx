@@ -28,17 +28,39 @@ export const BooksList: FC<BooksListProps> = ({
 
 	const mutation = useUpdateBookOrderMutation(currentList);
 
-	const handleDragEnd = () => {
+	const handleDragEnd = (draggedBookId: string) => {
 		const movedItemIndex = localBooks.findIndex(
-			(book, index) => book.id !== serverBooks[index]?.id,
+			(book) => book.id === draggedBookId,
 		);
+
 		if (movedItemIndex === -1) return;
 
 		const movedBook = localBooks[movedItemIndex];
-
 		const itemAbove = localBooks[movedItemIndex - 1];
 		const itemBelow = localBooks[movedItemIndex + 1];
 
+		// 1. Replicate your backend's fractional math
+		let optimisticPosition = 1.0;
+
+		if (!itemAbove && itemBelow) {
+			optimisticPosition = itemBelow.position / 2;
+		} else if (itemAbove && !itemBelow) {
+			optimisticPosition = itemAbove.position + 1.0;
+		} else if (itemAbove && itemBelow) {
+			optimisticPosition = (itemAbove.position + itemBelow.position) / 2;
+		}
+
+		// 2. IMMEDIATELY update the local book's position property
+		// This ensures that if the user drags a second book right away,
+		// it uses this new math as a neighbor, not the stale server data.
+		const updatedBooks = [...localBooks];
+		updatedBooks[movedItemIndex] = {
+			...movedBook,
+			position: optimisticPosition,
+		};
+		setLocalBooks(updatedBooks);
+
+		// 3. Fire the mutation with the correct neighbors
 		mutation.mutate({
 			listType: currentList,
 			bookId: movedBook.id,
@@ -61,7 +83,7 @@ export const BooksList: FC<BooksListProps> = ({
 				axis="y"
 				values={localBooks}
 				onReorder={setLocalBooks}
-				onPointerUp={handleDragEnd}
+				// onPointerUp={handleDragEnd}
 				className="flex flex-col gap-2.5 list-none p-0 m-0"
 			>
 				<AnimatePresence>
@@ -70,6 +92,7 @@ export const BooksList: FC<BooksListProps> = ({
 							key={book.id}
 							book={book}
 							onBookOptions={onBookOptions}
+							handleDragEnd={() => handleDragEnd(book.id)}
 						/>
 					))}
 				</AnimatePresence>

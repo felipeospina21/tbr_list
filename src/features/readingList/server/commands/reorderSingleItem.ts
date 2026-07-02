@@ -1,6 +1,6 @@
 import { db } from "@/db/drizzle";
 import { readingListItems, readingLists } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import { ReadingListType } from "../../types";
 
 export interface ReorderSingleItemInput {
@@ -42,7 +42,7 @@ export async function reorderSingleItem(input: ReorderSingleItemInput) {
 			and(
 				eq(readingListItems.bookId, input.bookId),
 				// Subquery: dynamically looks up the single listId matching this user and list type
-				eq(
+				inArray(
 					readingListItems.listId,
 					db
 						.select({ id: readingLists.id })

@@ -13,6 +13,7 @@ import {
 } from "@/features/readingList/server/queries/getReadingListsCount";
 import { reorderSingleItem } from "@/features/readingList/server/commands/reorderSingleItem";
 import { UpdateServerOrderPayload } from "@/features/readingList/api/useChangeBookPosition";
+import { withRetry } from "@/lib/api/withRetry";
 
 export interface FetchRedingLists {
 	items: GetReadingListWithBooks;
@@ -29,8 +30,8 @@ export async function GET(request: Request) {
 
 		// Run both database queries simultaneously for optimal performance
 		const [readingList, counts] = await Promise.all([
-			getReadingListWithBooks(userId, type),
-			getReadingListCounts(userId),
+			withRetry(() => getReadingListWithBooks(userId, type)),
+			withRetry(() => getReadingListCounts(userId)),
 		]);
 
 		// Combine them into a single clean envelope
