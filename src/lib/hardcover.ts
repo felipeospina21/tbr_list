@@ -6,13 +6,13 @@ import {
 	HardcoverSearchHighlight,
 	HardcoverSearchHighlightMatch,
 } from "@/features/search/types/hardcover.types";
-import {
-	normalizeIsbn,
-	formatSeriesPosition,
-	normalizeSubjects,
-	buildBookIdentityKey,
-} from "./book";
 import { SearchBook } from "@/features/search/types/search.types";
+import {
+	buildBookIdentityKey,
+	formatSeriesPosition,
+	normalizeIsbn,
+	normalizeSubjects,
+} from "./book";
 
 export function normalizeHardcoverAuthorization(apiKey: string | undefined) {
 	const normalizedApiKey = apiKey?.trim();

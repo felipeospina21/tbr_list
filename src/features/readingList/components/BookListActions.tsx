@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Trash2 } from "lucide-react";
 import { Dispatch, FC, SetStateAction } from "react";
-import { T } from "@/tokens";
 import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
+import { T } from "@/tokens";
 
 interface BookListActionsProps {
 	optionsBook: ReadingListBook | null;

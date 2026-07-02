@@ -1,8 +1,8 @@
-import Image from "next/image";
 import { isDragging, motion, Reorder, useDragControls } from "framer-motion";
-import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
-import { FC } from "react";
 import { GripVertical, MoreVertical } from "lucide-react";
+import Image from "next/image";
+import { FC } from "react";
+import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
 import { cn } from "@/lib/utils";
 
 interface DraggableBookItemProps {

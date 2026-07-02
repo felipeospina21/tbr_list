@@ -1,12 +1,12 @@
 import { and, eq, inArray } from "drizzle-orm";
+import { db } from "@/db/drizzle";
 import {
-	books,
-	readingLists,
-	readingListItems,
 	bookGenres,
 	bookMoods,
+	books,
+	readingListItems,
+	readingLists,
 } from "@/db/schema";
-import { db } from "@/db/drizzle";
 import { ReadingListType } from "@/features/readingList/types";
 
 export interface ReadingListBook {

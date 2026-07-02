@@ -1,6 +1,6 @@
 import { apiFetch } from "@/lib/api/apiFetch";
-import { HARDCOVER_API_KEY } from "../constants";
 import { normalizeHardcoverAuthorization } from "@/lib/hardcover";
+import { HARDCOVER_API_KEY } from "../constants";
 import { HardcoverEdition } from "../types/hardcover.types";
 
 type HardcoverEditionResponse = {

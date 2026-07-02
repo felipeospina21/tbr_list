@@ -1,12 +1,11 @@
 "use client";
+import { usePathname } from "next/navigation";
 import { type FC, type ReactNode } from "react";
-
 import { cn } from "@/lib/utils";
 import { Header } from "./Header";
 import { NavDock } from "./NavDock";
 import styles from "./PageSurface.module.css";
 import { SectionBackdrop } from "./SectionBackdrop";
-import { usePathname } from "next/navigation";
 
 interface PageSurfaceProps {
 	children: ReactNode;

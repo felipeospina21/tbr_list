@@ -1,19 +1,20 @@
+import { neonConfig, Pool } from "@neondatabase/serverless";
 import { config } from "dotenv";
-import { drizzle } from "drizzle-orm/neon-http";
+import { drizzle } from "drizzle-orm/neon-serverless";
+import ws from "ws";
 import * as schema from "./schema";
-import { neon } from "@neondatabase/serverless";
 
 config({ path: ".env.local" }); // or .env.local
 
-const sql = neon(process.env.DATABASE_URL!, {
-	fetchOptions: {
-		cache: "no-store",
-	},
+neonConfig.webSocketConstructor = ws;
+
+const pool = new Pool({
+	connectionString: process.env.DATABASE_URL!,
 });
 
 // 2. Pass the custom client into Drizzle, keeping your casing and schema setup
 export const db = drizzle({
-	client: sql,
+	client: pool,
 	casing: "snake_case",
 	schema,
 });

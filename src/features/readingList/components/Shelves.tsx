@@ -1,10 +1,10 @@
-import { BookMarked, BookOpen, BookCheck, X } from "lucide-react";
+import { BookCheck, BookMarked, BookOpen, X } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FC } from "react";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import { ReadingListType } from "@/features/readingList/types";
 import { useFetchReadingList } from "@/features/readingList/api/useFetchReadingList";
-import { Spinner } from "../../../components/ui/Spinner";
+import { ReadingListType } from "@/features/readingList/types";
 import { cn } from "@/lib/utils";
+import { Spinner } from "../../../components/ui/Spinner";
 
 interface ShelvesProps {
 	currentList: ReadingListType;

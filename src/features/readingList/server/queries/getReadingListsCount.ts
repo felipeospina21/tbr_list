@@ -1,6 +1,6 @@
 import { eq, sql } from "drizzle-orm";
-import { readingLists, readingListItems } from "@/db/schema"; // Adjust paths to your schema
 import { db } from "@/db/drizzle";
+import { readingListItems, readingLists } from "@/db/schema"; // Adjust paths to your schema
 import { ReadingListType } from "../../types";
 
 export type GetReadingListCounts = Record<ReadingListType, number>;

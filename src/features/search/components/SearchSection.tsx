@@ -1,10 +1,10 @@
 "use client";
 import { Search, X } from "lucide-react";
 import { useMemo, useRef, useState, useTransition } from "react";
+import { Spinner } from "@/components/ui/Spinner";
 import { useBookSearchData } from "@/features/readingList/api/useBookSearchData";
 import { T } from "@/tokens";
 import { SearchSuggestions } from "./SearchSuggestions";
-import { Spinner } from "@/components/ui/Spinner";
 
 function debounce<Args extends unknown[]>(
 	fn: (...args: Args) => void,

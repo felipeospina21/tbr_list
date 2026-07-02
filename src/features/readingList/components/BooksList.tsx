@@ -1,11 +1,11 @@
-import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
 import { AnimatePresence, Reorder } from "framer-motion";
 import { FC, useEffect, useState } from "react";
-import { DraggableBookItem } from "./DraggableBookItem";
+import { useUpdateBookOrderMutation } from "@/features/readingList/api/useChangeBookPosition";
 import { useFetchReadingList } from "@/features/readingList/api/useFetchReadingList";
+import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
 import { ReadingListType } from "@/features/readingList/types";
 import { Loader } from "../../../components/layout/Loader";
-import { useUpdateBookOrderMutation } from "@/features/readingList/api/useChangeBookPosition";
+import { DraggableBookItem } from "./DraggableBookItem";
 
 interface BooksListProps {
 	currentList: ReadingListType;

@@ -2,9 +2,9 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type {
-	SchemaBook,
 	ReadingListSlug,
 	ReadingListSnapshot,
+	SchemaBook,
 } from "../types";
 import { totalPages } from "../types";
 import { getReadingListQueryKey } from "./readingListQueryKeys";

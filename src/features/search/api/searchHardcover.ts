@@ -1,10 +1,10 @@
 import { apiFetch } from "@/lib/api/apiFetch";
-import { HARDCOVER_API_KEY, SEARCH_LIMIT } from "../constants";
 import {
 	findMatchingHardcoverEdition,
 	mapHardcoverBook,
 	normalizeHardcoverAuthorization,
 } from "@/lib/hardcover";
+import { HARDCOVER_API_KEY, SEARCH_LIMIT } from "../constants";
 import {
 	HardcoverBookDocument,
 	HardcoverSearchHighlight,
