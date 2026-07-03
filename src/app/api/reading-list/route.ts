@@ -1,8 +1,12 @@
 import { unauthorized } from "next/navigation";
 import { getCurrentUserId } from "@/features/auth/server/getCurrentUserId";
 import { UpdateServerOrderPayload } from "@/features/readingList/api/useChangeBookPosition";
-import { readingListTypeSchema } from "@/features/readingList/schemas/readingList.schema";
+import {
+	deleteBookSchema,
+	readingListTypeSchema,
+} from "@/features/readingList/schemas/readingList.schema";
 import { addBookToReadingList } from "@/features/readingList/server/commands/addBookToReadingList";
+import { deleteBookFromReadingList } from "@/features/readingList/server/commands/deleteBookFromReadingList";
 import { reorderSingleItem } from "@/features/readingList/server/commands/reorderSingleItem";
 import {
 	GetReadingListCounts,
@@ -87,6 +91,36 @@ export async function PATCH(request: Request) {
 		});
 
 		return ApiResponseHelper.success({ position: res.position }, 200);
+	} catch (error) {
+		return ApiResponseHelper.handle(error);
+	}
+}
+
+export async function DELETE(request: Request) {
+	try {
+		const userId = await getCurrentUserId();
+		if (!userId) {
+			return unauthorized();
+		}
+
+		const body = await request.json();
+		const parsedBody = deleteBookSchema.safeParse(body);
+
+		if (!parsedBody.success) {
+			return ApiResponseHelper.error(
+				"Invalid delete request.",
+				"BAD_REQUEST",
+				400,
+				parsedBody.error.flatten(),
+			);
+		}
+
+		const result = await deleteBookFromReadingList({
+			userId,
+			bookId: parsedBody.data.bookId,
+		});
+
+		return ApiResponseHelper.success(result, 200);
 	} catch (error) {
 		return ApiResponseHelper.handle(error);
 	}

@@ -1,12 +1,8 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type {
-	ReadingListSlug,
-	ReadingListSnapshot,
-	SchemaBook,
-} from "../types";
-import { totalPages } from "../types";
+import type { FetchRedingLists } from "@/app/api/reading-list/route";
+import type { ReadingListSlug, SchemaBook } from "../types";
 import { getReadingListQueryKey } from "./readingListQueryKeys";
 
 interface TransferBookInput {
@@ -15,45 +11,58 @@ interface TransferBookInput {
 }
 
 interface TransferBookContext {
-	previousSourceSnapshot?: ReadingListSnapshot;
-	previousTargetSnapshot?: ReadingListSnapshot;
+	previousSourceSnapshot?: FetchRedingLists;
+	previousTargetSnapshot?: FetchRedingLists;
 	targetQueryKey: ReturnType<typeof getReadingListQueryKey>;
 }
 
 function removeBookFromSnapshot(
-	snapshot: ReadingListSnapshot | undefined,
+	snapshot: FetchRedingLists | undefined,
 	bookId: string,
 ) {
 	if (!snapshot) {
 		return snapshot;
 	}
 
-	const books = snapshot.books.filter((book) => book.id !== bookId);
+	const books = snapshot.items.books.filter((book) => book.id !== bookId);
 
 	return {
 		...snapshot,
-		books,
-		pages: totalPages(books),
+		items: {
+			...snapshot.items,
+			books,
+			pages: books.reduce(
+				(sum, book) => sum + (typeof book.pages === "number" ? book.pages : 0),
+				0,
+			),
+		},
 	};
 }
 
 function appendBookToSnapshot(
-	snapshot: ReadingListSnapshot | undefined,
+	snapshot: FetchRedingLists | undefined,
 	book: SchemaBook,
 ) {
 	if (
 		!snapshot ||
-		snapshot.books.some((existingBook) => existingBook.id === book.id)
+		snapshot.items.books.some((existingBook) => existingBook.id === book.id)
 	) {
 		return snapshot;
 	}
 
-	const books = [...snapshot.books, book];
+	const books = [...snapshot.items.books, book];
 
 	return {
 		...snapshot,
-		books,
-		pages: totalPages(books),
+		items: {
+			...snapshot.items,
+			books,
+			pages: books.reduce(
+				(sum, currentBook) =>
+					sum + (typeof currentBook.pages === "number" ? currentBook.pages : 0),
+				0,
+			),
+		},
 	};
 }
 
@@ -61,7 +70,7 @@ export async function transferReadingListBook(
 	sourceListSlug: ReadingListSlug,
 	targetListSlug: ReadingListSlug,
 	bookId: string,
-): Promise<ReadingListSnapshot> {
+): Promise<FetchRedingLists> {
 	const response = await fetch(`/api/reading-list?listSlug=${sourceListSlug}`, {
 		method: "PATCH",
 		headers: {
@@ -74,7 +83,7 @@ export async function transferReadingListBook(
 		throw new Error("Reading list request failed");
 	}
 
-	return (await response.json()) as ReadingListSnapshot;
+	return (await response.json()) as FetchRedingLists;
 }
 
 export function useTransferBookBetweenReadingLists(
@@ -84,7 +93,7 @@ export function useTransferBookBetweenReadingLists(
 	const sourceQueryKey = getReadingListQueryKey(sourceListSlug);
 
 	return useMutation<
-		ReadingListSnapshot,
+		FetchRedingLists,
 		Error,
 		TransferBookInput,
 		TransferBookContext
@@ -100,15 +109,15 @@ export function useTransferBookBetweenReadingLists(
 			]);
 
 			const previousSourceSnapshot =
-				queryClient.getQueryData<ReadingListSnapshot>(sourceQueryKey);
+				queryClient.getQueryData<FetchRedingLists>(sourceQueryKey);
 			const previousTargetSnapshot =
-				queryClient.getQueryData<ReadingListSnapshot>(targetQueryKey);
+				queryClient.getQueryData<FetchRedingLists>(targetQueryKey);
 
-			queryClient.setQueryData<ReadingListSnapshot | undefined>(
+			queryClient.setQueryData<FetchRedingLists | undefined>(
 				sourceQueryKey,
 				(snapshot) => removeBookFromSnapshot(snapshot, book.id),
 			);
-			queryClient.setQueryData<ReadingListSnapshot | undefined>(
+			queryClient.setQueryData<FetchRedingLists | undefined>(
 				targetQueryKey,
 				(snapshot) => appendBookToSnapshot(snapshot, book),
 			);

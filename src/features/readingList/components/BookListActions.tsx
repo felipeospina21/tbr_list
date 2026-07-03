@@ -1,29 +1,37 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Trash2 } from "lucide-react";
 import { Dispatch, FC, SetStateAction } from "react";
+import { useRemoveBookFromReadingList } from "@/features/readingList/api/useRemoveBookFromReadingList";
 import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
-import { T } from "@/tokens";
+import { ReadingListType } from "@/features/readingList/types";
 
 interface BookListActionsProps {
 	optionsBook: ReadingListBook | null;
 	setOptionsBook: Dispatch<SetStateAction<ReadingListBook | null>>;
+	currentList: ReadingListType;
 }
 
 export const BookListActions: FC<BookListActionsProps> = ({
 	optionsBook,
 	setOptionsBook,
+	currentList,
 }) => {
-	// const moveBook = (book: Book, shelf: ShelfKey) => {
-	// 	setBooks(books.map((b) => (b.id === book.id ? { ...b, shelf } : b)));
-	// 	setOptionsBook(null);
-	// };
-	//
-	// const removeBook = (book: Book) => {
-	// 	setBooks(books.filter((b) => b.id !== book.id));
-	// 	setOptionsBook(null);
-	// };
-	//
+	const removeBookMutation = useRemoveBookFromReadingList(currentList);
 	const navDockHeight = "-72px";
+
+	const handleRemoveBook = async () => {
+		if (!optionsBook || removeBookMutation.isPending) {
+			return;
+		}
+
+		try {
+			await removeBookMutation.mutateAsync({ bookId: optionsBook.id });
+			setOptionsBook(null);
+		} catch {
+			// Keep the sheet open so the user can retry or dismiss manually.
+		}
+	};
+
 	return (
 		<AnimatePresence>
 			{optionsBook && (
@@ -51,15 +59,20 @@ export const BookListActions: FC<BookListActionsProps> = ({
 						</p>
 						<div className="flex flex-col gap-2">
 							<button
-								className="flex items-center gap-3 w-full py-3.5 px-3 rounded-xl text-sm font-nunito font-semibold active:scale-[0.98] transition-transform bg-surface-raised text-paper border-[1px_soled_var(--color-stone)]"
+								className="flex items-center gap-3 w-full py-3.5 px-3 rounded-xl text-sm font-nunito font-semibold active:scale-[0.98] transition-transform bg-surface-raised text-paper border-[1px_solid_var(--color-stone)]"
 								onClick={() => {}}
+								type="button"
 							>
 								<ArrowRight size={15} className="text-amber" />
 								Move to
 							</button>
 							<button
-								className="flex items-center gap-3 w-full py-3.5 px-3 rounded-xl text-sm font-nunito font-semibold mt-1 active:scale-[0.98] transition-transform bg-ember-bg border-[1px_solid_rgba(139,58,42,0.35) text-[#c97060]"
-								onClick={() => {}}
+								className="flex items-center gap-3 w-full py-3.5 px-3 rounded-xl text-sm font-nunito font-semibold mt-1 active:scale-[0.98] transition-transform bg-ember-bg border-[1px_solid_rgba(139,58,42,0.35)] text-[#c97060] disabled:opacity-60 disabled:cursor-not-allowed"
+								onClick={() => {
+									void handleRemoveBook();
+								}}
+								disabled={removeBookMutation.isPending}
+								type="button"
 							>
 								<Trash2 size={15} />
 								Remove from library

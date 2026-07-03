@@ -28,6 +28,7 @@ export const Library = () => {
 			<BookListActions
 				optionsBook={optionsBook}
 				setOptionsBook={setOptionsBook}
+				currentList={currentList}
 			/>
 		</div>
 	);

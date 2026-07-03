@@ -1,72 +1,77 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { ReadingListSlug, ReadingListSnapshot } from "../types";
-import { totalPages } from "../types";
-import { getReadingListQueryKey } from "./readingListQueryKeys";
+import type { FetchRedingLists } from "@/app/api/reading-list/route";
+import { apiFetch } from "@/lib/api/apiFetch";
+import type { ReadingListType } from "../types";
+import {
+	getReadingListQueryKey,
+	READING_LIST_QUERY_KEY,
+} from "./readingListQueryKeys";
 
 interface RemoveBookInput {
 	bookId: string;
 }
 
 interface RemoveBookContext {
-	previousSnapshot?: ReadingListSnapshot;
+	previousSnapshot?: FetchRedingLists;
+}
+
+export interface DeleteReadingListBookResponse {
+	bookId: string;
 }
 
 function removeBookFromSnapshot(
-	snapshot: ReadingListSnapshot | undefined,
+	snapshot: FetchRedingLists | undefined,
 	bookId: string,
 ) {
 	if (!snapshot) {
 		return snapshot;
 	}
 
-	const books = snapshot.books.filter((book) => book.id !== bookId);
+	const books = snapshot.items.books.filter((book) => book.id !== bookId);
 
 	return {
 		...snapshot,
-		books,
-		pages: totalPages(books),
+		items: {
+			...snapshot.items,
+			books,
+			pages: books.reduce(
+				(sum, book) => sum + (typeof book.pages === "number" ? book.pages : 0),
+				0,
+			),
+		},
 	};
 }
 
-export async function removeReadingListBook(
-	listSlug: ReadingListSlug,
-	bookId: string,
-): Promise<ReadingListSnapshot> {
-	const response = await fetch(`/api/reading-list?listSlug=${listSlug}`, {
+export async function removeReadingListBook(bookId: string) {
+	return apiFetch<DeleteReadingListBookResponse>(`/api/reading-list`, {
 		method: "DELETE",
 		headers: {
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({ bookId }),
 	});
-
-	if (!response.ok) {
-		throw new Error("Reading list request failed");
-	}
-
-	return (await response.json()) as ReadingListSnapshot;
 }
 
-export function useRemoveBookFromReadingList(listSlug: ReadingListSlug) {
+export function useRemoveBookFromReadingList(listType: ReadingListType) {
 	const queryClient = useQueryClient();
-	const queryKey = getReadingListQueryKey(listSlug);
+	const queryKey = getReadingListQueryKey(listType);
 
 	return useMutation<
-		ReadingListSnapshot,
+		DeleteReadingListBookResponse,
 		Error,
 		RemoveBookInput,
 		RemoveBookContext
 	>({
-		mutationFn: ({ bookId }) => removeReadingListBook(listSlug, bookId),
+		mutationFn: ({ bookId }) => removeReadingListBook(bookId),
 		onMutate: async ({ bookId }) => {
 			await queryClient.cancelQueries({ queryKey });
 
 			const previousSnapshot =
-				queryClient.getQueryData<ReadingListSnapshot>(queryKey);
+				queryClient.getQueryData<FetchRedingLists>(queryKey);
 
-			queryClient.setQueryData<ReadingListSnapshot | undefined>(
+			queryClient.setQueryData<FetchRedingLists | undefined>(
 				queryKey,
 				(snapshot) => removeBookFromSnapshot(snapshot, bookId),
 			);
@@ -78,8 +83,10 @@ export function useRemoveBookFromReadingList(listSlug: ReadingListSlug) {
 				queryClient.setQueryData(queryKey, context.previousSnapshot);
 			}
 		},
-		onSuccess: (snapshot) => {
-			queryClient.setQueryData(queryKey, snapshot);
+		onSuccess: () => {
+			void queryClient.invalidateQueries({
+				queryKey: READING_LIST_QUERY_KEY,
+			});
 		},
 	});
 }

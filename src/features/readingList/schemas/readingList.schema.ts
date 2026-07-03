@@ -44,8 +44,8 @@ export const moveBookSchema = z.object({
 	targetIndex: z.number().int().nonnegative(),
 });
 
-export const removeBookSchema = z.object({
-	bookId: z.string(),
+export const deleteBookSchema = z.object({
+	bookId: z.string().uuid(),
 });
 
 export const transferBookSchema = z.object({
