@@ -86,9 +86,7 @@ export async function PATCH(request: Request) {
 			abovePosition,
 		});
 
-		return ApiResponseHelper.success(res.success, 200, {
-			newPosition: res.position,
-		});
+		return ApiResponseHelper.success({ position: res.position }, 200);
 	} catch (error) {
 		return ApiResponseHelper.handle(error);
 	}

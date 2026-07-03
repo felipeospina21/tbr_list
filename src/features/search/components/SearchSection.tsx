@@ -24,7 +24,7 @@ export const SearchSection = () => {
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	// 1. Grab the React 19 transition pending state
-	const [isPending, startTransition] = useTransition();
+	const [_isPending, startTransition] = useTransition();
 
 	const updateDebounce = useMemo(() => {
 		return debounce((val: string) => {

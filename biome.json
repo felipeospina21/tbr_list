@@ -10,14 +10,15 @@
 		"ignoreUnknown": false,
 		"includes": [
 			"**",
-			"!**/.codex/**",
-			"!**/.codegraph/**",
-			"!**/.hippo/**",
-			"!**/node_modules/**",
-			"!.next/**",
-			"!out/**",
-			"!build/**",
-			"!next-env.d.ts"
+			"!**/.codex",
+			"!**/.codegraph",
+			"!**/.hippo",
+			"!**/node_modules",
+			"!**/.next",
+			"!**/out",
+			"!**/build",
+			"!next-env.d.ts",
+			"!**/migrations"
 		]
 	},
 	"css": {

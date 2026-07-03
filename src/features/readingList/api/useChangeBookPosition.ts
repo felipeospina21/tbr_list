@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { FetchRedingLists } from "@/app/api/reading-list/route";
 import { apiFetch } from "@/lib/api/apiFetch";
 import { ReorderSingleItemInput } from "../server/commands/reorderSingleItem";
 import { ReadingListBook } from "../server/queries/getReadingListWithBooks";
@@ -8,8 +9,13 @@ import type { ReadingListType } from "../types";
 import { getReadingListQueryKey } from "./readingListQueryKeys";
 
 export type UpdateServerOrderPayload = Omit<ReorderSingleItemInput, "userId">;
+type UpdateServerOrderResponse = {
+	position: number;
+};
 
-export async function updateServerOrder(payload: UpdateServerOrderPayload) {
+export async function updateServerOrder(
+	payload: UpdateServerOrderPayload,
+): Promise<UpdateServerOrderResponse> {
 	return apiFetch(`/api/reading-list`, {
 		method: "PATCH",
 		headers: {
@@ -19,23 +25,27 @@ export async function updateServerOrder(payload: UpdateServerOrderPayload) {
 	});
 }
 type ReorderSingleInputContext = {
-	previousBooks: R;
+	previousBooks?: FetchRedingLists;
 };
 
-type R = unknown;
-
-interface ReadingListCacheData {
-	items: {
-		books: ReadingListBook[];
-	};
+interface UseUpdateBookOrderMutationOptions {
+	onError?: (context: ReorderSingleInputContext | undefined) => void;
+	onSuccess?: (
+		data: UpdateServerOrderResponse,
+		variables: UpdateServerOrderPayload,
+		context: ReorderSingleInputContext | undefined,
+	) => void;
 }
 
-export function useUpdateBookOrderMutation(readingListType: ReadingListType) {
+export function useUpdateBookOrderMutation(
+	readingListType: ReadingListType,
+	options?: UseUpdateBookOrderMutationOptions,
+) {
 	const queryClient = useQueryClient();
 	const queryKey = getReadingListQueryKey(readingListType);
 
 	return useMutation<
-		R,
+		UpdateServerOrderResponse,
 		Error,
 		UpdateServerOrderPayload,
 		ReorderSingleInputContext
@@ -49,7 +59,8 @@ export function useUpdateBookOrderMutation(readingListType: ReadingListType) {
 			await queryClient.cancelQueries({ queryKey });
 
 			// 2. Snapshot the current cache state for rollback purposes
-			const previousBooks = queryClient.getQueryData(queryKey);
+			const previousBooks =
+				queryClient.getQueryData<FetchRedingLists>(queryKey);
 
 			// 3. OPTIMISTIC UPDATE: Calculate the new float location immediately in cache
 			let calculatedPosition: number;
@@ -71,46 +82,55 @@ export function useUpdateBookOrderMutation(readingListType: ReadingListType) {
 			}
 
 			// 4. Safely update ONLY the target book's position property inside the array
-			queryClient.setQueryData<ReadingListCacheData>(queryKey, (oldData) => {
-				// Make sure this matches your exact cached structure (e.g., oldData.items.books)
-				if (!oldData?.items?.books) return oldData;
+			queryClient.setQueryData<FetchRedingLists | undefined>(
+				queryKey,
+				(oldData) => {
+					// Make sure this matches your exact cached structure (e.g., oldData.items.books)
+					if (!oldData?.items?.books) return oldData;
 
-				const updatedBooks = oldData.items.books.map((book: ReadingListBook) =>
-					book.id === payload.bookId
-						? { ...book, position: calculatedPosition }
-						: book,
-				);
+					const updatedBooks = oldData.items.books.map(
+						(book: ReadingListBook) =>
+							book.id === payload.bookId
+								? { ...book, position: calculatedPosition }
+								: book,
+					);
 
-				// Return the intact structural wrapper with our single modified book item
-				return {
-					...oldData,
-					items: {
-						...oldData.items,
-						books: updatedBooks,
-					},
-				};
-			});
+					// Return the intact structural wrapper with our single modified book item
+					return {
+						...oldData,
+						items: {
+							...oldData.items,
+							books: updatedBooks,
+						},
+					};
+				},
+			);
 
 			return { previousBooks };
 		},
 
-		onSuccess: (responseData, payload) => {
+		onSuccess: (responseData, payload, context) => {
 			// Ensure the cache matches the definitive precision float returned by Postgres
-			queryClient.setQueryData<ReadingListCacheData>(queryKey, (oldData) => {
-				if (!oldData?.items?.books) return oldData;
+			queryClient.setQueryData<FetchRedingLists | undefined>(
+				queryKey,
+				(oldData) => {
+					if (!oldData?.items?.books) return oldData;
 
-				return {
-					...oldData,
-					items: {
-						...oldData.items,
-						books: oldData.items.books.map((book: ReadingListBook) =>
-							book.id === payload.bookId
-								? { ...book, position: responseData.position }
-								: book,
-						),
-					},
-				};
-			});
+					return {
+						...oldData,
+						items: {
+							...oldData.items,
+							books: oldData.items.books.map((book: ReadingListBook) =>
+								book.id === payload.bookId
+									? { ...book, position: responseData.position }
+									: book,
+							),
+						},
+					};
+				},
+			);
+
+			options?.onSuccess?.(responseData, payload, context);
 		},
 
 		onError: (_err, _variables, context) => {
@@ -118,6 +138,8 @@ export function useUpdateBookOrderMutation(readingListType: ReadingListType) {
 			if (context?.previousBooks) {
 				queryClient.setQueryData(queryKey, context.previousBooks);
 			}
+
+			options?.onError?.(context);
 		},
 	});
 }

@@ -1,11 +1,13 @@
 import { AnimatePresence, Reorder } from "framer-motion";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { useUpdateBookOrderMutation } from "@/features/readingList/api/useChangeBookPosition";
 import { useFetchReadingList } from "@/features/readingList/api/useFetchReadingList";
 import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
 import { ReadingListType } from "@/features/readingList/types";
 import { Loader } from "../../../components/layout/Loader";
 import { DraggableBookItem } from "./DraggableBookItem";
+
+const EMPTY_BOOKS: ReadingListBook[] = [];
 
 interface BooksListProps {
 	currentList: ReadingListType;
@@ -17,16 +19,41 @@ export const BooksList: FC<BooksListProps> = ({
 	onBookOptions,
 }) => {
 	const listBooksQuery = useFetchReadingList(currentList);
-	const serverBooks = listBooksQuery.data?.items?.books ?? [];
-	const serverBooksSerialized = JSON.stringify(serverBooks.map((b) => b.id));
+	const serverBooks = listBooksQuery.data?.items?.books ?? EMPTY_BOOKS;
+	const serverBooksSignature = serverBooks.map((book) => book.id).join("|");
 
 	const [localBooks, setLocalBooks] = useState(serverBooks);
+	const serverBooksRef = useRef(serverBooks);
 
 	useEffect(() => {
-		setLocalBooks(serverBooks);
-	}, [serverBooksSerialized]);
+		serverBooksRef.current = serverBooks;
+	}, [serverBooks]);
 
-	const mutation = useUpdateBookOrderMutation(currentList);
+	useEffect(() => {
+		const nextBooks = serverBooksRef.current;
+		const nextBooksSignature = nextBooks.map((book) => book.id).join("|");
+
+		if (nextBooksSignature !== serverBooksSignature) return;
+
+		setLocalBooks(nextBooks);
+	}, [serverBooksSignature]);
+
+	const mutation = useUpdateBookOrderMutation(currentList, {
+		onError: (context) => {
+			if (context?.previousBooks?.items?.books) {
+				setLocalBooks(context.previousBooks.items.books);
+			}
+		},
+		onSuccess: (responseData, payload) => {
+			setLocalBooks((currentBooks) =>
+				currentBooks.map((book) =>
+					book.id === payload.bookId
+						? { ...book, position: responseData.position }
+						: book,
+				),
+			);
+		},
+	});
 
 	const handleDragEnd = (draggedBookId: string) => {
 		const movedItemIndex = localBooks.findIndex(
