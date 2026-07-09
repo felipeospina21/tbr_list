@@ -44,7 +44,7 @@ export const BookListActions: FC<BookListActionsProps> = ({
 						onClick={() => setOptionsBook(null)}
 					/>
 					<motion.div
-						className="fixed bottom-0 left-0 right-0 z-50 rounded-t-2xl px-4 pt-4 bg-surface-high border-t-[1px_solid_var(--color-stone)] pb-[calc(16px+env(safe-area-inset-bottom,0px))]"
+						className="fixed bottom-0 left-0 right-0 z-50 rounded-t-2xl px-4 pt-4 bg-surface-high border-t-[1px_solid_var(--color-stone)] pb-[calc(16px+env(safe-area-inset-bottom,0))]"
 						initial={{ y: "100%" }}
 						animate={{ y: navDockHeight }}
 						exit={{ y: "100%" }}

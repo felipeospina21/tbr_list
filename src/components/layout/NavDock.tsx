@@ -47,7 +47,7 @@ interface NavDockProps {
 
 export const NavDock: FC<NavDockProps> = ({ activeNav }) => {
 	return (
-		<div className="fixed bottom-0 left-0 right-0 z-30 shrink-0 safe-bottom text-surface border-t-[1px_solid_var(--color-stone)] shadow-[0_-8px_32px_rgba(0,0,0,0.4)]">
+		<div className="fixed bottom-0 left-0 right-0 z-30 shrink-0 safe-bottom bg-surface border-t-[1px_solid_var(--color-stone)] shadow-[0_-8px_32px_rgba(0,0,0,0.4)]">
 			<div className="flex items-stretch h-18">
 				{NAV_ITEMS.map((item) => {
 					const Icon = item.icon;

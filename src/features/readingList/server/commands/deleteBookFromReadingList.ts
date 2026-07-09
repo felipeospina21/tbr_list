@@ -1,6 +1,6 @@
 import { and, eq, inArray, sql } from "drizzle-orm";
 
-import { db } from "@/db/drizzle";
+import { DbClient, db } from "@/db/drizzle";
 import {
 	books,
 	readingListItems,
@@ -14,7 +14,7 @@ export interface DeleteBookFromReadingListInput {
 	bookId: string;
 }
 
-async function countBookReferences(bookId: string, tx = db) {
+async function countBookReferences(bookId: string, tx: DbClient = db) {
 	const [readingListItemRefs, readingSessionRefs, userBookMoodRefs] =
 		await Promise.all([
 			tx

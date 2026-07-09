@@ -1,4 +1,5 @@
 import { unauthorized } from "next/navigation";
+import z from "zod";
 import { getCurrentUserId } from "@/features/auth/server/getCurrentUserId";
 import { UpdateServerOrderPayload } from "@/features/readingList/api/useChangeBookPosition";
 import {
@@ -111,7 +112,7 @@ export async function DELETE(request: Request) {
 				"Invalid delete request.",
 				"BAD_REQUEST",
 				400,
-				parsedBody.error.flatten(),
+				z.treeifyError(parsedBody.error),
 			);
 		}
 
