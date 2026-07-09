@@ -1,7 +1,22 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, Trash2 } from "lucide-react";
-import { Dispatch, FC, SetStateAction } from "react";
+import {
+	ArrowRight,
+	BookCheck,
+	BookMarked,
+	BookOpen,
+	Trash2,
+	X,
+} from "lucide-react";
+import {
+	Dispatch,
+	FC,
+	ReactNode,
+	SetStateAction,
+	useEffect,
+	useState,
+} from "react";
 import { useRemoveBookFromReadingList } from "@/features/readingList/api/useRemoveBookFromReadingList";
+import { useTransferBookBetweenReadingLists } from "@/features/readingList/api/useTransferBookBetweenReadingLists";
 import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
 import { ReadingListType } from "@/features/readingList/types";
 
@@ -11,13 +26,37 @@ interface BookListActionsProps {
 	currentList: ReadingListType;
 }
 
+const TRANSFER_TARGETS: Array<{
+	type: ReadingListType;
+	label: string;
+	icon: ReactNode;
+}> = [
+	{ type: "to_be_read", label: "To Be Read", icon: <BookMarked size={14} /> },
+	{ type: "reading", label: "Reading", icon: <BookOpen size={14} /> },
+	{ type: "finished", label: "Finished", icon: <BookCheck size={14} /> },
+	{ type: "did_not_finish", label: "Did Not Finish", icon: <X size={14} /> },
+];
+
 export const BookListActions: FC<BookListActionsProps> = ({
 	optionsBook,
 	setOptionsBook,
 	currentList,
 }) => {
 	const removeBookMutation = useRemoveBookFromReadingList(currentList);
+	const transferBookMutation = useTransferBookBetweenReadingLists(currentList);
+	const [isMoveMenuOpen, setIsMoveMenuOpen] = useState(false);
 	const navDockHeight = "-72px";
+	const selectedBookId = optionsBook?.id;
+
+	useEffect(() => {
+		if (selectedBookId) {
+			setIsMoveMenuOpen(false);
+		}
+	}, [selectedBookId]);
+
+	const availableTargets = TRANSFER_TARGETS.filter(
+		(target) => target.type !== currentList,
+	);
 
 	const handleRemoveBook = async () => {
 		if (!optionsBook || removeBookMutation.isPending) {
@@ -29,6 +68,22 @@ export const BookListActions: FC<BookListActionsProps> = ({
 			setOptionsBook(null);
 		} catch {
 			// Keep the sheet open so the user can retry or dismiss manually.
+		}
+	};
+
+	const handleTransferBook = async (targetListType: ReadingListType) => {
+		if (!optionsBook || transferBookMutation.isPending) {
+			return;
+		}
+
+		try {
+			await transferBookMutation.mutateAsync({
+				book: optionsBook,
+				targetListType,
+			});
+			setOptionsBook(null);
+		} catch {
+			// Keep the sheet open so the user can pick a different target or retry.
 		}
 	};
 
@@ -60,12 +115,38 @@ export const BookListActions: FC<BookListActionsProps> = ({
 						<div className="flex flex-col gap-2">
 							<button
 								className="flex items-center gap-3 w-full py-3.5 px-3 rounded-xl text-sm font-nunito font-semibold active:scale-[0.98] transition-transform bg-surface-raised text-paper border-[1px_solid_var(--color-stone)]"
-								onClick={() => {}}
+								onClick={() => setIsMoveMenuOpen((current) => !current)}
 								type="button"
 							>
 								<ArrowRight size={15} className="text-amber" />
 								Move to
 							</button>
+							<AnimatePresence>
+								{isMoveMenuOpen && (
+									<motion.div
+										className="flex flex-col gap-2"
+										initial={{ opacity: 0, y: -6 }}
+										animate={{ opacity: 1, y: 0 }}
+										exit={{ opacity: 0, y: -6 }}
+										transition={{ duration: 0.18 }}
+									>
+										{availableTargets.map((target) => (
+											<button
+												key={target.type}
+												className="flex items-center gap-3 w-full py-3 px-3 rounded-xl text-sm font-nunito font-semibold active:scale-[0.98] transition-transform bg-surface-raised text-paper border-[1px_solid_var(--color-stone)] disabled:opacity-60 disabled:cursor-not-allowed"
+												onClick={() => {
+													void handleTransferBook(target.type);
+												}}
+												disabled={transferBookMutation.isPending}
+												type="button"
+											>
+												{target.icon}
+												{target.label}
+											</button>
+										))}
+									</motion.div>
+								)}
+							</AnimatePresence>
 							<button
 								className="flex items-center gap-3 w-full py-3.5 px-3 rounded-xl text-sm font-nunito font-semibold mt-1 active:scale-[0.98] transition-transform bg-ember-bg border-[1px_solid_rgba(139,58,42,0.35)] text-[#c97060] disabled:opacity-60 disabled:cursor-not-allowed"
 								onClick={() => {

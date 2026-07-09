@@ -1,14 +1,15 @@
 import { unauthorized } from "next/navigation";
 import z from "zod";
 import { getCurrentUserId } from "@/features/auth/server/getCurrentUserId";
-import { UpdateServerOrderPayload } from "@/features/readingList/api/useChangeBookPosition";
 import {
 	deleteBookSchema,
 	readingListTypeSchema,
+	transferBookSchema,
 } from "@/features/readingList/schemas/readingList.schema";
 import { addBookToReadingList } from "@/features/readingList/server/commands/addBookToReadingList";
 import { deleteBookFromReadingList } from "@/features/readingList/server/commands/deleteBookFromReadingList";
 import { reorderSingleItem } from "@/features/readingList/server/commands/reorderSingleItem";
+import { transferBookBetweenReadingLists } from "@/features/readingList/server/commands/transferBookBetweenReadingLists";
 import {
 	GetReadingListCounts,
 	getReadingListCounts,
@@ -80,8 +81,54 @@ export async function PATCH(request: Request) {
 			return unauthorized();
 		}
 
-		const body: UpdateServerOrderPayload = await request.json();
-		const { bookId, abovePosition, belowPosition, listType } = body;
+		const body: unknown = await request.json();
+		const isTransferRequest =
+			typeof body === "object" &&
+			body !== null &&
+			("sourceListType" in body || "targetListType" in body);
+
+		if (isTransferRequest) {
+			const transferPayload = transferBookSchema.safeParse(body);
+
+			if (!transferPayload.success) {
+				return ApiResponseHelper.error(
+					"Invalid transfer request.",
+					"BAD_REQUEST",
+					400,
+					z.treeifyError(transferPayload.error),
+				);
+			}
+
+			const result = await transferBookBetweenReadingLists({
+				userId,
+				bookId: transferPayload.data.bookId,
+				sourceListType: transferPayload.data.sourceListType,
+				targetListType: transferPayload.data.targetListType,
+			});
+
+			return ApiResponseHelper.success(result, 200);
+		}
+
+		const reorderSchema = z.object({
+			bookId: z.string(),
+			abovePosition: z.number().nullable(),
+			belowPosition: z.number().nullable(),
+			listType: readingListTypeSchema,
+		});
+
+		const reorderPayload = reorderSchema.safeParse(body);
+
+		if (!reorderPayload.success) {
+			return ApiResponseHelper.error(
+				"Invalid reading list request.",
+				"BAD_REQUEST",
+				400,
+				z.treeifyError(reorderPayload.error),
+			);
+		}
+
+		const { bookId, abovePosition, belowPosition, listType } =
+			reorderPayload.data;
 
 		const res = await reorderSingleItem({
 			listType,

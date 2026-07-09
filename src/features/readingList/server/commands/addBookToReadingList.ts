@@ -1,14 +1,11 @@
 import { and, eq, sql } from "drizzle-orm";
 
 import { db } from "@/db/drizzle";
-import {
-	readingListItems,
-	readingLists,
-	userReadingSessions,
-} from "@/db/schema";
+import { readingListItems, readingLists } from "@/db/schema";
 import { ReadingListType } from "@/features/readingList/types";
 import { SearchBook } from "@/features/search/types/search.types";
 import { upsertBook } from "./upsertBook";
+import { upsertUserReadingSession } from "./upsertUserReadingSession";
 
 export type AddBookToReadingListInput = {
 	userId: string;
@@ -77,23 +74,16 @@ export async function addBookToReadingList(input: AddBookToReadingListInput) {
 		});
 
 		// 5. Sync the Session/Stats row
-		await tx
-			.insert(userReadingSessions)
-			.values({
+		await upsertUserReadingSession(
+			{
 				userId: input.userId,
 				bookId: book.id,
 				status: input.type,
 				addedToTbrAt: input.type === "to_be_read" ? new Date() : null,
 				startedReadingAt: input.type === "reading" ? new Date() : null,
-			})
-			.onConflictDoUpdate({
-				target: [userReadingSessions.userId, userReadingSessions.bookId],
-				set: {
-					status: input.type,
-					addedToTbrAt: input.type === "to_be_read" ? new Date() : null,
-					startedReadingAt: input.type === "reading" ? new Date() : null,
-				},
-			});
+			},
+			tx,
+		);
 
 		return book;
 	});

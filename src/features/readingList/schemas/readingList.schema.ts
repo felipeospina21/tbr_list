@@ -48,11 +48,19 @@ export const deleteBookSchema = z.object({
 	bookId: z.string().uuid(),
 });
 
-export const transferBookSchema = z.object({
-	bookId: z.string(),
-	// sourceListSlug: readingListSlugSchema,
-	// targetListSlug: readingListSlugSchema,
-});
+export const transferBookSchema = z
+	.object({
+		bookId: z.string(),
+		sourceListType: readingListTypeSchema,
+		targetListType: readingListTypeSchema,
+	})
+	.refine(
+		({ sourceListType, targetListType }) => sourceListType !== targetListType,
+		{
+			message: "Target list must be different from source list.",
+			path: ["targetListType"],
+		},
+	);
 
 export const updateBookMoodsSchema = z.object({
 	bookId: z.string(),

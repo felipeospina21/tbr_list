@@ -2,18 +2,26 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { FetchRedingLists } from "@/app/api/reading-list/route";
-import type { ReadingListSlug, SchemaBook } from "../types";
+import type { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
+import { apiFetch } from "@/lib/api/apiFetch";
+import type { ReadingListType } from "../types";
 import { getReadingListQueryKey } from "./readingListQueryKeys";
 
 interface TransferBookInput {
-	book: SchemaBook;
-	targetListSlug: ReadingListSlug;
+	book: ReadingListBook;
+	targetListType: ReadingListType;
 }
 
 interface TransferBookContext {
 	previousSourceSnapshot?: FetchRedingLists;
 	previousTargetSnapshot?: FetchRedingLists;
 	targetQueryKey: ReturnType<typeof getReadingListQueryKey>;
+}
+
+interface TransferReadingListBookResponse {
+	bookId: string;
+	sourceListType: ReadingListType;
+	targetListType: ReadingListType;
 }
 
 function removeBookFromSnapshot(
@@ -41,16 +49,18 @@ function removeBookFromSnapshot(
 
 function appendBookToSnapshot(
 	snapshot: FetchRedingLists | undefined,
-	book: SchemaBook,
+	book: ReadingListBook,
 ) {
-	if (
-		!snapshot ||
-		snapshot.items.books.some((existingBook) => existingBook.id === book.id)
-	) {
+	if (!snapshot) {
 		return snapshot;
 	}
 
-	const books = [...snapshot.items.books, book];
+	const books = [
+		...snapshot.items.books.filter(
+			(existingBook) => existingBook.id !== book.id,
+		),
+		book,
+	];
 
 	return {
 		...snapshot,
@@ -67,41 +77,35 @@ function appendBookToSnapshot(
 }
 
 export async function transferReadingListBook(
-	sourceListSlug: ReadingListSlug,
-	targetListSlug: ReadingListSlug,
+	sourceListType: ReadingListType,
+	targetListType: ReadingListType,
 	bookId: string,
-): Promise<FetchRedingLists> {
-	const response = await fetch(`/api/reading-list?listSlug=${sourceListSlug}`, {
+): Promise<TransferReadingListBookResponse> {
+	return apiFetch<TransferReadingListBookResponse>(`/api/reading-list`, {
 		method: "PATCH",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify({ bookId, sourceListSlug, targetListSlug }),
+		body: JSON.stringify({ bookId, sourceListType, targetListType }),
 	});
-
-	if (!response.ok) {
-		throw new Error("Reading list request failed");
-	}
-
-	return (await response.json()) as FetchRedingLists;
 }
 
 export function useTransferBookBetweenReadingLists(
-	sourceListSlug: ReadingListSlug,
+	sourceListType: ReadingListType,
 ) {
 	const queryClient = useQueryClient();
-	const sourceQueryKey = getReadingListQueryKey(sourceListSlug);
+	const sourceQueryKey = getReadingListQueryKey(sourceListType);
 
 	return useMutation<
-		FetchRedingLists,
+		TransferReadingListBookResponse,
 		Error,
 		TransferBookInput,
 		TransferBookContext
 	>({
-		mutationFn: ({ book, targetListSlug }) =>
-			transferReadingListBook(sourceListSlug, targetListSlug, book.id),
-		onMutate: async ({ book, targetListSlug }) => {
-			const targetQueryKey = getReadingListQueryKey(targetListSlug);
+		mutationFn: ({ book, targetListType }) =>
+			transferReadingListBook(sourceListType, targetListType, book.id),
+		onMutate: async ({ book, targetListType }) => {
+			const targetQueryKey = getReadingListQueryKey(targetListType);
 
 			await Promise.all([
 				queryClient.cancelQueries({ queryKey: sourceQueryKey }),
@@ -147,9 +151,12 @@ export function useTransferBookBetweenReadingLists(
 				);
 			}
 		},
-		onSuccess: (snapshot, _input, context) => {
-			queryClient.setQueryData(sourceQueryKey, snapshot);
+		onSuccess: (_snapshot, _input, context) => {
+			if (!context) {
+				return;
+			}
 
+			void queryClient.invalidateQueries({ queryKey: sourceQueryKey });
 			void queryClient.invalidateQueries({ queryKey: context.targetQueryKey });
 		},
 	});

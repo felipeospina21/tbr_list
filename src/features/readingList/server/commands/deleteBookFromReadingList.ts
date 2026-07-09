@@ -1,6 +1,6 @@
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 
-import { DbClient, db } from "@/db/drizzle";
+import { db } from "@/db/drizzle";
 import {
 	books,
 	readingListItems,
@@ -8,40 +8,11 @@ import {
 	userBookMoods,
 	userReadingSessions,
 } from "@/db/schema";
+import { countBookReferences } from "./countBookReferences";
 
 export interface DeleteBookFromReadingListInput {
 	userId: string;
 	bookId: string;
-}
-
-async function countBookReferences(bookId: string, tx: DbClient = db) {
-	const [readingListItemRefs, readingSessionRefs, userBookMoodRefs] =
-		await Promise.all([
-			tx
-				.select({
-					count: sql<number>`count(*)`.mapWith(Number),
-				})
-				.from(readingListItems)
-				.where(eq(readingListItems.bookId, bookId)),
-			tx
-				.select({
-					count: sql<number>`count(*)`.mapWith(Number),
-				})
-				.from(userReadingSessions)
-				.where(eq(userReadingSessions.bookId, bookId)),
-			tx
-				.select({
-					count: sql<number>`count(*)`.mapWith(Number),
-				})
-				.from(userBookMoods)
-				.where(eq(userBookMoods.bookId, bookId)),
-		]);
-
-	return {
-		readingListItemRefs: readingListItemRefs[0]?.count ?? 0,
-		readingSessionRefs: readingSessionRefs[0]?.count ?? 0,
-		userBookMoodRefs: userBookMoodRefs[0]?.count ?? 0,
-	};
 }
 
 export async function deleteBookFromReadingList(
