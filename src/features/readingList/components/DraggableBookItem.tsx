@@ -41,7 +41,7 @@ export const DraggableBookItem: FC<DraggableBookItemProps> = ({
 					isDragging.y ? "bg-surface-high " : "bg-surface-raised",
 					isDragging.y ? "border-amber" : "border-stone",
 					isDragging.y
-						? `shadow-[0_16px_40px_rgba(0,0,0,0.5),_0_0_0_1px_var(--color-amber)]`
+						? `shadow-[0_16px_40px_rgba(0,0,0,0.5),0_0_0_1px_var(--color-amber)]`
 						: "shadow-[0_1px_4px_rgba(0,0,0,0.25)]",
 				)}
 			>
@@ -58,7 +58,7 @@ export const DraggableBookItem: FC<DraggableBookItemProps> = ({
 				)}
 
 				{/* Cover */}
-				<div className="relative flex-shrink-0 w-[68] min-h-[104]">
+				<div className="relative shrink-0 w-[68] min-h-[104]">
 					<Image
 						src={book.cover}
 						alt={book.title}
@@ -134,7 +134,7 @@ export const DraggableBookItem: FC<DraggableBookItemProps> = ({
 
 				{/* Options */}
 				<button
-					className="flex items-start pt-3 pr-2 pl-1 min-w-[44px] justify-center active:opacity-60 text-stone-light"
+					className="flex items-start pt-3 pr-2 pl-1 min-w-11 justify-center active:opacity-60 text-stone-light"
 					onClick={() => onBookOptions(book)}
 					aria-label="Book options"
 				>

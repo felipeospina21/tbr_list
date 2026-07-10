@@ -110,7 +110,6 @@ export const BooksList: FC<BooksListProps> = ({
 				axis="y"
 				values={localBooks}
 				onReorder={setLocalBooks}
-				// onPointerUp={handleDragEnd}
 				className="flex flex-col gap-2.5 list-none p-0 m-0"
 			>
 				<AnimatePresence>
