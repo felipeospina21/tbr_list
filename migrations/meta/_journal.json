@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1781827132853,
+      "tag": "0000_cheerful_doctor_octopus",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1783034062184,
+      "tag": "0001_late_madelyne_pryor",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784072241131,
+      "tag": "0002_previous_master_chief",
+      "breakpoints": true
+    }
+  ]
+}

@@ -10,23 +10,33 @@
 		"ignoreUnknown": false,
 		"includes": [
 			"**",
-			"!**/.codex/**",
-			"!**/.codegraph/**",
-			"!**/.hippo/**",
-			"!**/node_modules/**",
-			"!.next/**",
-			"!out/**",
-			"!build/**",
-			"!next-env.d.ts"
+			"!**/.codex",
+			"!**/.codegraph",
+			"!**/.hippo",
+			"!**/node_modules",
+			"!**/.next",
+			"!**/out",
+			"!**/build",
+			"!next-env.d.ts",
+			"!**/migrations"
 		]
 	},
-	"css": {},
-	"formatter": { "enabled": true, "indentStyle": "tab" },
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		}
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab"
+	},
 	"linter": {
 		"enabled": true,
 		"rules": {
 			"recommended": false,
-			"complexity": { "noUselessTypeConstraint": "error" },
+			"complexity": {
+				"noUselessTypeConstraint": "error"
+			},
 			"correctness": {
 				"noNextAsyncClientComponent": "warn",
 				"noUnusedVariables": "error"
@@ -72,7 +82,12 @@
 			"!next-env.d.ts"
 		]
 	},
-	"javascript": { "formatter": { "quoteStyle": "double" }, "globals": [] },
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "double"
+		},
+		"globals": []
+	},
 	"overrides": [
 		{
 			"includes": ["**/*.{js,jsx,mjs,ts,tsx,mts,cts}"],
@@ -228,8 +243,12 @@
 						"noUnwantedPolyfillio": "warn",
 						"useGoogleFontPreconnect": "warn"
 					},
-					"security": { "noDangerouslySetInnerHtmlWithChildren": "error" },
-					"style": { "noHeadElement": "warn" },
+					"security": {
+						"noDangerouslySetInnerHtmlWithChildren": "error"
+					},
+					"style": {
+						"noHeadElement": "warn"
+					},
 					"suspicious": {
 						"noCommentText": "error",
 						"noDocumentImportInPage": "error",
@@ -240,12 +259,19 @@
 				}
 			}
 		},
-		{ "includes": ["**/*.ts", "**/*.tsx"], "javascript": { "globals": [] } },
+		{
+			"includes": ["**/*.ts", "**/*.tsx"],
+			"javascript": {
+				"globals": []
+			}
+		},
 		{
 			"includes": ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
 			"linter": {
 				"rules": {
-					"complexity": { "noArguments": "error" },
+					"complexity": {
+						"noArguments": "error"
+					},
 					"correctness": {
 						"noConstAssign": "off",
 						"noGlobalObjectCalls": "off",
@@ -256,7 +282,9 @@
 						"noUnreachable": "off",
 						"noUnreachableSuper": "off"
 					},
-					"style": { "useConst": "error" },
+					"style": {
+						"useConst": "error"
+					},
 					"suspicious": {
 						"noClassAssign": "off",
 						"noDuplicateClassMembers": "off",
@@ -276,6 +304,10 @@
 	],
 	"assist": {
 		"enabled": true,
-		"actions": { "source": { "organizeImports": "on" } }
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
 	}
 }

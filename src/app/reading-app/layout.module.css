@@ -1,0 +1,21 @@
+.surface {
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.shell {
+	gap: 2rem;
+	padding: 1rem 0.5rem 2.5rem;
+}
+
+@media (min-width: 640px) {
+	.shell {
+		padding: 2rem 1.5rem 3.5rem;
+	}
+}
+
+@media (min-width: 1024px) {
+	.shell {
+		align-items: start;
+		padding: 2.5rem 2rem 4rem;
+	}
+}

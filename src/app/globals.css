@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+	--color-night: #13171c;
+	--color-surface: #1a1f26;
+	--color-surface-raised: #212830;
+	--color-surface-high: #2a323c;
+	--color-stone: #3a4552;
+	--color-stone-light: #4d5a68;
+	--color-paper: #e8e0d0;
+	--color-paper-dim: #b8ad9e;
+	--color-amber: #c98a38;
+	--color-amber-bright: #e8a84a;
+	--color-amber-dim: rgba(201, 138, 56, 0.18);
+	--color-ember: #8b3a2a;
+	--color-ember-bg: rgba(139, 58, 42, 0.18);
+}
+
+:root {
+	--background: #f3efe8;
+	--foreground: #171412;
+	--app-font-sans: "Nunito Sans", Arial, Helvetica, sans-serif;
+	--app-font-serif: Lora, Georgia, "Times New Roman", serif;
+	--app-font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+	--night: #13171c;
+	--surface: #1a1f26;
+	--surface-raised: #212830;
+	--surface-high: #2a323c;
+	--stone: #3a4552;
+	--stone-light: #4d5a68;
+	--paper: #e8e0d0;
+	--paper-dim: #b8ad9e;
+	--amber: #c98a38;
+	--amber-bright: #e8a84a;
+	--amber-dim: rgba(201, 138, 56, 0.18);
+	--ember: #8b3a2a;
+	--ember-bg: rgba(139, 58, 42, 0.18);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+	height: 100%;
+	background: var(--background);
+}
+
+body {
+	min-height: 100%;
+	background: var(--background);
+	color: var(--foreground);
+	font-family: var(--app-font-sans);
+	margin: 0;
+}
+
+button {
+	touch-action: manipulation;
+}
