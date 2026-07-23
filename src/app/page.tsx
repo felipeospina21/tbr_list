@@ -138,11 +138,7 @@ const LandingPageAfter: FC = () => (
 
 export default function LandingPage() {
 	return (
-		<PageSurface
-			decorations={<div className={styles.heroGlow} />}
-			shellClassName={styles.heroShell}
-			after={<LandingPageAfter />}
-		>
+		<PageSurface shellClassName={styles.heroShell} after={<LandingPageAfter />}>
 			<div className={styles.intro}>
 				<div className={styles.eyebrow}>
 					<Sparkles className={iconStyles.size4} />
