@@ -3,6 +3,7 @@ import Image from "next/image";
 import { FC } from "react";
 import { Spinner } from "@/components/ui/Spinner";
 import { useAddBookToReadingList } from "@/features/readingList/api/useAddBookToReadingList";
+import { useFetchReadingList } from "@/features/readingList/api/useFetchReadingList";
 import { cn } from "@/lib/utils";
 import { T } from "@/tokens";
 import { SearchBook } from "../types/search.types";
@@ -18,11 +19,30 @@ export const SearchSuggestions: FC<SearchSuggestionsProps> = ({
 	books,
 	isPending,
 }) => {
+	const readingListQuery = useFetchReadingList("to_be_read");
 	const addBookMutation = useAddBookToReadingList();
+
 	const isEmpty = !query && (!books || !books.length);
+	const isFetching = addBookMutation.isPending || readingListQuery.isFetching;
+
+	const addedBooks = readingListQuery.data?.items.books.map((book) => ({
+		id: book.canonicalId,
+		isbn10: book.isbn10,
+		isbn13: book.isbn13,
+	}));
 
 	const addBook = (book: SearchBook) => {
 		addBookMutation.mutate({ book, type: "to_be_read" });
+	};
+
+	const isBookAdded = (book: SearchBook) => {
+		return addedBooks?.some((addedBook) => {
+			return (
+				addedBook.id === Number(book.sourceBookId) ||
+				addedBook.isbn10 === book.isbn10 ||
+				addedBook.isbn13 === book.isbn13
+			);
+		});
 	};
 
 	return (
@@ -42,6 +62,15 @@ export const SearchSuggestions: FC<SearchSuggestionsProps> = ({
 			)}
 			<div className="flex flex-col gap-2.5">
 				{books?.map((book) => {
+					const variables = addBookMutation.variables;
+					const isBookBeingAdded =
+						variables?.book.sourceBookId === book.sourceBookId;
+					const ButtonIcon = isBookAdded(book) ? (
+						<CheckCircle size={15} />
+					) : (
+						<Plus size={15} />
+					);
+
 					return (
 						<div
 							key={book.sourceBookId}
@@ -94,7 +123,7 @@ export const SearchSuggestions: FC<SearchSuggestionsProps> = ({
 									}}
 									onClick={() => addBook(book)}
 								>
-									{addBookMutation.isPending ? <Spinner /> : <Plus size={15} />}
+									{isFetching && isBookBeingAdded ? <Spinner /> : ButtonIcon}
 								</button>
 							</div>
 						</div>
