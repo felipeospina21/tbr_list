@@ -1,3 +1,12 @@
+import { AnimatePresence, motion } from "framer-motion";
+import {
+	ArrowRight,
+	BookCheck,
+	BookMarked,
+	BookOpen,
+	Trash2,
+	X,
+} from "lucide-react";
 import {
 	Dispatch,
 	FC,
@@ -7,25 +16,16 @@ import {
 	useState,
 } from "react";
 import {
-	ArrowRight,
-	BookCheck,
-	BookMarked,
-	BookOpen,
-	Trash2,
-	X,
-} from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+	Drawer,
+	DrawerContent,
+	DrawerDescription,
+	DrawerHeader,
+	DrawerTitle,
+} from "@/components/drawer";
 import { useRemoveBookFromReadingList } from "@/features/readingList/api/useRemoveBookFromReadingList";
 import { useTransferBookBetweenReadingLists } from "@/features/readingList/api/useTransferBookBetweenReadingLists";
 import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
 import { ReadingListType } from "@/features/readingList/types";
-import {
-	DrawerContent,
-	DrawerHeader,
-	DrawerTitle,
-	DrawerDescription,
-	Drawer,
-} from "@/components/drawer";
 
 interface BookListActionsProps {
 	optionsBook: ReadingListBook | null;

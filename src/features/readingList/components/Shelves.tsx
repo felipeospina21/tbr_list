@@ -58,7 +58,7 @@ export const Shelves: FC<ShelvesProps> = ({ currentList }) => {
 	};
 
 	return (
-		<div className="flex mx-4 mt-4 rounded-xl p-1 gap-1 bg-surface">
+		<div className="flex mt-4 rounded-xl p-1 gap-1 bg-surface">
 			{shelves.map((s) => (
 				<button
 					key={s.type}
@@ -72,8 +72,8 @@ export const Shelves: FC<ShelvesProps> = ({ currentList }) => {
 					)}
 					onClick={() => handleTabChange(s.type)}
 				>
-					{s.icon}
-					{s.label}
+					<span className="hidden sm:flex items-center">{s.icon}</span>
+					<span>{s.label}</span>
 					<span
 						className={cn(
 							"ml-0.5 text-xs rounded-full px-1.5 py-px",

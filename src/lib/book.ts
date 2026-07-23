@@ -78,7 +78,7 @@ export function getBookSeriesString(
 	if (!name) {
 		return null;
 	}
-	return `${name} (${position} / ${count})`;
+	return `${name} ( ${position} of ${count} )`;
 }
 
 export function getPublisherString(name: string | null, year: number | null) {

@@ -1,7 +1,11 @@
 import { eq, sql } from "drizzle-orm";
 
 import { DbClient, db } from "@/db/drizzle";
-import { readingListItems, userBookMoods, userReadingSessions } from "@/db/schema";
+import {
+	readingListItems,
+	userBookMoods,
+	userReadingSessions,
+} from "@/db/schema";
 
 export interface BookReferenceCounts {
 	readingListItemRefs: number;

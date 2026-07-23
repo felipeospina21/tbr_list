@@ -5,19 +5,16 @@ import { useFetchReadingList } from "@/features/readingList/api/useFetchReadingL
 import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
 import { ReadingListType } from "@/features/readingList/types";
 import { Loader } from "../../../components/layout/Loader";
+import { BookListActions } from "./BookListActions";
 import { DraggableBookItem } from "./DraggableBookItem";
 
 const EMPTY_BOOKS: ReadingListBook[] = [];
 
 interface BooksListProps {
 	currentList: ReadingListType;
-	onBookOptions: (book: ReadingListBook) => void;
 }
 
-export const BooksList: FC<BooksListProps> = ({
-	currentList,
-	onBookOptions,
-}) => {
+export const BooksList: FC<BooksListProps> = ({ currentList }) => {
 	const listBooksQuery = useFetchReadingList(currentList);
 	const serverBooks = listBooksQuery.data?.items?.books ?? EMPTY_BOOKS;
 	const serverBooksSignature = serverBooks.map((book) => book.id).join("|");
@@ -96,6 +93,11 @@ export const BooksList: FC<BooksListProps> = ({
 		});
 	};
 
+	const [optionsBook, setOptionsBook] = useState<ReadingListBook | null>(null);
+	function onBookOptions(book: ReadingListBook) {
+		setOptionsBook(book);
+	}
+
 	if (listBooksQuery.isLoading) {
 		return <Loader />;
 	}
@@ -105,7 +107,7 @@ export const BooksList: FC<BooksListProps> = ({
 	}
 
 	return (
-		<div className="flex-1 overflow-y-auto px-4 pt-4 pb-2">
+		<div className="flex-1 overflow-y-auto pt-4 pb-2">
 			<Reorder.Group
 				axis="y"
 				values={localBooks}
@@ -123,6 +125,12 @@ export const BooksList: FC<BooksListProps> = ({
 					))}
 				</AnimatePresence>
 			</Reorder.Group>
+
+			<BookListActions
+				optionsBook={optionsBook}
+				setOptionsBook={setOptionsBook}
+				currentList={currentList}
+			/>
 		</div>
 	);
 };

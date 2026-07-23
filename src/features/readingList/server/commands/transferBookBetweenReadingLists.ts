@@ -1,11 +1,7 @@
 import { eq, sql } from "drizzle-orm";
 
 import { db } from "@/db/drizzle";
-import {
-	books,
-	readingListItems,
-	readingLists,
-} from "@/db/schema";
+import { books, readingListItems, readingLists } from "@/db/schema";
 import { ReadingListType } from "@/features/readingList/types";
 import { ReadingListNotFoundError } from "@/lib/errors/ReadingListNotFoundError";
 import { countBookReferences } from "./countBookReferences";
@@ -43,11 +39,17 @@ export async function transferBookBetweenReadingLists(
 		const [sourceList, targetList] = await Promise.all([
 			tx.query.readingLists.findFirst({
 				where: (lists, { and, eq }) =>
-					and(eq(lists.userId, input.userId), eq(lists.type, input.sourceListType)),
+					and(
+						eq(lists.userId, input.userId),
+						eq(lists.type, input.sourceListType),
+					),
 			}),
 			tx.query.readingLists.findFirst({
 				where: (lists, { and, eq }) =>
-					and(eq(lists.userId, input.userId), eq(lists.type, input.targetListType)),
+					and(
+						eq(lists.userId, input.userId),
+						eq(lists.type, input.targetListType),
+					),
 			}),
 		]);
 
@@ -69,7 +71,9 @@ export async function transferBookBetweenReadingLists(
 				and(eq(items.listId, targetList.id), eq(items.bookId, input.bookId)),
 		});
 
-		await tx.delete(readingListItems).where(eq(readingListItems.id, sourceItem.id));
+		await tx
+			.delete(readingListItems)
+			.where(eq(readingListItems.id, sourceItem.id));
 
 		const [positionResult] = await tx
 			.select({

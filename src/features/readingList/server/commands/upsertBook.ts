@@ -38,6 +38,7 @@ export async function upsertBook(input: SearchBook, tx: DbClient = db) {
 			publisher: input.publisher,
 			seriesName: input.seriesName,
 			seriesPosition: input.seriesPosition,
+			seriesCount: input.seriesCount,
 			subtitle: input.subtitle,
 		})
 		// Safety: If the book was added by a concurrent request, update its timestamp and return it
