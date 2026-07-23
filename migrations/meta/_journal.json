@@ -15,6 +15,13 @@
       "when": 1783034062184,
       "tag": "0001_late_madelyne_pryor",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784072241131,
+      "tag": "0002_previous_master_chief",
+      "breakpoints": true
     }
   ]
 }

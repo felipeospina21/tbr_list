@@ -1,12 +1,3 @@
-import { AnimatePresence, motion } from "framer-motion";
-import {
-	ArrowRight,
-	BookCheck,
-	BookMarked,
-	BookOpen,
-	Trash2,
-	X,
-} from "lucide-react";
 import {
 	Dispatch,
 	FC,
@@ -15,10 +6,26 @@ import {
 	useEffect,
 	useState,
 } from "react";
+import {
+	ArrowRight,
+	BookCheck,
+	BookMarked,
+	BookOpen,
+	Trash2,
+	X,
+} from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useRemoveBookFromReadingList } from "@/features/readingList/api/useRemoveBookFromReadingList";
 import { useTransferBookBetweenReadingLists } from "@/features/readingList/api/useTransferBookBetweenReadingLists";
 import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
 import { ReadingListType } from "@/features/readingList/types";
+import {
+	DrawerContent,
+	DrawerHeader,
+	DrawerTitle,
+	DrawerDescription,
+	Drawer,
+} from "@/components/drawer";
 
 interface BookListActionsProps {
 	optionsBook: ReadingListBook | null;
@@ -45,123 +52,97 @@ export const BookListActions: FC<BookListActionsProps> = ({
 	const removeBookMutation = useRemoveBookFromReadingList(currentList);
 	const transferBookMutation = useTransferBookBetweenReadingLists(currentList);
 	const [isMoveMenuOpen, setIsMoveMenuOpen] = useState(false);
-	const navDockHeight = "-72px";
-	const selectedBookId = optionsBook?.id;
 
 	useEffect(() => {
-		if (selectedBookId) {
-			setIsMoveMenuOpen(false);
-		}
-	}, [selectedBookId]);
+		if (optionsBook?.id) setIsMoveMenuOpen(false);
+	}, [optionsBook?.id]);
 
 	const availableTargets = TRANSFER_TARGETS.filter(
-		(target) => target.type !== currentList,
+		(t) => t.type !== currentList,
 	);
 
 	const handleRemoveBook = async () => {
-		if (!optionsBook || removeBookMutation.isPending) {
-			return;
-		}
-
+		if (!optionsBook || removeBookMutation.isPending) return;
 		try {
 			await removeBookMutation.mutateAsync({ bookId: optionsBook.id });
 			setOptionsBook(null);
-		} catch {
-			// Keep the sheet open so the user can retry or dismiss manually.
-		}
+		} catch {}
 	};
 
 	const handleTransferBook = async (targetListType: ReadingListType) => {
-		if (!optionsBook || transferBookMutation.isPending) {
-			return;
-		}
-
+		if (!optionsBook || transferBookMutation.isPending) return;
 		try {
 			await transferBookMutation.mutateAsync({
 				book: optionsBook,
 				targetListType,
 			});
 			setOptionsBook(null);
-		} catch {
-			// Keep the sheet open so the user can pick a different target or retry.
-		}
+		} catch {}
 	};
 
 	return (
-		<AnimatePresence>
-			{optionsBook && (
-				<>
-					<motion.div
-						className="fixed inset-0 z-40 bg-[rgba(0,0,0,0.6)]"
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
-						onClick={() => setOptionsBook(null)}
-					/>
-					<motion.div
-						className="fixed bottom-0 left-0 right-0 z-50 rounded-t-2xl px-4 pt-4 bg-surface-high border-t-[1px_solid_var(--color-stone)] pb-[calc(16px+env(safe-area-inset-bottom,0))]"
-						initial={{ y: "100%" }}
-						animate={{ y: navDockHeight }}
-						exit={{ y: "100%" }}
-						transition={{ type: "spring", stiffness: 400, damping: 40 }}
-					>
-						<div className="w-8 h-0.5 rounded-full mx-auto mb-4 bg-stone" />
-						<p className="font-lora text-base font-semibold mb-0.5 text-paper">
-							{optionsBook.title}
-						</p>
-						<p className="font-nunito text-sm mb-5 text-paper-dim">
-							{optionsBook.author}
-						</p>
-						<div className="flex flex-col gap-2">
-							<button
-								className="flex items-center gap-3 w-full py-3.5 px-3 rounded-xl text-sm font-nunito font-semibold active:scale-[0.98] transition-transform bg-surface-raised text-paper border-[1px_solid_var(--color-stone)]"
-								onClick={() => setIsMoveMenuOpen((current) => !current)}
-								type="button"
-							>
-								<ArrowRight size={15} className="text-amber" />
-								Move to
-							</button>
-							<AnimatePresence>
-								{isMoveMenuOpen && (
-									<motion.div
-										className="flex flex-col gap-2"
-										initial={{ opacity: 0, y: -6 }}
-										animate={{ opacity: 1, y: 0 }}
-										exit={{ opacity: 0, y: -6 }}
-										transition={{ duration: 0.18 }}
-									>
-										{availableTargets.map((target) => (
-											<button
-												key={target.type}
-												className="flex items-center gap-3 w-full py-3 px-3 rounded-xl text-sm font-nunito font-semibold active:scale-[0.98] transition-transform bg-surface-raised text-paper border-[1px_solid_var(--color-stone)] disabled:opacity-60 disabled:cursor-not-allowed"
-												onClick={() => {
-													void handleTransferBook(target.type);
-												}}
-												disabled={transferBookMutation.isPending}
-												type="button"
-											>
-												{target.icon}
-												{target.label}
-											</button>
-										))}
-									</motion.div>
-								)}
-							</AnimatePresence>
-							<button
-								className="flex items-center gap-3 w-full py-3.5 px-3 rounded-xl text-sm font-nunito font-semibold mt-1 active:scale-[0.98] transition-transform bg-ember-bg border-[1px_solid_rgba(139,58,42,0.35)] text-[#c97060] disabled:opacity-60 disabled:cursor-not-allowed"
-								onClick={() => {
-									void handleRemoveBook();
-								}}
-								disabled={removeBookMutation.isPending}
-								type="button"
-							>
-								<Trash2 size={15} />
-								Remove from library
-							</button>
-						</div>
-					</motion.div>
-				</>
-			)}
-		</AnimatePresence>
+		<Drawer
+			open={!!optionsBook}
+			onOpenChange={(open) => !open && setOptionsBook(null)}
+		>
+			<DrawerContent className="bg-surface-high border-t-[1px_solid_var(--color-stone)] pb-[env(safe-area-inset-bottom,16px)]">
+				<div className="mx-auto w-full px-4 pt-4">
+					<DrawerHeader className="px-0">
+						<DrawerTitle className="font-lora text-base font-semibold text-paper">
+							{optionsBook?.title}
+						</DrawerTitle>
+						<DrawerDescription className="font-nunito text-sm text-paper-dim">
+							{optionsBook?.author}
+						</DrawerDescription>
+					</DrawerHeader>
+
+					<div className="flex flex-col gap-2 pb-4">
+						<button
+							className="flex items-center gap-3 w-full py-3.5 px-3 rounded-xl text-sm font-nunito font-semibold bg-surface-raised text-paper border-[1px_solid_var(--color-stone)]"
+							onClick={() => setIsMoveMenuOpen((prev) => !prev)}
+							type="button"
+						>
+							<ArrowRight size={15} className="text-amber" />
+							Move to
+						</button>
+
+						<AnimatePresence initial={false}>
+							{isMoveMenuOpen && (
+								<motion.div
+									className="flex flex-col gap-2 overflow-hidden"
+									initial={{ height: 0, opacity: 0 }}
+									animate={{ height: "auto", opacity: 1 }}
+									exit={{ height: 0, opacity: 0 }}
+									transition={{ duration: 0.2 }}
+								>
+									{availableTargets.map((target) => (
+										<button
+											key={target.type}
+											className="flex items-center gap-3 w-full py-3 px-3 rounded-xl text-sm font-nunito font-semibold bg-surface-raised text-paper border-[1px_solid_var(--color-stone)] disabled:opacity-60"
+											onClick={() => void handleTransferBook(target.type)}
+											disabled={transferBookMutation.isPending}
+											type="button"
+										>
+											{target.icon}
+											{target.label}
+										</button>
+									))}
+								</motion.div>
+							)}
+						</AnimatePresence>
+
+						<button
+							className="flex items-center gap-3 w-full py-3.5 px-3 rounded-xl text-sm font-nunito font-semibold bg-ember-bg border-[1px_solid_rgba(139,58,42,0.35)] text-[#c97060] disabled:opacity-60"
+							onClick={() => void handleRemoveBook()}
+							disabled={removeBookMutation.isPending}
+							type="button"
+						>
+							<Trash2 size={15} />
+							Remove from library
+						</button>
+					</div>
+				</div>
+			</DrawerContent>
+		</Drawer>
 	);
 };

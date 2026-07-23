@@ -20,7 +20,8 @@ export type Book = {
 	cover: string;
 	accent: string;
 	seriesName: string | null;
-	seriesPosition: string | null;
+	seriesPosition: number | null;
+	seriesCount: number | null;
 	genres: string[];
 };
 
@@ -63,4 +64,34 @@ export function normalizeSubjects(subjects: readonly string[] | undefined) {
 
 export function formatSeriesPosition(position: number | undefined) {
 	return typeof position === "number" ? String(position) : null;
+}
+
+export function getBookSeriesString(
+	name: string | null,
+	position: number | null,
+	count: number | null,
+) {
+	if (name && (position === null || count === null)) {
+		return name;
+	}
+
+	if (!name) {
+		return null;
+	}
+	return `${name} (${position} / ${count})`;
+}
+
+export function getPublisherString(name: string | null, year: number | null) {
+	if (name && year) {
+		return `${name.toLowerCase()} - ${year}`;
+	}
+	if (name && year === null) {
+		return name;
+	}
+
+	if (name === null && year) {
+		return year;
+	}
+
+	return "";
 }

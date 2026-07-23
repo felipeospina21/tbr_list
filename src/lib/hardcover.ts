@@ -108,10 +108,11 @@ export function mapHardcoverBook(
 		document.series_names?.[0]?.trim() ??
 		null;
 	const seriesPosition =
-		formatSeriesPosition(document.featured_series_position) ??
-		formatSeriesPosition(document.featured_series?.position) ??
-		document.featured_series?.details?.trim() ??
+		document.featured_series_position ??
+		document.featured_series?.position ??
 		null;
+	const seriesCount =
+		document.featured_series?.series?.primary_books_count ?? null;
 	const moods = normalizeSubjects(document.moods);
 	const genres = normalizeSubjects(document.genres);
 	const bookId = edition?.book_id;
@@ -143,6 +144,7 @@ export function mapHardcoverBook(
 		accent: art.accent,
 		seriesName,
 		seriesPosition,
+		seriesCount,
 		moods,
 		genres,
 		provider: "Hardcover" as const,

@@ -16,10 +16,16 @@ export interface ReadingListBook {
 	cover: string;
 	pages: number | null;
 	seriesName: string | null;
-	seriesPosition: string | null;
+	seriesPosition: number | null;
+	seriesCount: number | null;
 	position: number;
 	genres: string[];
 	moods: string[];
+	description: string;
+	publisher: string | null;
+	publisherYear: number | null;
+	isbn10: string | null;
+	isbn13: string | null;
 }
 
 export interface GetReadingListWithBooks {
@@ -42,6 +48,12 @@ export async function getReadingListWithBooks(
 			pages: books.pages,
 			seriesName: books.seriesName,
 			seriesPosition: books.seriesPosition,
+			seriesCount: books.seriesCount,
+			description: books.description,
+			publisher: books.publisher,
+			publisherYear: books.publishedYear,
+			isbn10: books.isbn10,
+			isbn13: books.isbn13,
 			position: readingListItems.position,
 		})
 		.from(readingListItems)

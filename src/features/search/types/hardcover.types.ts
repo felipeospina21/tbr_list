@@ -44,6 +44,7 @@ export type HardcoverBookDocument = {
 		details?: string;
 		series?: {
 			name?: string;
+			primary_books_count?: number;
 		};
 	};
 };

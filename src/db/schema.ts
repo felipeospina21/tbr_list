@@ -96,7 +96,8 @@ export const books = pgTable(
 		isbn10: text(),
 		isbn13: text(),
 		seriesName: text(),
-		seriesPosition: text(),
+		seriesPosition: integer(),
+		seriesCount: integer(),
 		...timestamps,
 	},
 	(table) => [
