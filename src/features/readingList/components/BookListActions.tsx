@@ -26,6 +26,7 @@ import { useRemoveBookFromReadingList } from "@/features/readingList/api/useRemo
 import { useTransferBookBetweenReadingLists } from "@/features/readingList/api/useTransferBookBetweenReadingLists";
 import { ReadingListBook } from "@/features/readingList/server/queries/getReadingListWithBooks";
 import { ReadingListType } from "@/features/readingList/types";
+import { Spinner } from "@/components/ui/Spinner";
 
 interface BookListActionsProps {
 	optionsBook: ReadingListBook | null;
@@ -137,7 +138,11 @@ export const BookListActions: FC<BookListActionsProps> = ({
 							disabled={removeBookMutation.isPending}
 							type="button"
 						>
-							<Trash2 size={15} />
+							{removeBookMutation.isPending ? (
+								<Spinner />
+							) : (
+								<Trash2 size={15} />
+							)}
 							Remove from library
 						</button>
 					</div>
