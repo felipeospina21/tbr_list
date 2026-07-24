@@ -95,3 +95,15 @@ export function getPublisherString(name: string | null, year: number | null) {
 
 	return "";
 }
+
+export function getRatingString(rating: number | null, count: number | null) {
+	if (rating && count) {
+		return `${rating.toFixed(1)} (${count})`;
+	}
+
+	if (rating) {
+		return rating.toFixed(1);
+	}
+
+	return "";
+}

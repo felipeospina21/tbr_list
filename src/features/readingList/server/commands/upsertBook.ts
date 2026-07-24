@@ -40,6 +40,8 @@ export async function upsertBook(input: SearchBook, tx: DbClient = db) {
 			seriesPosition: input.seriesPosition,
 			seriesCount: input.seriesCount,
 			subtitle: input.subtitle,
+			rating: input.averageRating,
+			ratingsCount: input.ratingsCount,
 		})
 		// Safety: If the book was added by a concurrent request, update its timestamp and return it
 		.onConflictDoUpdate({

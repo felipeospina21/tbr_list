@@ -98,6 +98,8 @@ export const books = pgTable(
 		seriesName: text(),
 		seriesPosition: integer(),
 		seriesCount: integer(),
+		rating: real(),
+		ratingsCount: integer(),
 		...timestamps,
 	},
 	(table) => [

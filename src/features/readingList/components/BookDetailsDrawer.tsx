@@ -9,9 +9,14 @@ import {
 	DrawerTitle,
 	DrawerTrigger,
 } from "@/components/drawer";
-import { getBookSeriesString, getPublisherString } from "@/lib/book";
+import {
+	getBookSeriesString,
+	getPublisherString,
+	getRatingString,
+} from "@/lib/book";
 import { cn } from "@/lib/utils";
 import { ReadingListBook } from "../server/queries/getReadingListWithBooks";
+import { Star } from "lucide-react";
 
 interface BookDetailsDrawerProps {
 	children: ReactNode;
@@ -55,10 +60,18 @@ export const BookDetailsDrawer: FC<BookDetailsDrawerProps> = ({
 
 				<DrawerContent className="bg-surface-high text-paper border-transparent">
 					<DrawerHeader>
-						<DrawerTitle>{book.title}</DrawerTitle>
+						<DrawerTitle className="flex gap-5">{book.title}</DrawerTitle>
 						<DrawerDescription className="text-left text-paper-dim">
 							{getPublisherString(book.publisher, book.publisherYear)}
 						</DrawerDescription>
+						{book.rating && (
+							<span className="flex gap-1 items-center">
+								<Star size={11} className="fill-amber stroke-amber" />
+								<p className="text-[12px] font-mono">
+									{getRatingString(book.rating, book.ratingCount)}
+								</p>
+							</span>
+						)}
 					</DrawerHeader>
 					<div className="no-scrollbar overflow-y-auto px-4">
 						{book.description}

@@ -27,6 +27,8 @@ export interface ReadingListBook {
 	isbn10: string | null;
 	isbn13: string | null;
 	canonicalId: number;
+	rating: number | null;
+	ratingCount: number | null;
 }
 
 export interface GetReadingListWithBooks {
@@ -56,6 +58,8 @@ export async function getReadingListWithBooks(
 			isbn10: books.isbn10,
 			isbn13: books.isbn13,
 			canonicalId: books.canonicalId,
+			rating: books.rating,
+			ratingCount: books.ratingsCount,
 			position: readingListItems.position,
 		})
 		.from(readingListItems)

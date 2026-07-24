@@ -21,6 +21,7 @@ export const BookMetadata: FC<BookMetadataProps> = ({
 		e.preventDefault();
 		onBookOptions(book);
 	}
+
 	return (
 		<div
 			id="book_metadata_card"
