@@ -12,8 +12,8 @@ export const Header: FC<HeaderProps> = ({ activeNav }) => {
 	const sectionTitle: Record<NavId, string> = {
 		library: "NextRead",
 		search: "Discover",
-		mood: "Mood Match",
-		stats: "My Stats",
+		// mood: "Mood Match",
+		// stats: "My Stats",
 	};
 
 	return (

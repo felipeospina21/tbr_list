@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Lora, Nunito_Sans } from "next/font/google";
 import "./globals.css";
 import styles from "./layout.module.css";
-import { Providers } from "./providers";
+import { ReactQueryProvider } from "./providers/ReactQueryProvider";
+import { SerwistProvider } from "@serwist/turbopack/react";
 
 const lora = Lora({
 	subsets: ["latin"],
@@ -38,7 +39,9 @@ export default function RootLayout({
 			className={`${styles.html} ${lora.variable} ${nunitoSans.variable}`}
 		>
 			<body className={styles.body}>
-				<Providers>{children}</Providers>
+				<ReactQueryProvider>
+					<SerwistProvider swUrl="/serwist/sw.js">{children}</SerwistProvider>
+				</ReactQueryProvider>
 			</body>
 		</html>
 	);

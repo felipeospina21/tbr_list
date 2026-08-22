@@ -23,20 +23,20 @@ const NAV_ITEMS = [
 		icon: Search,
 		disabled: false,
 	},
-	{
-		id: "mood",
-		label: "Mood",
-		route: `${base}/mood`,
-		icon: Smile,
-		disabled: true,
-	},
-	{
-		id: "stats",
-		label: "Stats",
-		route: `${base}/stats`,
-		icon: BarChart2,
-		disabled: true,
-	},
+	// {
+	// 	id: "mood",
+	// 	label: "Mood",
+	// 	route: `${base}/mood`,
+	// 	icon: Smile,
+	// 	disabled: true,
+	// },
+	// {
+	// 	id: "stats",
+	// 	label: "Stats",
+	// 	route: `${base}/stats`,
+	// 	icon: BarChart2,
+	// 	disabled: true,
+	// },
 ] as const;
 
 export type NavId = (typeof NAV_ITEMS)[number]["id"];

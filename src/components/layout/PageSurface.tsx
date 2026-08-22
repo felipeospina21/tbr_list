@@ -16,7 +16,7 @@ interface PageSurfaceProps {
 	withBackdrop?: boolean;
 }
 
-export type NavItems = "library" | "search" | "mood" | "stats";
+export type NavItems = "library" | "search"; //| "mood" | "stats";
 
 export const PageSurface: FC<PageSurfaceProps> = ({
 	children,
