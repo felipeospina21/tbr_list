@@ -104,6 +104,7 @@ export function useTransferBookBetweenReadingLists(
 	>({
 		mutationFn: ({ book, targetListType }) =>
 			transferReadingListBook(sourceListType, targetListType, book.id),
+		networkMode: "online",
 		onMutate: async ({ book, targetListType }) => {
 			const targetQueryKey = getReadingListQueryKey(targetListType);
 

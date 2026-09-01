@@ -58,7 +58,7 @@ export const Shelves: FC<ShelvesProps> = ({ currentList }) => {
 	};
 
 	return (
-		<div className="flex mt-4 rounded-xl p-1 gap-1 bg-surface">
+		<div className="flex rounded-xl p-1 gap-1 bg-surface">
 			{shelves.map((s) => (
 				<button
 					key={s.type}

@@ -65,6 +65,7 @@ export function useRemoveBookFromReadingList(listType: ReadingListType) {
 		RemoveBookContext
 	>({
 		mutationFn: ({ bookId }) => removeReadingListBook(bookId),
+		networkMode: "online",
 		onMutate: async ({ bookId }) => {
 			await queryClient.cancelQueries({ queryKey });
 

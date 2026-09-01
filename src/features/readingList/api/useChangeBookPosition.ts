@@ -53,6 +53,7 @@ export function useUpdateBookOrderMutation(
 		mutationFn: async (input) => {
 			return updateServerOrder(input);
 		},
+		networkMode: "online",
 
 		onMutate: async (payload) => {
 			// 1. Cancel outgoing queries so they don't overwrite us

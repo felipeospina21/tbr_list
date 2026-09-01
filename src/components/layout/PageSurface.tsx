@@ -2,7 +2,6 @@
 import { usePathname } from "next/navigation";
 import { type FC, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import { Header } from "./Header";
 import { NavDock } from "./NavDock";
 import styles from "./PageSurface.module.css";
 import { SectionBackdrop } from "./SectionBackdrop";
@@ -32,7 +31,6 @@ export const PageSurface: FC<PageSurfaceProps> = ({
 	return (
 		<main className={cn(styles.main, className)}>
 			<section className={cn(styles.surface, surfaceClassName)}>
-				<Header activeNav={activeNav} />
 				{withBackdrop ? <SectionBackdrop /> : null}
 
 				<div className={cn(styles.shell, shellClassName)}>{children}</div>

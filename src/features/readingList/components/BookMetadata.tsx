@@ -35,7 +35,7 @@ export const BookMetadata: FC<BookMetadataProps> = ({
 			<BookMetadataTags genres={book.genres} moods={book.moods} />
 
 			<div id="book_metadata_footer" className="mt-3">
-				<p className="justify-self-start text-[10.5px] font-semibold leading-tight line-clamp-2 text-paper-dim">
+				<p className="justify-self-start text-[10.5px] font-semibold leading-tight truncate w-full text-paper-dim">
 					{bookSeries}
 				</p>
 			</div>
@@ -104,7 +104,7 @@ const BookMetadataTags = ({
 	return (
 		<div
 			id="book_metadata_tags"
-			className="flex items-center gap-1.5 mt-2 flex-wrap"
+			className="flex items-center gap-1.5 mt-2 flex-wrap max-h-12 overflow-hidden"
 		>
 			<span className="font-nunito text-xs px-2 py-0.5 rounded-full bg-stone text-paper-dim">
 				{genres[0]}

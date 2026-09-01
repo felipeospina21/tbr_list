@@ -7,7 +7,7 @@ interface BookImageProps {
 }
 export const BookImage: FC<BookImageProps> = ({ title, url }) => {
 	return (
-		<div className="relative shrink-0 w-[68] min-h-[104]">
+		<div className="w-3/12 min-h-[104]">
 			<Image
 				src={url}
 				alt={title}

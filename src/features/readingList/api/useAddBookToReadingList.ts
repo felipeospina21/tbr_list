@@ -26,6 +26,7 @@ export function useAddBookToReadingList() {
 
 	return useMutation<unknown, Error, AddReadingListBookPayload>({
 		mutationFn: (input) => addReadingListBook(input),
+		networkMode: "online",
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey });
 		},
