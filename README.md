@@ -1,42 +1,68 @@
-This is a [Next.js](https://nextjs.org) reading list app.
+# tbr_list
 
-## Getting Started
+A reading-list app for managing the books you want to read (to-be-read), are reading, and have finished. Search for books, add them to lists, and drag them into the order you want. It's installable as a PWA and works offline.
 
-First, copy the example env file if you want Google Books to use an API key:
+**Live:** https://tbr-list-pied.vercel.app
+
+## Features
+
+- **Book search**: queries Hardcover first (when configured), then falls back to Open Library, then Google Books
+- **Reading lists**: organize books into lists and shelves, with a details drawer for each book
+- **Drag and drop reordering**: fractional positions, so moving a book updates one row instead of shifting the whole list (see [`reorder.md`](reorder.md))
+- **Google sign-in** with NextAuth
+- **Offline support**: installable PWA with a service worker (Serwist) and a persisted query cache in IndexedDB
+- **Database model** for books, genres, moods, metrics and reading sessions (see [`src/docs/database-schema.md`](src/docs/database-schema.md))
+
+## Tech stack
+
+- [Next.js](https://nextjs.org/) 16, React 19 and TypeScript
+- Postgres on [Neon](https://neon.tech/), with Drizzle ORM and migrations
+- NextAuth (Auth.js) v4
+- TanStack Query with an async-storage persister
+- Tailwind CSS 4, shadcn/ui, Radix UI, Vaul and Framer Motion
+- Zod, Serwist and Biome
+
+## Getting started
+
+Requires Node and [pnpm](https://pnpm.io/).
 
 ```bash
-cp .env.example .env.local
+pnpm install
 ```
 
-Set `HARDCOVER_API_KEY` in `.env.local` to use Hardcover as the primary book search provider. Set `GOOGLE_BOOKS_API_KEY` to make the final Google Books fallback more reliable. The app searches Hardcover first when configured, then Open Library, then Google Books.
+Create a `.env.local` file with these variables (names only):
 
-Set `DATABASE_URL` to a Neon connection string for the reading list database. If you deploy on Vercel with a Neon or Postgres integration, the app also accepts `POSTGRES_URL_NON_POOLING`, `POSTGRES_URL`, or `NEON_DATABASE_URL`.
+```
+DATABASE_URL=              # Neon connection string
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+NEXTAUTH_SECRET=
+NEXTAUTH_URL=http://localhost:3000
+HARDCOVER_API_KEY=         # optional: enables Hardcover as the primary search
+GOOGLE_BOOKS_API_KEY=      # optional: makes the Google Books fallback more reliable
+```
 
-The normalized database layout and table relationships are documented in [`docs/database-schema.md`](/home/felipe/projects/tbr_list/docs/database-schema.md).
-
-The app now uses Google sign-in through NextAuth/Auth.js. Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `NEXTAUTH_SECRET`, and `NEXTAUTH_URL` in `.env.local`, and register `http://localhost:3000/api/auth/callback/google` as the local OAuth callback URL in Google Cloud Console.
-
-Then run the development server:
+- Register `http://localhost:3000/api/auth/callback/google` as an authorized redirect URI in Google Cloud Console.
+- If you deploy on Vercel with a Neon or Postgres integration, the app also accepts `POSTGRES_URL_NON_POOLING`, `POSTGRES_URL` or `NEON_DATABASE_URL` in place of `DATABASE_URL`.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm db:migrate    # Apply database migrations
+pnpm dev           # Dev server at http://localhost:3000
+pnpm build         # Production build
+pnpm start         # Run the production build
+pnpm check         # Biome lint and format
+pnpm db:generate   # Generate a migration after schema changes
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project structure
 
-The route stays thin in `app/page.tsx`; the reading-list feature lives in `features/readingList/`.
-
-## Learn More
-
-To learn more about Next.js, take a look at these resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out the [Next.js GitHub repository](https://github.com/vercel/next.js) if you want more context.
+```
+src/
+├── app/             # Routes: reading-app, search, login, offline, API routes
+├── features/        # readingList, search and auth (components, server code, schemas)
+├── components/      # Shared UI (shadcn) and layout
+├── db/              # Drizzle schema and client
+├── lib/             # API and error helpers
+└── docs/            # Database schema
+migrations/          # Drizzle SQL migrations
+```
